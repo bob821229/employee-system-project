@@ -4,6 +4,9 @@ import { reactive, computed, inject, ref } from "vue";
 export const useEmployeeStore = defineStore("employeeStore", () => {
   // 員工資料
   const getEmployeeStore = ref({
+    profileImageUrl: '', // 大頭貼 URL
+    idCardFrontImageUrl: '', // 身分證正面照片 URL
+    idCardBackImageUrl: '', // 身分證反面照片 URL
     employeeId: '',//人員編號
     department: '',//進用部門
     arrivalDate: null,//到職日
@@ -23,7 +26,7 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
       {
         name: "",//學校名稱
         department: "",//科系
-        period: null//修業起訖年月
+        period: [null,null]//修業起訖年月
       }
     ],//學歷
     workExperience: [
@@ -32,7 +35,7 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
         position: "",//職務名稱
         salary: null,//薪資
         leavingReason: "",//離職原因
-        period: null//服務起訖年月
+        period:[null,null]//服務起訖年月
       }
     ],//職務經歷
     languages: [],//語言能力
@@ -47,7 +50,8 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
     },//緊急聯絡人資訊
     bank: {
       account: '',//銀行帳號
-      branchName: ''//分行名稱
+      branchName: '',//分行名稱
+      
     },//銀行資訊
   }
 );

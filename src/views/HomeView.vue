@@ -6,7 +6,7 @@
       <el-table-column header-align="center" fixed prop="employeeId" label="人員編號" />
       <el-table-column header-align="center" prop="name" label="姓名" />
       <el-table-column header-align="center" prop="department" label="部門" :filters="departments"
-        :filter-method="filterHandler" />
+        :filter-method="filterHandler" filter-multiple />
       <el-table-column header-align="center" prop="email" label="信箱" />
       <el-table-column align="center" header-align="center" fixed="right" label="編輯">
         <template #default="scope">
@@ -344,8 +344,11 @@ const tableData = ref(
 const tableData1 = ref([])
 //篩選函式
 const filterHandler = (value, row, column) => {
-  const property = column['property']
-  return row[property] === value
+  console.log('value:', value, 'row:', row, 'column:', column)
+
+  // const property = column['property']
+  // return row[property] === value
+  return row.department === value
 }
 const editHandler = (data) => {
   console.log(data)

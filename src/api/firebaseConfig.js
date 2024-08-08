@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getDatabase } from 'firebase/database';
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 
 
@@ -22,5 +23,6 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 // 取得 Storage 實例
 // const storage = getStorage(app, "gs://employeesystemproject.appspot.com")
+const storage = getStorage(app);
 
-export { db };
+export { db , storage };
