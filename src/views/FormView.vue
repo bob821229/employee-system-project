@@ -96,7 +96,7 @@
 
             <el-col :sm="24" :md="12" :lg="12">
                 <el-form-item label="連絡電話" prop="homePhone">
-                    <el-input v-model.number="currentData.homePhone" placeholder="請輸入連絡電話" />
+                    <el-input v-model="currentData.homePhone" placeholder="請輸入連絡電話" />
                 </el-form-item>
             </el-col>
 
@@ -315,7 +315,7 @@
             </el-col>
             <el-col :sm="12" :md="6" :lg="6">
                 <el-form-item label="電話" prop="emergencyContact.phone">
-                    <el-input v-model.number="currentData.emergencyContact.phone" placeholder="請輸入電話" />
+                    <el-input v-model="currentData.emergencyContact.phone" placeholder="請輸入電話" />
                 </el-form-item>
             </el-col>
             <el-col :sm="12" :md="6" :lg="6">
@@ -347,7 +347,7 @@
                 </el-form-item>
             </el-col>
             <el-col :sm="12" :md="12" :lg="12">
-                <el-form-item label="身分證正面">
+                <el-form-item label="身分證正面" prop="idCardFrontImageUrl">
                     <el-upload :show-file-list="false" :auto-upload="false" :on-change="changeIdCardFrontImage" drag
                         style="width: 100%;">
                         <el-avatar v-if="previewimageUrl1 || currentData.idCardFrontImageUrl"
@@ -367,7 +367,7 @@
                 </el-form-item>
             </el-col>
             <el-col :sm="12" :md="12" :lg="12">
-                <el-form-item label="身分證反面">
+                <el-form-item label="身分證反面" prop="idCardBackImageUrl">
                     <el-upload :show-file-list="false" :auto-upload="false" :on-change="changeIdCardBackImage" drag
                         style="width: 100%;">
                         <el-avatar v-if="previewimageUrl2 || currentData.idCardBackImageUrl"
@@ -388,8 +388,9 @@
             </el-col>
             <el-col :span="24">
                 <div style="text-align: center;margin: 20px 0;">
-                    <el-button type="primary" @click="submitForm">驗證</el-button>
-                    <el-button type="primary" @click="saveChanges">保存</el-button>
+                    <el-button type="primary" @click="validateForm">驗證</el-button>
+                    <el-button type="primary" @click="resetValidateForm">重置驗證</el-button>
+                    <el-button type="primary" @click="submitForm">保存</el-button>
                     <el-button type="primary" @click="cancel">返回</el-button>
                 </div>
             </el-col>
@@ -405,21 +406,12 @@ import { db, storage } from '../api/firebaseConfig';
 import { getDatabase, ref as dbRef, push, onValue, remove, set } from 'firebase/database';
 import { ElMessage } from 'element-plus';
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted, watch, computed } from 'vue';
 // 創建一個響應式引用來存儲表單元素
 const ruleFormRef = ref(null);
 
-// 提交表單的函數
-const submitForm = async () => {
-    ruleFormRef.value.validate((valid) => {
-        if (!valid) {
-            ElMessage.error('驗證失敗，請檢查輸入')
-        } else {
-            ElMessage.success('驗證成功，可以提交表單')
-        }
-    })
-}
 
+// 驗證大頭照
 const validateProfileImage = (rule, value, callback) => {
     if (value === '' && previewimageUrl.value === null) {
         callback(new Error('請上傳照片'))
@@ -427,6 +419,24 @@ const validateProfileImage = (rule, value, callback) => {
         callback()
     }
 }
+// 驗證身分證正面
+const validateIdCardFrontImage = (rule, value, callback) => {
+    if (value === '' && previewimageUrl1.value === null) {
+        callback(new Error('請上傳身分證正面照'))
+    } else {
+        callback()
+    }
+}
+// 驗證身分證反面
+const validateIdCardBackImage = (rule, value, callback) => {
+    if (value === '' && previewimageUrl2.value === null) {
+        callback(new Error('請上傳身分證反面照'))
+    } else {
+        callback()
+    }
+}
+
+//驗證規則
 const rules = reactive({
     profileImageUrl: [
         { required: true, message: '請上傳大頭貼', trigger: 'blur' }
@@ -455,7 +465,7 @@ const rules = reactive({
     ],
     homePhone: [
         { required: true, message: '請輸入連絡電話', trigger: 'blur' },
-        { type: 'number', message: '內容必須為數字' }
+        { pattern: /^0\d{1,3}-\d{6,8}$/, message: '請輸入正確的格式(ex:03-3216549)', trigger: 'blur' }
     ],
     phone: [
         { required: true, message: '請輸入行動電話', trigger: 'blur' },
@@ -488,12 +498,8 @@ const rules = reactive({
         },
     ],
     'emergencyContact.phone': [
-        {
-            required: true,
-            message: '請輸入連絡電話',
-            trigger: 'blur'
-        },
-        { type: 'number', message: '內容必須為數字' }
+        { required: true, message: '請輸入連絡電話', trigger: 'blur' },
+        { pattern: /^0\d{1,3}-\d{6,8}$/, message: '請輸入正確的手機格式', trigger: 'blur' }
     ],
     'emergencyContact.mobile': [
         {
@@ -519,9 +525,14 @@ const rules = reactive({
     ],
     profileImageUrl: [
         { validator: validateProfileImage, trigger: 'change' }
-    ]
-}
-)
+    ],
+    idCardFrontImageUrl: [
+        { validator: validateIdCardFrontImage, trigger: 'change' }
+    ],
+    idCardBackImageUrl: [
+        { validator: validateIdCardBackImage, trigger: 'change' }
+    ],
+})
 
 
 
@@ -531,7 +542,7 @@ const languages = ref(['國語', '台語', '客語', '英語', '日語']);
 const expertises = ref(['Word', 'Excel', 'PowerPoint', 'GIS', 'Visio']);
 //特殊身分清單
 const specialStatus = ref(['原住民', '身心障礙'])
-
+//部門清單
 const departments = ref([
     { id: 1, name: '研究一所' },
     { id: 2, name: '研究二所' },
@@ -544,7 +555,10 @@ const departments = ref([
     { id: 9, name: '院長室' },
     { id: 10, name: '行政管理處' },
 ])
+
 const employeeStore = useEmployeeStore();
+
+
 
 //路由
 const router = useRouter();
@@ -552,7 +566,6 @@ const router = useRouter();
 const currentData = ref(employeeStore.getEmployeeStore);
 
 //新增學歷
-
 const addSchool = () => {
     let arrLength = currentData.value.schools.length
     if (arrLength == 3) {
@@ -566,8 +579,8 @@ const addSchool = () => {
         });
     }
 }
-//移除學歷
 
+//移除學歷
 const removeSchool = (index) => {
     let arrLength = currentData.value.schools.length
     if (arrLength == 1) {
@@ -592,6 +605,7 @@ const addWorkExperience = () => {
         });
     }
 }
+
 //移除工作經歷
 const removeWorkExperience = (index) => {
     let arrLength = currentData.value.workExperience.length
@@ -601,6 +615,7 @@ const removeWorkExperience = (index) => {
         currentData.value.workExperience.splice(index, 1);
     }
 }
+
 //新增人員
 const addItem = () => {
 
@@ -610,43 +625,73 @@ const addItem = () => {
     currentData.value.ifEnable = true
     push(itemsRef, currentData.value);
 };
+
 // 更新資料
 const updateData = () => {
 
     set(dbRef(db, `items/${currentData.value.key}`), currentData.value);
 }
 
-//新增或更新
-const saveChanges = async () => {
-    try {
-        await upload('1'); // 等待上傳完成
-        await upload('2'); // 等待上傳完成
-        await upload('3'); // 等待上傳完成
+// 提交表單的函數
+const submitForm = () => {
+    ruleFormRef.value.validate(async (valid) => {
 
-        if (currentData.value.key !== null) {
-            updateData();
-            ElMessage({
-                message: '已修改資料',
-                type: 'success',
-            });
-        } else {
-            // 沒key 新增人員
-            addItem();
-            ElMessage({
-                message: '已新增資料',
-                type: 'success',
-            });
+        if (!valid) {//驗證失敗
+            ElMessage.error('驗證失敗，請檢查輸入')
+        } else {//驗證成功 開始上傳圖片跟存取資料
+            ElMessage.success('驗證成功，可以提交表單')
+
+            try {
+                await upload('1'); // 等待上傳完成
+                await upload('2'); // 等待上傳完成
+                await upload('3'); // 等待上傳完成
+
+                if (currentData.value.key !== null) {
+                    //有key 更新資料
+                    updateData();
+                    ElMessage({
+                        message: '已修改資料',
+                        type: 'success',
+                    });
+                } else {
+                    // 沒key 新增人員
+                    addItem();
+                    ElMessage({
+                        message: '已新增資料',
+                        type: 'success',
+                    });
+                }
+                cancel();
+            } catch (error) {
+                console.error('上傳或保存資料失敗:', error);
+                ElMessage({
+                    message: '上傳或保存資料失敗',
+                    type: 'error',
+                });
+            }
         }
-        cancel();
-    } catch (error) {
-        console.error('上傳或保存資料失敗:', error);
-        ElMessage({
-            message: '上傳或保存資料失敗',
-            type: 'error',
-        });
-    }
-};
+    })
+}
 
+// 
+// 驗證
+const validateForm = (rule, value, callback) => {
+    ruleFormRef.value.validate()
+
+    // ruleFormRef.value.validate(async (valid) => {
+
+    //     if (!valid) {//驗證失敗
+    //         ElMessage.error('驗證失敗，請檢查輸入')
+    //     } else {//驗證成功 開始上傳圖片跟存取資料
+    //         ElMessage.success('驗證成功，可以提交表單')
+    //     }
+    // })
+}
+const resetValidateForm = () => {
+
+    if (!ruleFormRef.value) return
+    ruleFormRef.value.resetFields()
+}
 //清空資料 回到首頁
 const cancel = () => {
     employeeStore.resetEmployeeStore()
@@ -657,43 +702,63 @@ const cancel = () => {
 // ======以下處理上傳========
 const uploadProgress = ref(0);
 // 大頭照預覽
-const previewimageUrl = ref(null)
+const previewimageUrl = ref(null)//路徑暫存
 const previewfile = ref(null)//檔案暫存
 // 身分證正面預覽
-const previewimageUrl1 = ref(null)
+const previewimageUrl1 = ref(null)//路徑暫存
 const previewfile1 = ref(null)//檔案暫存
 // 身分證反面預覽
-const previewimageUrl2 = ref(null)
+const previewimageUrl2 = ref(null)//路徑暫存
 const previewfile2 = ref(null)//檔案暫存
 
-const changeProfileImage = (event) => {
-
+const changeProfileImage = async (event) => {
     const isJPG = event.raw.type === 'image/jpeg';
     const isPNG = event.raw.type === 'image/png';
     const isLt2M = event.size / 1024 / 1024 < 2;
 
     if (!isJPG && !isPNG) {
-        ElMessage.error('上傳大頭照只能是 JPG 或 PNG 格式!');
-        return
+        ElMessage.error('上傳的大頭照只能是 JPG 或 PNG 格式!');
+        return;
     }
     if (!isLt2M) {
-        ElMessage.error('上傳大頭照大小不能超過 2MB!');
-        return
+        ElMessage.error('上傳的大頭照大小不能超過 2MB!');
+        return;
     }
-    // console.log(event);
+
+    // 設定預覽文件
     previewfile.value = event;
     const file = event.raw;
-    console.log(file);
 
     if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            previewimageUrl.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
+        try {
+            // 使用 Promise 處理 FileReader 的異步操作
+            const result = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    resolve(e.target.result); // 成功讀取，返回結果
+                };
+                reader.onerror = function (error) {
+                    reject(error); // 讀取失敗，返回錯誤
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // 讀取成功後，將結果賦值給預覽圖片 URL
+            previewimageUrl.value = result;
+
+            // 所有操作完成後，進行表單驗證
+        } catch (error) {
+            ElMessage.error('讀取文件時發生錯誤');
+            console.error(error);
+        } finally {
+            //重新驗證
+            validateForm();
+
+        }
     }
 }
-const changeIdCardFrontImage = (event) => {
+
+const changeIdCardFrontImage = async (event) => {
     const isJPG = event.raw.type === 'image/jpeg';
     const isPNG = event.raw.type === 'image/png';
     const isLt2M = event.size / 1024 / 1024 < 2;
@@ -711,15 +776,36 @@ const changeIdCardFrontImage = (event) => {
     const file = event.raw;
     console.log(file);
 
+
     if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            previewimageUrl1.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
+        try {
+            // 使用 Promise 處理 FileReader 的異步操作
+            const result = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    resolve(e.target.result); // 成功讀取，返回結果
+                };
+                reader.onerror = function (error) {
+                    reject(error); // 讀取失敗，返回錯誤
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // 讀取成功後，將結果賦值給預覽圖片 URL
+            previewimageUrl1.value = result;
+
+            // 所有操作完成後，進行表單驗證
+        } catch (error) {
+            ElMessage.error('讀取文件時發生錯誤');
+            console.error(error);
+        } finally {
+            //重新驗證
+            validateForm();
+
+        }
     }
 }
-const changeIdCardBackImage = (event) => {
+const changeIdCardBackImage = async (event) => {
     const isJPG = event.raw.type === 'image/jpeg';
     const isPNG = event.raw.type === 'image/png';
     const isLt2M = event.size / 1024 / 1024 < 2;
@@ -737,18 +823,38 @@ const changeIdCardBackImage = (event) => {
     const file = event.raw;
     console.log(file);
 
+
     if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            previewimageUrl2.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
+        try {
+            // 使用 Promise 處理 FileReader 的異步操作
+            const result = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    resolve(e.target.result); // 成功讀取，返回結果
+                };
+                reader.onerror = function (error) {
+                    reject(error); // 讀取失敗，返回錯誤
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // 讀取成功後，將結果賦值給預覽圖片 URL
+            previewimageUrl2.value = result;
+
+            // 所有操作完成後，進行表單驗證
+        } catch (error) {
+            ElMessage.error('讀取文件時發生錯誤');
+            console.error(error);
+        } finally {
+            //重新驗證
+            validateForm();
+
+        }
     }
 }
-const x = ref(0)
+
+//處理照片上傳
 const upload = async (f) => {
-    x.value++
-    console.log(`x:${x.value}`)
     let file = null;
     if (f == '1') {
         file = previewfile.value;
@@ -821,87 +927,8 @@ const upload = async (f) => {
         });
     }
 };
-const handleFileChange = (file, fileAlias) => {
-    console.log('file:', file);
-    const isJPG = file.raw.type === 'image/jpeg';
-    const isPNG = file.raw.type === 'image/png';
-    const isLt2M = file.size / 1024 / 1024 < 2;
 
-    if (!isJPG && !isPNG) {
-        ElMessage.error('上傳大頭照只能是 JPG 或 PNG 格式!');
-        return
-    }
-    if (!isLt2M) {
-        ElMessage.error('上傳大頭照大小不能超過 2MB!');
-        return
-    }
 
-    const fileRef = storageRef(storage, `images/${file.raw.name}`);
-    const metadata = { contentType: file.raw.type };
-    const uploadTask = uploadBytesResumable(fileRef, file.raw, metadata);
-
-    uploadTask.on('state_changed',
-        (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            uploadProgress.value = progress;
-            console.log(`Upload is ${progress}% done`);
-            switch (snapshot.state) {
-                case 'paused':
-                    console.log('Upload is paused');
-                    break;
-                case 'running':
-                    console.log('Upload is running');
-                    break;
-            }
-        },
-        (error) => {
-            switch (error.code) {
-                case 'storage/unauthorized':
-                    console.error('User doesn\'t have permission to access the object');
-                    break;
-                case 'storage/canceled':
-                    console.error('User canceled the upload');
-                    break;
-                case 'storage/unknown':
-                    console.error('Unknown error occurred', error.serverResponse);
-                    break;
-            }
-        },
-        () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                // imageUrl.value = downloadURL;
-                currentData.value.profileImageUrl = downloadURL
-                console.log('File available at', downloadURL);
-                ElMessage({
-                    message: '上傳成功',
-                    type: 'success',
-                })
-
-                // 在此处可以将下载URL存储到Firebase数据库或其他地方
-                // const userId = 'your_user_id'; // 您可以根据实际情况获取用户ID
-                // const imageRef = dbRef(db, 'users/' + userId + '/profilePicture');
-                // await set(imageRef, downloadURL);
-                // console.log('文件URL成功存储到数据库');
-            });
-        }
-    );
-};
-
-const beforeAvatarUpload = (file) => {
-    const isJPG = file.type === 'image/jpeg';
-    const isPNG = file.type === 'image/png';
-    const isLt2M = file.size / 1024 / 1024 < 2;
-
-    if (!isJPG && !isPNG) {
-        ElMessage.error('上传头像图片只能是 JPG 或 PNG 格式!');
-        return false;
-    }
-    if (!isLt2M) {
-        ElMessage.error('上传头像图片大小不能超过 2MB!');
-        return false;
-    }
-    return true;
-};
 </script>
 <style scoped lang="scss">
 .el-form {

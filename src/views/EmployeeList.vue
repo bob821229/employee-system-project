@@ -350,16 +350,19 @@ const filterHandler = (value, row, column) => {
   // return row[property] === value
   return row.department === value
 }
+//編輯
 const editHandler = (data) => {
   console.log(data)
   employeeStore.setEmployeeStore(data)
   router.push('/form');
 
 }
+//新增
 const newHandler = () => {
   employeeStore.resetEmployeeStore()
   router.push('/form');
 }
+//取得
 const fetchItems = () => {
   tableData1.value.length = 0
   let itemsRef = dbRef(db, '/items');

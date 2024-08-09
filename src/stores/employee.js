@@ -2,6 +2,13 @@ import { defineStore } from 'pinia'
 import { reactive, computed, inject, ref } from "vue";
 
 export const useEmployeeStore = defineStore("employeeStore", () => {
+  const getUserInfo=ref({
+    key: '',//帳號+密碼
+    userName: '',//用戶名
+    role: '0',//權限等級 1:員工 2:主管 3:人事 0:未登入
+    basicInformation: {},//人員資料表
+    curriculumVitae: {},//個人簡歷
+  })
   // 員工資料
   const getEmployeeStore = ref({
     profileImageUrl: '', // 大頭貼 URL
@@ -55,61 +62,67 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
     },//銀行資訊
   }
 );
-  //更新資料
+  const isLoggedIn = computed(() => !!getUserInfo.value.userName);
+
+  //更新資料 並跳轉頁面
   const setEmployeeStore = (data) => {
-    getEmployeeStore.value=data
+    getUserInfo.value=data
+    getEmployeeStore.value=data.basicInformation
   };
 
   //清空資料
   const resetEmployeeStore = () => {
     getEmployeeStore.value={
-        ifEnable: true,//是否啟用
-        key:null,
-        employeeId: '',//人員編號
-        department: '',//進用部門
-        arrivalDate: null,//到職日
-        name: '',//姓名
-        idNumber: '',//身分證號
-        sex: '',//性別
-        birthday: null,//生日
-        homePhone: '',//連絡電話
-        phone: '',//行動電話
-        residenceAddress: '',//戶籍地址
-        mailingAddress: '',//通訊地址
-        email: '',//信箱
-        specialStatus: [],//特殊身分
-        drvingLicense: [],//駕照
-        maritalStatus: [],//婚姻狀況
-        schools: [
-          {
-            name: "",//學校名稱
-            department: "",//科系
-            period: null//修業起訖年月
-          }
-        ],//學歷
-        workExperience: [
-          {
-            company: "",//公司名稱
-            position: "",//職務名稱
-            salary: null,//薪資
-            leavingReason: "",//離職原因
-            period: null//服務起訖年月
-          }
-        ],//職務經歷
-        languages: [],//語言能力
-        computerExpertise: [],//電腦專長
-        professionalLicense: '',//專業證照
-        emergencyContact: {
-          name: '', // 緊急聯絡人姓名
-          relationship: '', // 關係
-          phone: '', // 連絡電話
-          mobile: '' // 行動電話
-        },//緊急聯絡人資訊
-        bank: {
-          account: '',//銀行帳號
-          branchName: ''//分行名稱
-        },//銀行資訊
-      }
+      profileImageUrl: '', // 大頭貼 URL
+      idCardFrontImageUrl: '', // 身分證正面照片 URL
+      idCardBackImageUrl: '', // 身分證反面照片 URL
+      employeeId: '',//人員編號
+      department: '',//進用部門
+      arrivalDate: null,//到職日
+      name: '',//姓名
+      idNumber: '',//身分證號
+      sex: '',//性別
+      birthday: null,//生日
+      homePhone: '',//連絡電話
+      phone: '',//行動電話
+      residenceAddress: '',//戶籍地址
+      mailingAddress: '',//通訊地址
+      email: '',//信箱
+      specialStatus: [],//特殊身分
+      drvingLicense: [],//駕照
+      maritalStatus: '',//婚姻狀況
+      schools: [
+        {
+          name: "",//學校名稱
+          department: "",//科系
+          period: [null,null]//修業起訖年月
+        }
+      ],//學歷
+      workExperience: [
+        {
+          company: "",//公司名稱
+          position: "",//職務名稱
+          salary: null,//薪資
+          leavingReason: "",//離職原因
+          period:[null,null]//服務起訖年月
+        }
+      ],//職務經歷
+      languages: [],//語言能力
+      computerExpertise: [],//電腦專長
+      professionalLicense: '',//專業證照
+      knowledgeAndSkills: '',//知識技能
+      emergencyContact: {
+        name: '', // 緊急聯絡人姓名
+        relationship: '', // 關係
+        phone: '', // 連絡電話
+        mobile: '' // 行動電話
+      },//緊急聯絡人資訊
+      bank: {
+        account: '',//銀行帳號
+        branchName: '',//分行名稱
+        
+      },//銀行資訊
+    }
   };
 
   const getCurriculumVitae=ref({
@@ -144,6 +157,7 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
     getCurriculumVitae.value=data
   }
   return { 
+    getUserInfo,
     getEmployeeStore, 
     setEmployeeStore, 
     resetEmployeeStore,

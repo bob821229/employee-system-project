@@ -31,7 +31,7 @@ import { computed } from 'vue';
 const route = useRoute();
 
 // 计算属性，用于判断当前路由是否是登录页
-const isLoginPage = computed(() => route.path === '/login');
+const isLoginPage = computed(() => route.path === '/');
 </script>
 
 <style scoped>
