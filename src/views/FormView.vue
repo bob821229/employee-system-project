@@ -2,7 +2,8 @@
 
 
 
-    <el-form ref="ruleFormRef" :model="currentData" label-position="top" :size="'large'" :rules="rules">
+    <el-form ref="ruleFormRef" :model="currentData" label-position="top" :size="'large'" :rules="rules"
+        :disabled="!checkUser">
         <h1 style="text-align: center;margin-top: 20px;">人員資料表</h1>
         <el-row :gutter="10">
             <!-- TODO 基本資料 -->
@@ -388,10 +389,11 @@
             </el-col>
             <el-col :span="24">
                 <div style="text-align: center;margin: 20px 0;">
-                    <el-button type="primary" @click="validateForm">驗證</el-button>
-                    <el-button type="primary" @click="resetValidateForm">重置驗證</el-button>
+                    <el-button type="primary" @click="validateForm" v-if="false">驗證</el-button>
+                    <el-button type="primary" @click="resetValidateForm" v-if="false">重置驗證</el-button>
                     <el-button type="primary" @click="submitForm">保存</el-button>
-                    <el-button type="primary" @click="cancel">返回</el-button>
+                    <el-button type="primary" @click="cancel" v-if="false">返回</el-button>
+                    <!-- <el-button type="primary" @click="updateData">updateData</el-button> -->
                 </div>
             </el-col>
         </el-row>
@@ -565,6 +567,11 @@ const router = useRouter();
 //目前顯示的資料
 const currentData = ref(employeeStore.getEmployeeStore);
 
+const checkUser = computed(() => {
+    // return currentData.value.name === employeeStore.getUserInfo.userName || employeeStore.getUserInfo.role == '3'
+    return employeeStore.getUserInfo.role == '3'
+})
+
 //新增學歷
 const addSchool = () => {
     let arrLength = currentData.value.schools.length
@@ -618,8 +625,42 @@ const removeWorkExperience = (index) => {
 
 //新增人員
 const addItem = () => {
-
-    const itemsRef = dbRef(db, 'items');
+    let obj = {
+        key: 'abc123321',//帳號+密碼
+        userName: currentData.value.name,//用戶名
+        role: '1',//權限等級 1:員工 2:主管 3:人事 0:未登入
+        ifEnable: true,//啟用狀態
+        basicInformation: currentData.value,//人員資料表
+        curriculumVitae: {
+            key: null,//key值
+            name: '',//姓名
+            educationalQualifications: '',//學歷
+            expertise: '',//專長
+            professionalLicense: '',//專業證照
+            workExperience: [
+                {
+                    company: "",//公司名稱
+                    position: "",//職務名稱
+                    period: null//服務起訖年月
+                }
+            ],//職務經歷
+            annualPublications: [
+                {
+                    category: '',//類型
+                    date: null,//時間
+                    name: ''//名稱
+                }
+            ],//歷年著作
+            annualProjects: [
+                {
+                    sponsorUnit: '',//委託單位
+                    period: null,//起訖時間
+                    projectName: ''//計畫名稱
+                }
+            ],//歷年計畫
+        },//個人簡歷
+    }
+    const itemsRef = dbRef(db, 'employees');
 
     //啟用狀態
     currentData.value.ifEnable = true
@@ -628,8 +669,8 @@ const addItem = () => {
 
 // 更新資料
 const updateData = () => {
-
-    set(dbRef(db, `items/${currentData.value.key}`), currentData.value);
+    // console.log('@@@@:', employeeStore.getUserInfo.basicInformation)
+    set(dbRef(db, `employees/${currentData.value.key}`), currentData.value);
 }
 
 // 提交表單的函數

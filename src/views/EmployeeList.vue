@@ -1,21 +1,27 @@
 <template>
 
-  <el-button @click="newHandler">新增人員</el-button>
+  <el-button @click="newHandler" v-if="role === '3'">新增人員</el-button>
   <div style="width: 100%;max-width: 1500px;margin: auto;">
     <el-table :data="tableData1" style="width: 100%" size="large" max-height="700" scrollbar-always-on="true" border>
-      <el-table-column header-align="center" fixed prop="employeeId" label="人員編號" />
-      <el-table-column header-align="center" prop="name" label="姓名" />
-      <el-table-column header-align="center" prop="department" label="部門" :filters="departments"
+      <el-table-column header-align="center" fixed prop="basicInformation.employeeId" label="人員編號" />
+      <el-table-column header-align="center" prop="basicInformation.name" label="姓名" />
+      <el-table-column header-align="center" prop="basicInformation.department" label="部門" :filters="departments"
         :filter-method="filterHandler" filter-multiple />
-      <el-table-column header-align="center" prop="email" label="信箱" />
-      <el-table-column align="center" header-align="center" fixed="right" label="編輯">
+      <el-table-column header-align="center" prop="basicInformation.email" label="信箱" />
+      <el-table-column align="center" header-align="center" fixed="right" label="編輯" v-if="role === '3'">
         <template #default="scope">
-          <el-button type="primary" plain size="small" @click="editHandler(scope.row)">修改</el-button>
-          <el-button type="danger" plain size="small" @click="confirmDelete(scope.row)">
+          <el-button type="primary" plain @click="editHandler(scope.row)">修改</el-button>
+          <el-button type="danger" plain @click="confirmDelete(scope.row)">
             刪除
           </el-button>
         </template>
       </el-table-column>
+      <el-table-column align="center" header-align="center" fixed="right" label="個人簡歷">
+        <template #default="scope">
+          <el-button type="primary" plain @click="checkHandler(scope.row)">查看</el-button>
+        </template>
+      </el-table-column>
+
     </el-table>
   </div>
 
@@ -44,6 +50,7 @@ import {
 } from 'firebase/database';
 const employeeStore = useEmployeeStore();
 const router = useRouter();
+const role = ref(employeeStore.getUserInfo.role)
 // 是否顯示彈窗
 const centerDialogVisible = ref(false)
 const departments = ref([
@@ -345,15 +352,12 @@ const tableData1 = ref([])
 //篩選函式
 const filterHandler = (value, row, column) => {
   console.log('value:', value, 'row:', row, 'column:', column)
-
-  // const property = column['property']
-  // return row[property] === value
-  return row.department === value
+  return row.basicInformation.department === value
 }
 //編輯
 const editHandler = (data) => {
-  console.log(data)
-  employeeStore.setEmployeeStore(data)
+  let obj = deepCopy(data.basicInformation)
+  employeeStore.setEmployeeStore(obj)
   router.push('/form');
 
 }
@@ -365,7 +369,7 @@ const newHandler = () => {
 //取得
 const fetchItems = () => {
   tableData1.value.length = 0
-  let itemsRef = dbRef(db, '/items');
+  let itemsRef = dbRef(db, '/employees');
   itemsRef = query(itemsRef, orderByChild('ifEnable'), equalTo(true));
   onValue(itemsRef, (snapshot) => {
     snapshot.forEach((childSnapshot) => {
@@ -376,20 +380,29 @@ const fetchItems = () => {
       tableData1.value.push(obj);
     })
   });
+  console.log(`tabledata:${tableData1.value}`)
 };
 const tmpKey = ref('')
 const selectedItem = ref({})
 
+// 查看簡歷
+const checkHandler = (data) => {
+  console.log(data.curriculumVitae)
+  employeeStore.setCurriculumVitae(data.curriculumVitae)
+  router.push('/about');
+}
+// 確定刪除
 const confirmDelete = (obj) => {
-
   selectedItem.value = obj
   centerDialogVisible.value = true
 }
+
+//刪除
 const deleteItem = async () => {
   // 更改狀態
   try {
     selectedItem.value.ifEnable = false
-    set(dbRef(db, `items/${selectedItem.value.key}`), selectedItem.value);
+    set(dbRef(db, `employees/${selectedItem.value.key}`), selectedItem.value);
     console.log('該資料已刪除');
   } catch (error) {
     console.error('刪除失敗:', error);
@@ -397,7 +410,6 @@ const deleteItem = async () => {
     centerDialogVisible.value = false;
     selectedItem.value.length = 0
     fetchItems(); // 刪除後重新獲取數據
-
   }
 
   // 直接刪除
@@ -413,7 +425,9 @@ const deleteItem = async () => {
   //   selectedItem.value.key = ''
   // }
 };
-
+function deepCopy(obj) {
+  return JSON.parse(JSON.stringify(obj))
+}
 onMounted(
   () => {
     fetchItems()

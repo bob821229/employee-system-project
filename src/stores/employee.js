@@ -62,12 +62,50 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
     },//銀行資訊
   }
 );
-  const isLoggedIn = computed(() => !!getUserInfo.value.userName);
+  //簡歷
+  const getCurriculumVitae=ref({
+    key:null,//key值
+    name:'',//姓名
+    educationalQualifications:'',//學歷
+    expertise:'',//專長
+    professionalLicense:'',//專業證照
+    workExperience: [
+      {
+        company: "",//公司名稱
+        position: "",//職務名稱
+        period: null//服務起訖年月
+      }
+    ],//職務經歷
+    annualPublications:[
+      {
+        category:'',//類型
+        date:null,//時間
+        name:''//名稱
+      }
+    ],//歷年著作
+    annualProjects:[
+      {
+        sponsorUnit:'',//委託單位
+        period:null,//起訖時間
+        projectName :''//計畫名稱
+      }
+    ],//歷年計畫
+  })
+  const isLoggedIn = computed(() => getUserInfo.value.role!="0");
 
   //更新資料 並跳轉頁面
   const setEmployeeStore = (data) => {
+    // getUserInfo.value=data
+    getEmployeeStore.value=data
+  };
+  //更新簡歷資料 並跳轉頁面
+  const setCurriculumVitae = (data) => {
+    // getUserInfo.value=data
+    getCurriculumVitae.value=data
+  };
+  //更新資料 並跳轉頁面
+  const setUserInfo = (data) => {
     getUserInfo.value=data
-    getEmployeeStore.value=data.basicInformation
   };
 
   //清空資料
@@ -124,44 +162,18 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
       },//銀行資訊
     }
   };
-
-  const getCurriculumVitae=ref({
-    key:null,//key值
-    name:'',//姓名
-    educationalQualifications:'',//學歷
-    expertise:'',//專長
-    professionalLicense:'',//專業證照
-    workExperience: [
-      {
-        company: "",//公司名稱
-        position: "",//職務名稱
-        period: null//服務起訖年月
-      }
-    ],//職務經歷
-    annualPublications:[
-      {
-        category:'',//類型
-        date:null,//時間
-        name:''//名稱
-      }
-    ],//歷年著作
-    annualProjects:[
-      {
-        sponsorUnit:'',//委託單位
-        period:null,//起訖時間
-        projectName :''//計畫名稱
-      }
-    ],//歷年計畫
-  })
-  const setCurriculumVitae=(data)=>{
-    getCurriculumVitae.value=data
-  }
+  
+  
+  
   return { 
     getUserInfo,
     getEmployeeStore, 
     setEmployeeStore, 
     resetEmployeeStore,
-    getCurriculumVitae
+    getCurriculumVitae,
+    setUserInfo,
+    setCurriculumVitae,
+    isLoggedIn
   };
 }, 
 );
