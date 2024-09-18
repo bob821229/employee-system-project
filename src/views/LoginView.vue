@@ -16,7 +16,7 @@
         <!-- <el-form-item label="Confirm" prop="checkPass" label-position="top">
           <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" />
         </el-form-item> -->
-        {{ key }}<br>
+        <!-- {{ key }}<br> -->
         <!-- name:{{ userN }} -->
         <div style="display: flex; justify-content: center;margin-top: 50px;">
           <div>

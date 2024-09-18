@@ -293,7 +293,11 @@
             </el-col>
             <el-col :sm="24" :md="8" :lg="8">
                 <el-form-item label="專業證照">
-                    <el-input v-model="currentData.professionalLicense" placeholder="請輸入專業證照" />
+                    <!-- <el-input v-model="currentData.professionalLicense" placeholder="請輸入專業證照" /> -->
+                    <el-select v-model="currentData.professionalLicense" placeholder="請輸入專業證照" multiple filterable
+                        allow-create default-first-option :reserve-keyword="false">
+                        <el-option v-for="item in professionalLicenses" :key="item" :label="item" :value="item" />
+                    </el-select>
                 </el-form-item>
             </el-col>
 
@@ -542,6 +546,8 @@ const rules = reactive({
 const languages = ref(['國語', '台語', '客語', '英語', '日語']);
 //技能清單
 const expertises = ref(['Word', 'Excel', 'PowerPoint', 'GIS', 'Visio']);
+//證照清單
+const professionalLicenses = ref(['系統分析師 (CSM)', '資料庫管理師 (Oracle Certified Professional)', '雲端架構師 (AWS Certified Solutions Architect)', '資訊安全管理師 (CISSP)', 'GIS工程師']);
 //特殊身分清單
 const specialStatus = ref(['原住民', '身心障礙'])
 //部門清單

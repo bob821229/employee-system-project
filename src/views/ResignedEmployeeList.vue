@@ -1,8 +1,9 @@
 <template>
 
+
+
   <div style="width: 100%;max-width: 1500px;margin: auto;">
     <div style="display: flex;justify-content: space-between;padding: 10px 0;">
-      <el-button @click="newHandler" v-if="role === '3'">新增人員</el-button>
       <el-input v-model="searchText" style="width: 240px" placeholder="搜尋" />
     </div>
     <el-table :data="filteredTableData" style="width: 100%" size="large" max-height="700" scrollbar-always-on="true"
@@ -14,9 +15,8 @@
       <el-table-column header-align="center" prop="basicInformation.professionalLicense" label="專業證照" />
       <el-table-column width="200" align="center" header-align="center" fixed="right" label="編輯" v-if="role === '3'">
         <template #default="scope">
-          <el-button type="primary" plain @click="editHandler(scope.row)">修改</el-button>
-          <el-button type="danger" plain @click="confirmDelete(scope.row)">
-            刪除
+          <el-button type="success" plain @click="confirmDelete(scope.row)">
+            啟用
           </el-button>
         </template>
       </el-table-column>
@@ -31,7 +31,7 @@
 
   <!-- 刪除確認彈框 -->
   <el-dialog v-model="centerDialogVisible" title="警告" width="500" align-center>
-    <span>您確定要刪除該筆資料?</span>
+    <span>您確定要啟用該筆資料?</span>
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="centerDialogVisible = false">取消</el-button>
@@ -55,7 +55,6 @@ import {
 const employeeStore = useEmployeeStore();
 const router = useRouter();
 const role = ref(employeeStore.getUserInfo.role)
-
 // 是否顯示彈窗
 const centerDialogVisible = ref(false)
 const departments = ref([
@@ -374,7 +373,6 @@ const filteredTableData = computed(() => {
     );
   })
 })
-
 //篩選函式
 const filterHandler = (value, row, column) => {
   console.log('value:', value, 'row:', row, 'column:', column)
@@ -396,7 +394,7 @@ const newHandler = () => {
 const fetchItems = () => {
   tableData1.value.length = 0
   let itemsRef = dbRef(db, '/users');
-  itemsRef = query(itemsRef, orderByChild('ifEnable'), equalTo(true));
+  itemsRef = query(itemsRef, orderByChild('ifEnable'), equalTo(false));
   onValue(itemsRef, (snapshot) => {
     snapshot.forEach((childSnapshot) => {
       const childKey = childSnapshot.key;
@@ -427,11 +425,11 @@ const confirmDelete = (obj) => {
 const deleteItem = async () => {
   // 更改狀態
   try {
-    selectedItem.value.ifEnable = false
+    selectedItem.value.ifEnable = true
     set(dbRef(db, `users/${selectedItem.value.key}`), selectedItem.value);
-    console.log('該資料已刪除');
+    console.log('該資料已啟用');
   } catch (error) {
-    console.error('刪除失敗:', error);
+    console.error('啟用失敗:', error);
   } finally {
     centerDialogVisible.value = false;
     selectedItem.value.length = 0

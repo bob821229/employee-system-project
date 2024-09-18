@@ -4,6 +4,7 @@
         <el-menu-item index="/form" @click="updateBasicInformation">人員資料表</el-menu-item>
         <el-menu-item index="/about" @click="updateCurriculumVitae">個人簡歷</el-menu-item>
         <el-menu-item index="/employeeList" v-if="role != '1'">人員資料表清單</el-menu-item>
+        <el-menu-item index="/resignedEmployeeList" v-if="role != '1'">離職人員資料表清單</el-menu-item>
 
 
         <span style="margin-left: auto; display: flex; align-items: center;margin-right: 10px;">
