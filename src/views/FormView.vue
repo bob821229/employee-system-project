@@ -2,8 +2,7 @@
 
 
 
-    <el-form ref="ruleFormRef" :model="currentData" label-position="top" :size="'large'" :rules="rules"
-        :disabled="!checkUser">
+    <el-form ref="ruleFormRef" :model="currentData" label-position="top" :size="'large'" :rules="rules">
         <h1 style="text-align: center;margin-top: 20px;">人員資料表</h1>
         <el-row :gutter="10">
             <!-- TODO 基本資料 -->
@@ -107,49 +106,79 @@
                 </el-form-item>
             </el-col>
 
-            <el-col :sm="24" :md="24" :lg="24">
-                <el-form-item label="戶籍地址" prop="residenceAddress">
-                    <el-input v-model="currentData.residenceAddress" placeholder="請輸入戶籍地址" />
+            <el-col :sm="24" :md="24" :lg="4">
+                <el-form-item label="戶籍地址郵遞區號" prop="residence.postalCode">
+                    <el-input v-model="currentData.residence.postalCode" placeholder="請輸入戶籍地址" />
+                </el-form-item>
+            </el-col>
+            <el-col :sm="24" :md="24" :lg="20">
+                <el-form-item label="戶籍地址" prop="residence.address">
+                    <el-input v-model="currentData.residence.address" placeholder="請輸入戶籍地址" />
                 </el-form-item>
             </el-col>
 
-            <el-col :sm="24" :md="24" :lg="24">
-                <el-form-item label="通訊地址" prop="mailingAddress">
-                    <el-input v-model="currentData.mailingAddress" placeholder="請輸入通訊地址">
+            <el-col :sm="24" :md="24" :lg="4">
+                <el-form-item label="通訊地址郵遞區號" prop="mailing.postalCode">
+                    <el-input v-model="currentData.mailing.postalCode" placeholder="請輸入通訊地址">
+                    </el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :sm="24" :md="24" :lg="20">
+                <el-form-item label="通訊地址" prop="mailing.address">
+                    <el-input v-model="currentData.mailing.address" placeholder="請輸入通訊地址">
                         <template #append>
-                            <el-button
-                                @click="currentData.mailingAddress = currentData.residenceAddress">同戶籍地址</el-button>
+                            <el-button @click="copyResidence">同戶籍地址</el-button>
                         </template>
                     </el-input>
                 </el-form-item>
             </el-col>
 
-            <el-col :sm="24" :md="12" :lg="8">
+            <el-col :sm="24" :md="24" :lg="6" v-if="checkUser">
+                <el-form-item label="職稱" prop="positionTitle">
+                    <el-select v-model="currentData.positionTitle" placeholder="選擇職稱" filterable allow-create
+                        default-first-option :reserve-keyword="false">
+                        <el-option v-for="item in positionTitles" :key="item" :label="item" :value="item" />
+                    </el-select>
+                </el-form-item>
+            </el-col>
+
+            <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="特殊身分" prop="specialStatus">
-                    <el-select v-model="currentData.specialStatus" multiple placeholder="請選擇特殊身分">
+                    <el-select v-model="currentData.specialStatus" multiple placeholder="請選擇特殊身分"
+                        @change="handleSpecialStatusChange">
                         <el-option v-for="s in specialStatus" :key="s" :label="s" :value="s" />
                     </el-select>
                 </el-form-item>
             </el-col>
 
-            <el-col :sm="24" :md="12" :lg="8">
+            <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="駕照" prop="drvingLicense">
-                    <el-select v-model="currentData.drvingLicense" multiple placeholder="請選擇駕照">
-                        <el-option label="機車" value="機車" />
-                        <el-option label="汽車" value="汽車" />
-                        <!-- 依據實際需求加入更多選項 -->
+                    <el-select v-model="currentData.drvingLicense" multiple placeholder="請選擇駕照"
+                        @change="handleLicenseChange">
+                        <el-option v-for="d in drvingLicenses" :key="d" :label="d" :value="d" />
                     </el-select>
                 </el-form-item>
             </el-col>
 
-            <el-col :sm="24" :md="12" :lg="8">
+            <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="婚姻狀況" prop="maritalStatus">
-                    <el-radio-group v-model="currentData.maritalStatus">
-                        <el-radio value="已婚" size="large">已婚</el-radio>
-                        <el-radio value="未婚" size="large">未婚</el-radio>
-                    </el-radio-group>
+                    <el-select v-model="currentData.maritalStatus" placeholder="請選擇婚姻狀況">
+                        <el-option label="已婚" value="已婚" />
+                        <el-option label="未婚" value="未婚" />
+                        <el-option label="其他" value="其他" />
+                    </el-select>
                 </el-form-item>
             </el-col>
+            <el-col :span="24" v-if="checkUser">
+                <el-form-item label="離職日期" prop=" resignationDate">
+                    <!-- <el-input v-model="currentData.resignationDate" placeholder="離職日期"> -->
+                    <el-date-picker v-model="currentData.resignationDate" type="date" style="width: 100%;"
+                        placeholder="請選擇到職日" />
+                    <!-- </el-input> -->
+                </el-form-item>
+            </el-col>
+
+
 
 
             <!-- TODO 教育程度 -->
@@ -162,7 +191,25 @@
             <el-col :span="24">
                 <el-row style="width: 100%;align-items: end;" :gutter="10"
                     v-for="(school, index) in currentData.schools" :key="index" class="work-experience-item">
-                    <el-col :span="6">
+                    <el-col :span="2">
+                        <el-form-item label="學位" :prop="'schools.' + index + '.academicDegree'" :rules="{
+                            required: true,
+                            message: '請輸入學位',
+                            trigger: 'blur',
+                            validator: (rule, value, callback) => {
+                                if (value == '') {
+                                    callback(new Error('請選擇學位'))
+                                }
+                            }
+                        }">
+                            <el-select v-model="school.academicDegree" placeholder="請選擇學位">
+                                <el-option disabled label="請選擇" value="" />
+                                <el-option v-for="d in academicDegrees" :key="d" :label="d" :value="d" />
+                            </el-select>
+                            <!-- <el-input v-model="school.academicDegree" placeholder="請選擇學位" /> -->
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="4">
                         <el-form-item label="學校名稱" :prop="'schools.' + index + '.name'" :rules="{
                             required: true,
                             message: '請輸入學校名稱',
@@ -171,13 +218,33 @@
                             <el-input v-model="school.name" placeholder="請輸入學校名稱" />
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6">
+                    <el-col :span="4">
                         <el-form-item label="科系" :prop="'schools.' + index + '.department'" :rules="{
                             required: true,
                             message: '請輸入科系',
                             trigger: 'blur',
                         }">
                             <el-input v-model="school.department" placeholder="請輸入科系" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="2">
+                        <el-form-item label="畢業/肄業" :prop="'schools.' + index + '.degreeStatus'" :rules="{
+                            required: true,
+                            message: '請輸入畢業/肄業',
+                            trigger: 'blur',
+                            validator: (rule, value, callback) => {
+                                console.log('values')
+                                if (value === '') {
+                                    callback(new Error('請選擇畢業/肄業'))
+                                }
+                            }
+                        }">
+                            <el-select v-model="school.degreeStatus" placeholder="請選擇畢業/肄業">
+                                <el-option disabled label="請選擇" value="" />
+                                <el-option label="畢業" value="畢業" />
+                                <el-option label="肄業" value="肄業" />
+                            </el-select>
+                            <!-- <el-input v-model="school.academicDegree" placeholder="請選擇學位" /> -->
                         </el-form-item>
                     </el-col>
                     <el-col :span="9">
@@ -341,13 +408,13 @@
 
 
             <el-col :sm="12" :md="12" :lg="12">
-                <el-form-item label="銀行帳號" prop="bank.account">
+                <el-form-item label="國泰世華銀行帳號" prop="bank.account">
                     <el-input v-model="currentData.bank.account" placeholder="請輸入銀行帳號" />
                 </el-form-item>
             </el-col>
 
             <el-col :sm="12" :md="12" :lg="12">
-                <el-form-item label="銀行分行名稱" prop="bank.branchName">
+                <el-form-item label="國泰世華銀行分行名稱" prop="bank.branchName">
                     <el-input v-model="currentData.bank.branchName" placeholder="請輸入銀行分行名稱" />
                 </el-form-item>
             </el-col>
@@ -355,8 +422,12 @@
                 <el-form-item label="身分證正面" prop="idCardFrontImageUrl">
                     <el-upload :show-file-list="false" :auto-upload="false" :on-change="changeIdCardFrontImage" drag
                         style="width: 100%;">
-                        <el-avatar v-if="previewimageUrl1 || currentData.idCardFrontImageUrl"
-                            :src="previewimageUrl1 || currentData.idCardFrontImageUrl" fit="cover" class="avatar" />
+                        <el-watermark v-if="previewimageUrl1 || currentData.idCardFrontImageUrl" class="watermark"
+                            :content="config.content" :font="config.font" :z-index="config.zIndex"
+                            :rotate="config.rotate" :gap="config.gap" :offset="config.offset">
+                            <el-avatar :src="previewimageUrl1 || currentData.idCardFrontImageUrl" fit="cover"
+                                class="avatar" />
+                        </el-watermark>
                         <div v-else>
                             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
                             <div class="el-upload__text">
@@ -375,8 +446,12 @@
                 <el-form-item label="身分證反面" prop="idCardBackImageUrl">
                     <el-upload :show-file-list="false" :auto-upload="false" :on-change="changeIdCardBackImage" drag
                         style="width: 100%;">
-                        <el-avatar v-if="previewimageUrl2 || currentData.idCardBackImageUrl"
-                            :src="previewimageUrl2 || currentData.idCardBackImageUrl" fit="cover" class="avatar" />
+                        <el-watermark v-if="previewimageUrl2 || currentData.idCardBackImageUrl" class="watermark"
+                            :content="config.content" :font="config.font" :z-index="config.zIndex"
+                            :rotate="config.rotate" :gap="config.gap" :offset="config.offset">
+                            <el-avatar :src="previewimageUrl2 || currentData.idCardBackImageUrl" fit="cover"
+                                class="avatar" />
+                        </el-watermark>
                         <div v-else>
                             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
                             <div class="el-upload__text">
@@ -393,16 +468,21 @@
             </el-col>
             <el-col :span="24">
                 <div style="text-align: center;margin: 20px 0;">
-                    <el-button type="primary" @click="validateForm" v-if="false">驗證</el-button>
+                    <el-button type="primary" @click="validateForm">驗證</el-button>
                     <el-button type="primary" @click="resetValidateForm" v-if="false">重置驗證</el-button>
                     <el-button type="primary" @click="submitForm">保存</el-button>
                     <el-button type="primary" @click="cancel" v-if="false">返回</el-button>
-                    <!-- <el-button type="primary" @click="updateData">updateData</el-button> -->
+                    <el-button type="primary" @click="updateData">updateData</el-button>
                 </div>
             </el-col>
         </el-row>
     </el-form>
+    <div style="position: fixed;right: 20px; bottom: 20px;">
+        <el-tooltip content="匯出PDF" placement="left-start" effect="dark">
+            <el-button :icon="Upload" type="primary" plain round>匯出</el-button>
+        </el-tooltip>
 
+    </div>
 </template>
 
 <script setup>
@@ -413,6 +493,9 @@ import { getDatabase, ref as dbRef, push, onValue, remove, set } from 'firebase/
 import { ElMessage } from 'element-plus';
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { ref, reactive, onMounted, watch, computed } from 'vue';
+import {
+    Upload,
+} from '@element-plus/icons-vue'
 // 創建一個響應式引用來存儲表單元素
 const ruleFormRef = ref(null);
 
@@ -448,7 +531,7 @@ const rules = reactive({
         { required: true, message: '請上傳大頭貼', trigger: 'blur' }
     ],
     employeeId: [
-        { required: true, message: '請輸入人員編號', trigger: 'blur' }
+        { required: false, message: '請輸入人員編號', trigger: 'blur' }
     ],
     department: [
         { required: true, message: '請選擇部門', trigger: 'change' }
@@ -477,10 +560,16 @@ const rules = reactive({
         { required: true, message: '請輸入行動電話', trigger: 'blur' },
         { pattern: /^09[0-9]{8}$/, message: '請輸入正確的手機格式', trigger: 'blur' }
     ],
-    residenceAddress: [
+    'residence.postalCode': [
+        { required: true, message: '戶籍地址郵遞區號', trigger: 'blur' }
+    ],
+    'residence.address': [
         { required: true, message: '請輸入戶籍地址', trigger: 'blur' }
     ],
-    mailingAddress: [
+    'mailing.postalCode': [
+        { required: true, message: '通訊地址郵遞區號', trigger: 'blur' }
+    ],
+    'mailing.address': [
         { required: true, message: '請輸入通訊地址', trigger: 'blur' }
     ],
     email: [
@@ -538,6 +627,20 @@ const rules = reactive({
     idCardBackImageUrl: [
         { validator: validateIdCardBackImage, trigger: 'change' }
     ],
+    specialStatus: [
+        {
+            required: true,
+            message: '請至少選擇一個特殊身分',
+            trigger: 'change',
+        }
+    ],
+    drvingLicense: [
+        {
+            required: true,
+            message: '請至少選擇一個駕照種類',
+            trigger: 'change',
+        }
+    ],
 })
 
 
@@ -546,10 +649,16 @@ const rules = reactive({
 const languages = ref(['國語', '台語', '客語', '英語', '日語']);
 //技能清單
 const expertises = ref(['Word', 'Excel', 'PowerPoint', 'GIS', 'Visio']);
+//職稱清單
+const positionTitles = ref(['開發人員', '研究員', '顧問', '助理研究員', '行政人員']);
 //證照清單
 const professionalLicenses = ref(['系統分析師 (CSM)', '資料庫管理師 (Oracle Certified Professional)', '雲端架構師 (AWS Certified Solutions Architect)', '資訊安全管理師 (CISSP)', 'GIS工程師']);
 //特殊身分清單
-const specialStatus = ref(['原住民', '身心障礙'])
+const specialStatus = ref(['原住民', '身心障礙', '無'])
+//駕照清單
+const drvingLicenses = ref(['機車', '汽車', '無'])
+//學歷清單
+const academicDegrees = ref(['博士', '碩士', '學士', '專科/高中'])
 //部門清單
 const departments = ref([
     { id: 1, name: '研究一所' },
@@ -566,28 +675,62 @@ const departments = ref([
 
 const employeeStore = useEmployeeStore();
 
-
-
+//控制浮水印
+const config = reactive(
+    {
+        content: '僅限台農院人事建檔',
+        font: {
+            fontSize: 24,
+            color: 'rgba(255, 0, 0, 0.78)',
+            fontWeight: 'bold',
+            textBaseline: 'top',
+        },
+        zIndex: 30,
+        rotate: -22,
+        gap: [100, 100],
+    })
 //路由
 const router = useRouter();
 //目前顯示的資料
 const currentData = ref(employeeStore.getEmployeeStore);
 
+
+// 處理駕照選擇變化
+const handleLicenseChange = (value) => {
+    if (value.includes('無')) {
+        currentData.value.drvingLicense = ['無']
+    } else {
+        currentData.value.drvingLicense = value
+    }
+}
+// 處理駕照選擇變化
+const handleSpecialStatusChange = (value) => {
+    if (value.includes('無')) {
+        currentData.value.specialStatus = ['無']
+    } else {
+        currentData.value.specialStatus = value
+    }
+}
 const checkUser = computed(() => {
     // return currentData.value.name === employeeStore.getUserInfo.userName || employeeStore.getUserInfo.role == '3'
     return employeeStore.getUserInfo.role == '3'
 })
-
+//同戶籍地址資料
+const copyResidence = () => {
+    currentData.value.mailing = deepCopy(currentData.value.residence)
+}
 //新增學歷
 const addSchool = () => {
     let arrLength = currentData.value.schools.length
-    if (arrLength == 3) {
-        alert("最多三筆")
+    if (arrLength == 5) {
+        alert("最多五筆")
     } else {
         currentData.value.schools.push({
             key: Date.now(),
             name: "",
+            academicDegree: "",
             department: "",
+            degreeStatus: "畢業",
             period: []
         });
     }
@@ -642,7 +785,7 @@ const addItem = () => {
             name: '',//姓名
             educationalQualifications: '',//學歷
             expertise: '',//專長
-            professionalLicense: '',//專業證照
+            professionalLicense: [],//專業證照
             workExperience: [
                 {
                     company: "",//公司名稱
@@ -666,7 +809,7 @@ const addItem = () => {
             ],//歷年計畫
         },//個人簡歷
     }
-    const itemsRef = dbRef(db, 'employees');
+    const itemsRef = dbRef(db, 'users');
 
     //啟用狀態
     currentData.value.ifEnable = true
@@ -676,7 +819,8 @@ const addItem = () => {
 // 更新資料
 const updateData = () => {
     // console.log('@@@@:', employeeStore.getUserInfo.basicInformation)
-    set(dbRef(db, `employees/${currentData.value.key}`), currentData.value);
+    // set(dbRef(db, `users/${currentData.value.key}`), currentData.value);
+    console.log('更新成功:', currentData.value);
 }
 
 // 提交表單的函數
@@ -719,7 +863,9 @@ const submitForm = () => {
         }
     })
 }
-
+const deepCopy = (obj) => {
+    return JSON.parse(JSON.stringify(obj))
+}
 // 
 // 驗證
 const validateForm = (rule, value, callback) => {
@@ -1046,5 +1192,10 @@ const upload = async (f) => {
 
 .el-upload-dragger {
     padding: 0;
+}
+
+.watermark {
+    display: flex;
+    flex: auto;
 }
 </style>

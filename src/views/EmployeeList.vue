@@ -5,7 +5,7 @@
       <el-button @click="newHandler" v-if="role === '3'">新增人員</el-button>
       <el-input v-model="searchText" style="width: 240px" placeholder="搜尋" />
     </div>
-    <el-table :data="filteredTableData" style="width: 100%" size="large" max-height="700" scrollbar-always-on="true"
+    <el-table :data="filteredTableData" style="width: 100%" size="large" max-height="700" :scrollbar-always-on="true"
       border>
       <el-table-column width="120" header-align="center" fixed prop="basicInformation.employeeId" label="人員編號" />
       <el-table-column width="150" header-align="center" prop="basicInformation.name" label="姓名" />

@@ -45,18 +45,15 @@ function logout() {
 }
 // 更新人員資料表
 function updateBasicInformation() {
-    let obj = deepCopy(employeeStore.getUserInfo.basicInformation)
+    let obj = employeeStore.getUserInfo.basicInformation
     employeeStore.setEmployeeStore(obj)
 
 }
 // 更新個人簡歷
 function updateCurriculumVitae() {
-    let obj = deepCopy(employeeStore.getUserInfo.curriculumVitae)
+    let obj = employeeStore.getUserInfo.curriculumVitae
     employeeStore.setCurriculumVitae(obj)
 
-}
-function deepCopy(obj) {
-    return JSON.parse(JSON.stringify(obj))
 }
 
 </script>
