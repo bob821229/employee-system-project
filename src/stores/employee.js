@@ -10,8 +10,8 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
     basicInformation: {},//人員資料表
     curriculumVitae: {},//個人簡歷
   })
-  // 目前顯示 員工資料
-  const getEmployeeStore = ref({
+  // 目前顯示 人員資料表
+  const tmpBasicInformation = ref({
     profileImageUrl: '', // 大頭貼 URL
     idCardFrontImageUrl: '', // 身分證正面照片 URL
     idCardBackImageUrl: '', // 身分證反面照片 URL
@@ -69,8 +69,8 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
     },//銀行資訊
   }
 );
-  //目前顯示 簡歷
-  const getCurriculumVitae=ref({
+  //目前顯示 個人簡歷
+  const tmpCurriculumVitae=ref({
     key:null,//key值
     name:'',//姓名
     educationalQualifications:'',//學歷
@@ -98,33 +98,54 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
       }
     ],//歷年計畫
   })
+  //登入時 取得用戶資料
   const setUserInfo = (data) => {
     getUserInfo.value=deepCopy(data)
+    tmpUserInfo.value=deepCopy(data)
   }
+  //暫存 用戶資料
+  const tmpUserInfo=ref({
+    key: '',//帳號+密碼
+    userName: '',//用戶名
+    role: '0',//權限等級 1:員工 2:主管 3:人事 0:未登入
+    firebaseKey:'',
+    basicInformation: {},//人員資料表
+    curriculumVitae: {},//個人簡歷
+  })
 
   //更新資料 並跳轉頁面
   const setEmployeeStore = (data) => {
     // getUserInfo.value=data
-    getEmployeeStore.value=deepCopy(data)
+    tmpBasicInformation.value=deepCopy(data)
+    tmpUserInfo.value.basicInformation=deepCopy(data)
   };
   //更新簡歷資料 並跳轉頁面
   const setCurriculumVitae = (data) => {
     // getUserInfo.value=data
-    getCurriculumVitae.value=deepCopy(data)
+    tmpCurriculumVitae.value=deepCopy(data)
+    tmpUserInfo.value.curriculumVitae=deepCopy(data)
   };
-
+  //更新暫存資料
+  const setTmpUserInfo = (data) => {
+    tmpUserInfo.value=deepCopy(data)
+  }
   //更新資料
-  const updateData=(type,data)=>{
-    if(type=='basicInformation'){
-      getUserInfo.value.basicInformation=deepCopy(getEmployeeStore.value)
+  const updateData=(isSelf=true,data)=>{
+    if(isSelf){
+      getUserInfo.value=deepCopy(data)
     }
+    //修改人員資料表
+    if(type=='basicInformation'){
+      getUserInfo.value.basicInformation=deepCopy(tmpBasicInformation.value)
+    }
+    //修改簡歷資料表
     if(type=='curriculumVitae'){
-      getUserInfo.value.curriculumVitae=deepCopy(data)
+      getUserInfo.value.curriculumVitae=deepCopy(tmpCurriculumVitae.value)
     }
   }
   //清空 人員資料表
   const resetEmployeeStore = () => {
-    getEmployeeStore.value={
+    tmpBasicInformation.value={
       arrivalDate: null,//到職日
       bank: {
         account: '',//銀行帳號
@@ -194,13 +215,15 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
   
   return { 
     getUserInfo,
-    getEmployeeStore, 
+    tmpBasicInformation, 
     setEmployeeStore, 
     resetEmployeeStore,
-    getCurriculumVitae,
+    tmpCurriculumVitae,
     setCurriculumVitae,
     setUserInfo,
-    updateData
+    updateData,
+    tmpUserInfo,
+    setTmpUserInfo
   };
 }, 
 );

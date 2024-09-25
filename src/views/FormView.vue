@@ -692,7 +692,7 @@ const config = reactive(
 //路由
 const router = useRouter();
 //目前顯示的資料
-const currentData = ref(employeeStore.getEmployeeStore);
+const currentData = ref(employeeStore.tmpUserInfo.basicInformation);
 
 
 // 處理駕照選擇變化
@@ -814,13 +814,24 @@ const addItem = () => {
     //啟用狀態
     currentData.value.ifEnable = true
     push(itemsRef, currentData.value);
-};
+}
 
 // 更新資料
 const updateData = () => {
     // console.log('@@@@:', employeeStore.getUserInfo.basicInformation)
-    // set(dbRef(db, `users/${currentData.value.key}`), currentData.value);
-    console.log('更新成功:', currentData.value);
+    let firebaseKey = employeeStore.tmpUserInfo.firebaseKey
+    console.log('firebaseKey:', firebaseKey)
+    let isSelf = (employeeStore.tmpUserInfo.userName == employeeStore.getUserInfo.userName)
+    // employeeStore.updateData('basicInformation')
+    set(dbRef(db, `users/${firebaseKey}`), employeeStore.tmpUserInfo);
+    //如果修改對象是本人，則更新store中的資料
+    console.log('isSelf:', isSelf)
+    if (isSelf) {
+        employeeStore.getUserInfo = deepCopy(employeeStore.tmpUserInfo)
+        console.log('本人更新成功:', employeeStore.tmpUserInfo);
+    } else {
+        console.log('更新成功:', employeeStore.tmpUserInfo);
+    }
 }
 
 // 提交表單的函數
@@ -1144,7 +1155,7 @@ const upload = async (f) => {
     border: 1px dashed #8c939d;
     border-radius: 6px;
     width: 100px;
-    height: 100px;
+    min-height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1175,8 +1186,8 @@ const upload = async (f) => {
 .el-icon.avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
-    width: 178px;
-    height: 178px;
+    // width: 178px;
+    // height: 178px;
     text-align: center;
 }
 

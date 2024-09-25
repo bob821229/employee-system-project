@@ -382,6 +382,7 @@ const filterHandler = (value, row, column) => {
 }
 //編輯
 const editHandler = (data) => {
+  console.log('目前選定:', data)
   let obj = deepCopy(data.basicInformation)
   employeeStore.setEmployeeStore(obj)
   router.push('/form');
@@ -402,19 +403,20 @@ const fetchItems = () => {
       const childKey = childSnapshot.key;
       const obj = childSnapshot.val();
 
-      obj.key = childKey;
+      // obj.key = childKey;
+      obj.firebaseKey = childKey;
       tableData1.value.push(obj);
     })
   });
-  console.log(`tabledata:${tableData1.value}`)
+  console.log("tableData1:", tableData1.value)
 };
-const tmpKey = ref('')
 const selectedItem = ref({})
 
 // 查看簡歷
 const checkHandler = (data) => {
   console.log(data.curriculumVitae)
   employeeStore.setCurriculumVitae(data.curriculumVitae)
+  employeeStore.setTmpUserInfo(data)
   router.push('/about');
 }
 // 確定刪除
@@ -423,12 +425,13 @@ const confirmDelete = (obj) => {
   centerDialogVisible.value = true
 }
 
+
 //刪除
 const deleteItem = async () => {
   // 更改狀態
   try {
     selectedItem.value.ifEnable = false
-    set(dbRef(db, `users/${selectedItem.value.key}`), selectedItem.value);
+    set(dbRef(db, `users/${selectedItem.value.firebaseKey}`), selectedItem.value);
     console.log('該資料已刪除');
   } catch (error) {
     console.error('刪除失敗:', error);

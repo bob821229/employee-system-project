@@ -166,7 +166,7 @@ import {
 import { useEmployeeStore } from '../stores/employee';
 const employeeStore = useEmployeeStore();
 const role = ref(employeeStore.getUserInfo.role)
-const curriculumVitae = ref(employeeStore.getCurriculumVitae);
+const curriculumVitae = ref(employeeStore.tmpUserInfo.curriculumVitae);
 const checkUser = computed(() => {
     return curriculumVitae.value.name === employeeStore.getUserInfo.userName || employeeStore.getUserInfo.role == '3'
 })

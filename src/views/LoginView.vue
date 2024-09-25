@@ -204,8 +204,9 @@ const submitForm = (formEl) => {
 
             // 如果需要該 key 對應的資料
             const firstItem = data[firstKey];
+            firstItem.firebaseKey = firstKey;
             console.log(firstItem); // 這裡的 firstItem 是該 key 對應的資料
-            userN.value = firstItem
+            // userN.value = firstItem
             let role = firstItem.role;
             employeeStore.setUserInfo(firstItem)
 
@@ -214,7 +215,6 @@ const submitForm = (formEl) => {
             } else if (role === '1') {
               router.push('/form');
             } else {
-              // reset
               router.push('/login');
             }
           }
