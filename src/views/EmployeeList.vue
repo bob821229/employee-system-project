@@ -383,8 +383,9 @@ const filterHandler = (value, row, column) => {
 //編輯
 const editHandler = (data) => {
   console.log('目前選定:', data)
-  let obj = deepCopy(data.basicInformation)
-  employeeStore.setEmployeeStore(obj)
+  // let obj = deepCopy(data.basicInformation)
+  // employeeStore.setEmployeeStore(obj)
+  employeeStore.setTmpUserInfo(data)
   router.push('/form');
 
 }
@@ -415,7 +416,7 @@ const selectedItem = ref({})
 // 查看簡歷
 const checkHandler = (data) => {
   console.log(data.curriculumVitae)
-  employeeStore.setCurriculumVitae(data.curriculumVitae)
+  // employeeStore.setCurriculumVitae(data.curriculumVitae)
   employeeStore.setTmpUserInfo(data)
   router.push('/about');
 }

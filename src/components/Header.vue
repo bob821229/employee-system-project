@@ -2,7 +2,7 @@
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" router background-color="#545c64"
         text-color="#fff" active-text-color="#ffd04b" :ellipsis="false">
         <el-menu-item index="/form" @click="updateBasicInformation">人員資料表</el-menu-item>
-        <el-menu-item index="/about" @click="updateCurriculumVitae">個人簡歷</el-menu-item>
+        <el-menu-item index="/about" @click="updateBasicInformation">個人簡歷</el-menu-item>
         <el-menu-item index="/employeeList" v-if="role != '1'">人員資料表清單</el-menu-item>
         <el-menu-item index="/resignedEmployeeList" v-if="role != '1'">離職人員資料表清單</el-menu-item>
 
@@ -25,7 +25,7 @@
     </el-menu>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 import { useEmployeeStore } from '../stores/employee';
 import { useRouter } from 'vue-router';
@@ -45,8 +45,9 @@ function logout() {
 }
 // 更新人員資料表
 function updateBasicInformation() {
-    let obj = employeeStore.getUserInfo.basicInformation
-    employeeStore.setEmployeeStore(obj)
+    let obj = deepCopy(employeeStore.getUserInfo)
+    // employeeStore.setEmployeeStore(obj)
+    employeeStore.setTmpUserInfo(obj)
 
 }
 // 更新個人簡歷
@@ -55,7 +56,9 @@ function updateCurriculumVitae() {
     employeeStore.setCurriculumVitae(obj)
 
 }
-
+function deepCopy(obj) {
+    return JSON.parse(JSON.stringify(obj))
+}
 </script>
 
 <style scoped lang="scss">

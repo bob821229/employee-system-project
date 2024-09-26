@@ -11,13 +11,14 @@
                     <el-text size="large" tag="b">基本資料</el-text>
                 </el-divider>
             </el-col>
+            <!-- 人員編號 -->
             <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="人員編號" prop="employeeId">
                     <el-input v-model="currentData.employeeId" placeholder="請輸入編號" />
                 </el-form-item>
             </el-col>
 
-
+            <!-- 部門   -->
             <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="部門" prop="department">
                     <el-select v-model="currentData.department" placeholder="請選擇部門">
@@ -25,41 +26,39 @@
                     </el-select>
                 </el-form-item>
             </el-col>
-
+            <!-- 到職日 -->
             <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="到職日" prop="arrivalDate">
                     <el-date-picker v-model="currentData.arrivalDate" type="date" style="width: 100%;"
                         placeholder="請選擇到職日" />
                 </el-form-item>
             </el-col>
-
+            <!-- 信箱 -->
             <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="信箱" prop="email">
                     <el-input v-model="currentData.email" placeholder="請輸入信箱" />
                 </el-form-item>
             </el-col>
-
+            <!-- 姓名 -->
             <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="姓名" prop="name">
                     <el-input v-model="currentData.name" placeholder="請輸入姓名" />
                 </el-form-item>
             </el-col>
-
+            <!-- 身分證 -->
             <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="身分證號" prop="idNumber">
                     <el-input v-model="currentData.idNumber" maxlength="10" show-word-limit placeholder="請輸入身分證號" />
                 </el-form-item>
             </el-col>
-
-
-
+            <!-- 生日 -->
             <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="生日" prop="birthday">
                     <el-date-picker v-model="currentData.birthday" type="date" style="width: 100%;"
                         placeholder="請選擇生日" />
                 </el-form-item>
             </el-col>
-
+            <!-- 性別 -->
             <el-col :sm="24" :md="6" :lg="3">
                 <el-form-item label="性別" prop="sex">
                     <el-radio-group v-model="currentData.sex">
@@ -68,17 +67,9 @@
                     </el-radio-group>
                 </el-form-item>
             </el-col>
+            <!-- 照片 -->
             <el-col :sm="24" :md="6" :lg="3">
                 <el-form-item label="照片" prop="profileImageUrl">
-                    <!-- <el-upload class="avatar-uploader" :show-file-list="false" :auto-upload="false"
-                        :on-change="handleFileChange" :before-upload="beforeAvatarUpload">
-
-                        <el-avatar v-if="currentData.profileImageUrl" :src="currentData.profileImageUrl" fit="cover"
-                            class="avatar" />
-                        <el-icon v-else class="avatar-uploader-icon">
-                            <Plus />
-                        </el-icon>
-                    </el-upload> -->
                     <el-upload class="avatar-uploader" :show-file-list="false" :auto-upload="false"
                         :on-change="changeProfileImage">
 
@@ -91,38 +82,38 @@
                 </el-form-item>
 
             </el-col>
-
-
-
+            <!-- 連絡電話 -->
             <el-col :sm="24" :md="12" :lg="12">
                 <el-form-item label="連絡電話" prop="homePhone">
                     <el-input v-model="currentData.homePhone" placeholder="請輸入連絡電話" />
                 </el-form-item>
             </el-col>
-
+            <!-- 行動電話 -->
             <el-col :sm="24" :md="12" :lg="12">
                 <el-form-item label="行動電話" prop="phone">
                     <el-input v-model="currentData.phone" maxlength="10" show-word-limit placeholder="請輸入行動電話" />
                 </el-form-item>
             </el-col>
-
+            <!-- 戶籍郵遞區號 -->
             <el-col :sm="24" :md="24" :lg="4">
                 <el-form-item label="戶籍地址郵遞區號" prop="residence.postalCode">
                     <el-input v-model="currentData.residence.postalCode" placeholder="請輸入戶籍地址" />
                 </el-form-item>
             </el-col>
+            <!-- 戶籍地址 -->
             <el-col :sm="24" :md="24" :lg="20">
                 <el-form-item label="戶籍地址" prop="residence.address">
                     <el-input v-model="currentData.residence.address" placeholder="請輸入戶籍地址" />
                 </el-form-item>
             </el-col>
-
+            <!-- 通訊郵遞區號 -->
             <el-col :sm="24" :md="24" :lg="4">
                 <el-form-item label="通訊地址郵遞區號" prop="mailing.postalCode">
                     <el-input v-model="currentData.mailing.postalCode" placeholder="請輸入通訊地址">
                     </el-input>
                 </el-form-item>
             </el-col>
+            <!-- 通訊地址 -->
             <el-col :sm="24" :md="24" :lg="20">
                 <el-form-item label="通訊地址" prop="mailing.address">
                     <el-input v-model="currentData.mailing.address" placeholder="請輸入通訊地址">
@@ -132,7 +123,7 @@
                     </el-input>
                 </el-form-item>
             </el-col>
-
+            <!-- 職稱 -->
             <el-col :sm="24" :md="24" :lg="6" v-if="checkUser">
                 <el-form-item label="職稱" prop="positionTitle">
                     <el-select v-model="currentData.positionTitle" placeholder="選擇職稱" filterable allow-create
@@ -141,7 +132,7 @@
                     </el-select>
                 </el-form-item>
             </el-col>
-
+            <!-- 特殊身分 -->
             <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="特殊身分" prop="specialStatus">
                     <el-select v-model="currentData.specialStatus" multiple placeholder="請選擇特殊身分"
@@ -150,7 +141,7 @@
                     </el-select>
                 </el-form-item>
             </el-col>
-
+            <!-- 駕照 -->
             <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="駕照" prop="drvingLicense">
                     <el-select v-model="currentData.drvingLicense" multiple placeholder="請選擇駕照"
@@ -159,7 +150,7 @@
                     </el-select>
                 </el-form-item>
             </el-col>
-
+            <!-- 婚姻 -->
             <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="婚姻狀況" prop="maritalStatus">
                     <el-select v-model="currentData.maritalStatus" placeholder="請選擇婚姻狀況">
@@ -169,17 +160,15 @@
                     </el-select>
                 </el-form-item>
             </el-col>
+            <!-- 離職日期 -->
             <el-col :span="24" v-if="checkUser">
                 <el-form-item label="離職日期" prop=" resignationDate">
                     <!-- <el-input v-model="currentData.resignationDate" placeholder="離職日期"> -->
                     <el-date-picker v-model="currentData.resignationDate" type="date" style="width: 100%;"
-                        placeholder="請選擇到職日" />
+                        placeholder="請選擇離職日期" />
                     <!-- </el-input> -->
                 </el-form-item>
             </el-col>
-
-
-
 
             <!-- TODO 教育程度 -->
             <el-col :span="24">
@@ -187,7 +176,7 @@
                     <el-text size="large" tag="b">教育程度</el-text>
                 </el-divider>
             </el-col>
-
+            <!-- 學歷 -->
             <el-col :span="24">
                 <el-row style="width: 100%;align-items: end;" :gutter="10"
                     v-for="(school, index) in currentData.schools" :key="index" class="work-experience-item">
@@ -234,7 +223,7 @@
                             trigger: 'blur',
                             validator: (rule, value, callback) => {
                                 console.log('values')
-                                if (value === '') {
+                                if (!value) {
                                     callback(new Error('請選擇畢業/肄業'))
                                 }
                             }
@@ -251,8 +240,15 @@
                         <el-form-item label="修業起訖年月" :prop="'schools.' + index + '.period'" :rules="{
                             type: 'array',
                             required: true,
-                            message: '請選擇修業起訖年月',
+                            // message: '請選擇修業起訖年月',
                             trigger: 'change',
+                            validator: (rule, value, callback) => {
+                                if (value && value.length === 2 && value[0] !== null && value[1] !== null) {
+                                    callback();
+                                } else {
+                                    callback(new Error('請選擇有效的修業起訖年月'));
+                                }
+                            }
                         }">
                             <el-date-picker v-model="school.period" type="monthrange" range-separator="至"
                                 start-placeholder="開始年月" end-placeholder="結束年月" format="YYYY-MM"
@@ -316,9 +312,17 @@
                     </el-col>
                     <el-col :span="4">
                         <el-form-item label="服務起訖年月" :prop="'workExperience.' + index + '.period'" :rules="{
+                            type: 'array',
                             required: true,
-                            message: '請輸入服務起訖年月',
-                            trigger: 'blur',
+                            // message: '請輸入服務起訖年月',
+                            trigger: 'change',
+                            validator: (rule, value, callback) => {
+                                if (value && value.length === 2 && value[0] !== null && value[1] !== null) {
+                                    callback();
+                                } else {
+                                    callback(new Error('請選擇有效的服務起訖年月'));
+                                }
+                            }
                         }">
                             <el-date-picker v-model="experience.period" type="monthrange" range-separator="至"
                                 start-placeholder="開始年月" end-placeholder="結束年月" format="YYYY-MM"
@@ -468,11 +472,12 @@
             </el-col>
             <el-col :span="24">
                 <div style="text-align: center;margin: 20px 0;">
-                    <el-button type="primary" @click="validateForm">驗證</el-button>
-                    <el-button type="primary" @click="resetValidateForm" v-if="false">重置驗證</el-button>
-                    <el-button type="primary" @click="submitForm">保存</el-button>
+                    <el-button type="primary" @click="validateForm(ruleFormRef)">驗證</el-button>
+                    <el-button type="primary" @click="resetValidateForm">重置驗證</el-button>
+                    <el-button type="primary" @click="submitForm(ruleFormRef)">保存</el-button>
                     <el-button type="primary" @click="cancel" v-if="false">返回</el-button>
                     <el-button type="primary" @click="updateData">updateData</el-button>
+                    <el-button type="primary" @click="submitForm1(ruleFormRef)">submitForm1</el-button>
                 </div>
             </el-col>
         </el-row>
@@ -483,6 +488,15 @@
         </el-tooltip>
 
     </div>
+    <el-form ref="ruleFormRef2" :model="user" :rules="userRules">
+        <el-form-item label="帳號" prop="account">
+            <el-input v-model="user.account" placeholder="請輸入帳號" />
+        </el-form-item>
+        <el-form-item label="密碼" prop="password">
+            <el-input v-model="user.password" placeholder="請輸入密碼" />
+        </el-form-item>
+        <el-button type="primary" @click="submitForm2(ruleFormRef2)">submitForm2</el-button>
+    </el-form>
 </template>
 
 <script setup>
@@ -492,18 +506,57 @@ import { db, storage } from '../api/firebaseConfig';
 import { getDatabase, ref as dbRef, push, onValue, remove, set } from 'firebase/database';
 import { ElMessage } from 'element-plus';
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { ref, reactive, onMounted, watch, computed } from 'vue';
+import { ref, reactive, onMounted, watch, computed, nextTick } from 'vue';
 import {
     Upload,
 } from '@element-plus/icons-vue'
 // 創建一個響應式引用來存儲表單元素
 const ruleFormRef = ref(null);
-
+//表單實體
+const ruleFormRef2 = ref(null);
+//數據
+const user = ref({
+    account: '',//帳號
+    password: '',//密碼
+})
+//數據驗證規則
+const userRules = reactive({
+    account: [
+        { required: true, message: '請輸入帳號', trigger: 'blur' },
+        { min: 3, max: 5, message: '長度在 3 到 5 個字符', trigger: 'blur' },
+    ],
+    password: [
+        { required: true, message: '請輸入密碼', trigger: 'blur' },
+    ]
+})
+//驗證表單
+const submitForm2 = async (formEl) => {
+    console.log('submitForm2')
+    console.log("formEl:", formEl)
+    if (!formEl) return;
+    formEl.validate((valid) => {
+        if (valid) {
+            // 驗證成功
+            ElMessage({
+                message: '驗證成功',
+                type: 'success',
+            });
+        } else {
+            //驗證失敗
+            // console.log('驗證失敗!');
+            ElMessage({
+                message: '驗證失敗',
+                type: 'error',
+            });
+        }
+    });
+}
 
 // 驗證大頭照
 const validateProfileImage = (rule, value, callback) => {
     if (value === '' && previewimageUrl.value === null) {
-        callback(new Error('請上傳照片'))
+        return callback(new Error('請上傳照片'))
+
     } else {
         callback()
     }
@@ -528,7 +581,7 @@ const validateIdCardBackImage = (rule, value, callback) => {
 //驗證規則
 const rules = reactive({
     profileImageUrl: [
-        { required: true, message: '請上傳大頭貼', trigger: 'blur' }
+        { required: true, message: '請上傳大頭貼', trigger: 'change', validator: validateProfileImage }
     ],
     employeeId: [
         { required: false, message: '請輸入人員編號', trigger: 'blur' }
@@ -648,7 +701,7 @@ const rules = reactive({
 // 語言清單
 const languages = ref(['國語', '台語', '客語', '英語', '日語']);
 //技能清單
-const expertises = ref(['Word', 'Excel', 'PowerPoint', 'GIS', 'Visio']);
+const expertises = ref(['Word', 'Excel', 'PowerPoint', 'GIS', 'Visio', 'JavaScript']);
 //職稱清單
 const positionTitles = ref(['開發人員', '研究員', '顧問', '助理研究員', '行政人員']);
 //證照清單
@@ -703,7 +756,7 @@ const handleLicenseChange = (value) => {
         currentData.value.drvingLicense = value
     }
 }
-// 處理駕照選擇變化
+// 處理特殊身分選擇變化
 const handleSpecialStatusChange = (value) => {
     if (value.includes('無')) {
         currentData.value.specialStatus = ['無']
@@ -711,6 +764,7 @@ const handleSpecialStatusChange = (value) => {
         currentData.value.specialStatus = value
     }
 }
+// 確認使用者身份
 const checkUser = computed(() => {
     // return currentData.value.name === employeeStore.getUserInfo.userName || employeeStore.getUserInfo.role == '3'
     return employeeStore.getUserInfo.role == '3'
@@ -730,12 +784,11 @@ const addSchool = () => {
             name: "",
             academicDegree: "",
             department: "",
-            degreeStatus: "畢業",
-            period: []
+            degreeStatus: "",
+            period: [null, null],
         });
     }
 }
-
 //移除學歷
 const removeSchool = (index) => {
     let arrLength = currentData.value.schools.length
@@ -745,7 +798,6 @@ const removeSchool = (index) => {
         currentData.value.schools.splice(index, 1);
     }
 }
-
 //新增工作經歷
 const addWorkExperience = () => {
     let arrLength = currentData.value.workExperience.length
@@ -753,15 +805,15 @@ const addWorkExperience = () => {
         alert("最多三筆")
     } else {
         currentData.value.workExperience.push({
-            company: '',
-            position: '',
-            start: '',
-            end: '',
-            description: ''
+            key: Date.now(),
+            company: "",//公司名稱
+            position: "",//職務名稱
+            salary: null,//薪資
+            leavingReason: "",//離職原因
+            period: [null, null]//服務起訖年月
         });
     }
 }
-
 //移除工作經歷
 const removeWorkExperience = (index) => {
     let arrLength = currentData.value.workExperience.length
@@ -835,35 +887,44 @@ const updateData = () => {
 }
 
 // 提交表單的函數
-const submitForm = () => {
-    ruleFormRef.value.validate(async (valid) => {
-
+const submitForm = async () => {
+    console.log('submitForm')
+    if (!ruleFormRef.value) return
+    await ruleFormRef.value.validate(async (valid) => {
+        console.log('Validation started')
+        console.log("valid:", valid)
         if (!valid) {//驗證失敗
+            console.log('Validation failed')
             ElMessage.error('驗證失敗，請檢查輸入')
         } else {//驗證成功 開始上傳圖片跟存取資料
+            console.log('Validation succeeded')
             ElMessage.success('驗證成功，可以提交表單')
 
             try {
+                console.log('Starting upload process')
                 await upload('1'); // 等待上傳完成
                 await upload('2'); // 等待上傳完成
                 await upload('3'); // 等待上傳完成
+                console.log('Upload process completed')
 
-                if (currentData.value.key !== null) {
+                if (currentData.value.firebaseKey !== '') {
+                    console.log('有key 更新資料')
                     //有key 更新資料
-                    updateData();
+                    // updateData();
                     ElMessage({
                         message: '已修改資料',
                         type: 'success',
                     });
                 } else {
                     // 沒key 新增人員
-                    addItem();
+                    console.log('沒key 新增人員')
+                    // addItem();
                     ElMessage({
                         message: '已新增資料',
                         type: 'success',
                     });
                 }
-                cancel();
+                // cancel();
             } catch (error) {
                 console.error('上傳或保存資料失敗:', error);
                 ElMessage({
@@ -874,25 +935,46 @@ const submitForm = () => {
         }
     })
 }
+
+const submitForm1 = async (formEl = ruleFormRef) => {
+    console.log('submitForm1')
+    console.log("ruleFormRef:", ruleFormRef.value)
+    console.log("formEl:", formEl)
+    if (!formEl) return;
+    await formEl.validate((valid) => {
+        if (valid) {
+            // 驗證成功
+            console.log('驗證成功!');
+        } else {
+            //驗證失敗
+            console.log('驗證失敗!');
+        }
+    });
+}
+
 const deepCopy = (obj) => {
     return JSON.parse(JSON.stringify(obj))
 }
-// 
+
 // 驗證
-const validateForm = (rule, value, callback) => {
-    ruleFormRef.value.validate()
-
-    // ruleFormRef.value.validate(async (valid) => {
-
-    //     if (!valid) {//驗證失敗
-    //         ElMessage.error('驗證失敗，請檢查輸入')
-    //     } else {//驗證成功 開始上傳圖片跟存取資料
-    //         ElMessage.success('驗證成功，可以提交表單')
-    //     }
-    // })
+const validateForm = (elForm = ruleFormRef.value) => {
+    console.log("驗證", ruleFormRef.value)
+    ruleFormRef.value.validate(async (valid, fields) => {
+        if (!valid) {
+            ElMessage.error('驗證失敗，請檢查輸入')
+        } else {
+            ElMessage.success('驗證成功，可以提交表單')
+        }
+    })
 }
-const resetValidateForm = () => {
 
+// const ruleFormRef = ref(null)
+
+// 在 setup 函数中
+onMounted(() => {
+    console.log('$$ruleFormRef:', ruleFormRef.value)
+})
+const resetValidateForm = () => {
     if (!ruleFormRef.value) return
     ruleFormRef.value.resetFields()
 }
@@ -961,7 +1043,6 @@ const changeProfileImage = async (event) => {
         }
     }
 }
-
 const changeIdCardFrontImage = async (event) => {
     const isJPG = event.raw.type === 'image/jpeg';
     const isPNG = event.raw.type === 'image/png';
