@@ -24,7 +24,7 @@
               登入
             </el-button>
             <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-            <!-- <el-button @click="addItem()">新增</el-button> -->
+            <el-button @click="addItem()">新增</el-button>
           </div>
         </div>
       </el-form>
@@ -47,94 +47,88 @@ const ruleFormRef = ref()
 const userN = ref({})
 
 let obj = ref({
-  key: 'abc123123',//帳號+密碼
-  userName: '許弘毅',//用戶名
-  role: '1',//權限等級 1:員工 2:主管 3:人事
+  key: 'abc789789',//帳號+密碼
+  userName: '倪佩君',//用戶名
+  role: '3',//權限等級 1:員工 2:主管 3:人事
+  firebaseKey: '',//firebaseKey
+  ifEnable: true,//是否啟用
   basicInformation: {
-    "arrivalDate": "2023-01-15",
-    "bank": {
-      "account": "123456789012",
-      "branchName": "台北市南門分行"
-    },
-    "birthday": "1985-03-22",
-    "computerExpertise": [
-      "JavaScript",
+    arrivalDate: "2023-01-15",//到職日
+    bank: {
+      account: '123456789012',//銀行帳號
+      branchName: '台北市南門分行',//分行名稱
+
+    },//銀行資訊
+    birthday: "1985-03-22",//生日
+    computerExpertise: ["JavaScript",
       "Java",
-      "Python"
-    ],
-    "department": "數位發展處",
-    "drvingLicense": [
-      "機車"
-    ],
-    "email": "zhangsan@example.com",
-    "emergencyContact": {
-      "mobile": "0987654321",
-      "name": "李四",
-      "phone": "02-87654321",
-      "relationship": "兄弟"
-    },
-    "employeeId": "E001",
-    "homePhone": "02-12345678",
-    "idCardBackImageUrl": "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2F%E8%9E%A2%E5%B9%95%E6%93%B7%E5%8F%96%E7%95%AB%E9%9D%A2%202024-08-06%20132612.png?alt=media&token=19a4c2e1-e9bc-4525-8cc4-d8eb657ad44f",
-    "idCardFrontImageUrl": "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2Fimg.jpg?alt=media&token=426bebb1-f32e-4666-9496-7e7a9d557938",
-    "idNumber": "A123456789",
-    "ifEnable": true,
-    "key": "-O3C40kxjE_Ta6sYf0Ls",
-    "languages": [
-      "中文",
-      "英文"
-    ],
-    "mailingAddress": "台北市中正區中山路1號",
-    "maritalStatus": "已婚",
-    "name": "許弘毅",
-    "phone": "0912345678",
-    "professionalLicense": "資訊安全管理師",
-    "profileImageUrl": "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2Flabubu.jpg?alt=media&token=23e33f9a-6916-4349-b002-49cbda38f806",
-    "residenceAddress": "台北市中正區中山路1號",
-    "schools": [
+      "Python"],//電腦專長
+    department: '數位發展處',//進用部門
+    drvingLicense: ["機車"],//駕照
+    email: "zhangsan@example.com",//信箱
+    emergencyContact: {
+      mobile: '0987654321',// 行動電話
+      name: '李四', // 緊急聯絡人姓名
+      phone: '02-87654321', // 連絡電話
+      relationship: '兄弟' // 關係
+    },//緊急聯絡人資訊
+    employeeId: 'E001',//人員編號
+    homePhone: '02-12345678',//連絡電話
+    idCardFrontImageUrl: "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2F%E8%9E%A2%E5%B9%95%E6%93%B7%E5%8F%96%E7%95%AB%E9%9D%A2%202024-08-06%20132612.png?alt=media&token=19a4c2e1-e9bc-4525-8cc4-d8eb657ad44f", // 身分證正面照片 URL
+    idCardBackImageUrl: "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2Fimg.jpg?alt=media&token=426bebb1-f32e-4666-9496-7e7a9d557938", // 身分證反面照片 URL
+    idNumber: 'A123456789',//身分證號
+    languages: ["中文", "英文"],//語言能力
+    mailing: {
+      address: '台北市中正區中山路1號',//通訊地址
+      postalCode: '028',//郵遞區號
+    },//通訊地址
+    maritalStatus: '已婚',//婚姻狀況
+    name: "倪佩君",//姓名
+    phone: '0912345678',//行動電話
+    positionTitle: '開發人員',//職稱
+    professionalLicense: ['系統分析師 (CSM)'],//專業證照
+    profileImageUrl: "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2Flabubu.jpg?alt=media&token=23e33f9a-6916-4349-b002-49cbda38f806", // 大頭貼 URL
+    residence: {
+      address: '台北市中正區中山路1號',//通訊地址
+      postalCode: '028',//郵遞區號
+    },//戶籍地址
+    resignationDate: null,//離職日
+    schools: [
       {
-        "department": "資訊工程系",
-        "name": "台灣大學",
-        "period": [
-          "2007-01",
-          "2011-12"
-        ]
-      },
-      {
-        "department": "資訊工程系",
-        "name": "成功大學",
-        "period": [
-          "2007-01",
-          "2011-12"
-        ]
-      },
-      {
-        "department": "化工系",
-        "name": "清華大學",
-        "period": [
-          "2024-01",
-          "2025-04"
-        ]
+        academicDegree: '學士',//學位
+        degreeStatus: "畢業",//畢業狀況
+        name: "台灣大學",//學校名稱
+        department: "資訊工程系",//科系
+        period: ["2007-01",
+          "2011-12"]//修業起訖年月
       }
-    ],
-    "sex": "男",
-    "specialStatus": [
-      "原住民"
-    ],
-    "workExperience": [
+    ],//學歷
+    sex: '男',//性別
+    specialStatus: ["原住民"],//特殊身分
+    workExperience: [
       {
-        "company": "ABC科技公司",
-        "leavingReason": "尋求更好發展",
-        "period": [
-          "2007-07",
-          "2012-12"
-        ],
-        "position": "軟體工程師",
-        "salary": 60000
+        company: "ABC科技公司",//公司名稱
+        position: "軟體工程師",//職務名稱
+        salary: 60000,//薪資
+        leavingReason: "尋求更好發展",//離職原因
+        period: ["2007-07",
+          "2012-12"]//服務起訖年月
       }
-    ]
+    ],//職務經歷
   },//人員資料表
   curriculumVitae: {
+    name: "倪佩君",//姓名
+    educationalQualifications: '台灣科技大學碩士',//學歷
+    expertise: '前端開發',//專長
+    professionalLicense: ["高級軟體工程師證書", "GIS專業技術人員證照"],//專業證照
+    workExperience: [
+      { company: "ABC科技有限公司", period: ["2019-01", "2022-12"], position: "前端開發工程師" },
+      { company: "XYZ互聯網公司", period: ["2023-01", "2024-08"], position: "前端團隊負責人" }
+    ],//職務經歷
+    annualPublications: [
+      { category: "碩士論文", name: "《前端性能優化的最佳實踐》", period: "2022-01" },
+      { category: "期刊", name: "《現代前端開發指南》", period: "2023-06" }
+    ],//歷年著作
     annualProjects: [
       {
         period: ["2020-04", "2021-10"],
@@ -146,20 +140,7 @@ let obj = ref({
         projectName: "大型電商平台的前端架構優化",
         sponsorUnit: "某知名互聯網公司"
       }
-    ],
-    annualPublications: [
-      { category: "碩士論文", name: "《前端性能優化的最佳實踐》", period: "2022-01" },
-      { category: "期刊", name: "《現代前端開發指南》", period: "2023-06" }
-    ],
-    educationalQualifications: "台灣科技大學碩士",
-    expertise: "前端開發",
-    key: "-O3W9yqRjFHugD1_bTfn",
-    name: "許弘毅",
-    professionalLicense: "高級軟體工程師證書",
-    workExperience: [
-      { company: "ABC科技有限公司", period: ["2019-01", "2022-12"], position: "前端開發工程師" },
-      { company: "XYZ互聯網公司", period: ["2023-01", "2024-08"], position: "前端團隊負責人" }
-    ]
+    ],//歷年計畫
   },//個人簡歷
 })
 
@@ -167,8 +148,8 @@ let obj = ref({
 //新增人員
 const addItem = () => {
 
-  const itemsRef = dbRef(db, 'employees');
-  // const itemsRef = dbRef(db, 'users');
+  // const itemsRef = dbRef(db, 'employees');
+  const itemsRef = dbRef(db, 'users');
   dbPush(itemsRef, obj.value);
 };
 

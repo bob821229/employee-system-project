@@ -13,7 +13,7 @@
       <el-table-column width="250" header-align="center" prop="basicInformation.department" label="部門"
         :filters="departments" :filter-method="filterHandler" filter-multiple />
       <el-table-column header-align="center" prop="basicInformation.professionalLicense" label="專業證照" />
-      <el-table-column width="200" align="center" header-align="center" fixed="right" label="編輯" v-if="role === '3'">
+      <el-table-column width="200" align="center" header-align="center" fixed="right" label="編輯">
         <template #default="scope">
           <el-button type="success" plain @click="confirmDelete(scope.row)">
             啟用
@@ -387,7 +387,7 @@ const editHandler = (data) => {
 }
 //新增
 const newHandler = () => {
-  employeeStore.resetEmployeeStore()
+  employeeStore.resetTmpUserInfo()
   router.push('/form');
 }
 //取得

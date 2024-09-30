@@ -31,12 +31,13 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
   }
   
   //清空 人員資料表
-  const resetEmployeeStore = () => {
+  const resetTmpUserInfo = (key='',role='0',userName='') => {
     tmpUserInfo.value={
-      key: '',//帳號+密碼
-      userName: '',//用戶名
-      role: '0',//權限等級 1:員工 2:主管 3:人事 0:未登入
-      firebaseKey:'',
+      key: key,//帳號+密碼
+      userName: userName,//用戶名
+      role: role,//權限等級 1:員工 2:主管 3:人事 0:未登入
+      firebaseKey:'',//firebaseKey
+      ifEnable: true,//是否啟用
       basicInformation: {
         arrivalDate: null,//到職日
         bank: {
@@ -66,7 +67,7 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
           postalCode: '',//郵遞區號
         },//通訊地址
         maritalStatus: '',//婚姻狀況
-        name: '',//姓名
+        name: userName,//姓名
         phone: '',//行動電話
         positionTitle:'',//職稱
         professionalLicense: [],//專業證照
@@ -98,8 +99,7 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
         ],//職務經歷
       },//人員資料表
       curriculumVitae: {
-        key: null,//key值
-        name: '',//姓名
+        name: userName,//姓名
         educationalQualifications: '',//學歷
         expertise: '',//專長
         professionalLicense: [],//專業證照
@@ -133,7 +133,7 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
   
   return { 
     getUserInfo,
-    resetEmployeeStore,
+    resetTmpUserInfo,
     setUserInfo,
     tmpUserInfo,
     setTmpUserInfo

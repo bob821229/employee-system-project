@@ -181,7 +181,6 @@ const addWorkExperience = () => {
         period: null//服務起訖年月
     });
 };
-
 // 移除經歷
 const removeWorkExperience = (index) => {
     const minWorkExperience = 1;
@@ -227,42 +226,24 @@ const removeAnnualProjects = (index) => {
     }
     curriculumVitae.value.annualProjects.splice(index, 1);
 };
-
-const tableData = ref([])
-// const fetchItems = async () => {
-//     tableData.value.length = 0
-//     let itemsRef = dbRef(db, '/curriculumVitaes');
-//     try {
-
-//         onValue(itemsRef, (snapshot) => {
-
-//             snapshot.forEach((childSnapshot) => {
-//                 const childKey = childSnapshot.key;
-//                 const obj = childSnapshot.val();
-
-//                 curriculumVitae.value = obj;
-//                 curriculumVitae.value.key = childKey;
-//             })
-//         });
-//         console.log('取得個人簡歷成功')
-
-//     } catch (error) {
-//         console.log('取得個人簡歷失敗:', error)
-
-//     }
-// };
-
-const addItem = () => {
-
-    const itemsRef = dbRef(db, 'curriculumVitaes');
-
-    //啟用狀態
-    curriculumVitae.value.ifEnable = true
-    push(itemsRef, curriculumVitae.value);
-};
+// const updateData = () => {
+//     let keyId = curriculumVitae.value.key
+//     set(dbRef(db, `curriculumVitaes/${keyId}`), curriculumVitae.value);
+// }
+// 更新資料
 const updateData = () => {
-    let keyId = curriculumVitae.value.key
-    set(dbRef(db, `curriculumVitaes/${keyId}`), curriculumVitae.value);
+    let firebaseKey = employeeStore.tmpUserInfo.firebaseKey
+    console.log('firebaseKey:', firebaseKey)
+    let isSelf = (employeeStore.tmpUserInfo.userName == employeeStore.getUserInfo.userName)
+    //如果修改對象是本人，則更新store中的資料
+    console.log('isSelf:', isSelf)
+    if (isSelf) {
+        employeeStore.getUserInfo = deepCopy(employeeStore.tmpUserInfo)
+        console.log('本人更新成功:', employeeStore.tmpUserInfo);
+    } else {
+        console.log('非本人更新成功:', employeeStore.tmpUserInfo);
+    }
+    set(dbRef(db, `users/${firebaseKey}`), employeeStore.tmpUserInfo);
 }
 onMounted(() => {
     // fetchItems();
