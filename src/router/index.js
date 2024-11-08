@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useEmployeeStore } from '../stores/employee';
 
 // import EmployeeList from '../views/EmployeeList.vue'
 import LoginView from '../views/LoginView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -44,5 +46,21 @@ const router = createRouter({
     }
   ]
 })
+
+const getEmployeeStore = ()=>{
+  return useEmployeeStore();
+ }
+// 路由守衛
+router.beforeEach((to, from, next) => {
+  const employeeStore = getEmployeeStore()
+  const { role } = employeeStore.getUserInfo
+
+  if (to.name !== 'login' && role === '0') {
+    next({ name: 'login' })
+  } else {
+    next()
+  }
+})
+
 
 export default router

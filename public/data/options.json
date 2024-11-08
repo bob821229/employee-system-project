@@ -1,0 +1,230 @@
+{
+    "departmentList": [
+        {
+            "text": "研究一所",
+            "value": "01"
+        },
+        {
+            "text": "研究二所",
+            "value": "02"
+        },
+        {
+            "text": "研究三所",
+            "value": "03"
+        },
+        {
+            "text": "研究四所",
+            "value": "04"
+        },
+        {
+            "text": "林業研究發展中心",
+            "value": "05"
+        },
+        {
+            "text": "教育推廣處",
+            "value": "06"
+        },
+        {
+            "text": "國際合作處",
+            "value": "07"
+        },
+        {
+            "text": "數位發展處",
+            "value": "08"
+        },
+        {
+            "text": "行政處",
+            "value": "09"
+        }
+    ],
+    "sexList": [
+        {
+            "text": "男",
+            "value": "01"
+        },
+        {
+            "text": "女",
+            "value": "02"
+        }
+    ],
+    "positionTitleList": [
+        {
+            "text": "開發人員",
+            "value": "01"
+        },
+        {
+            "text": "研究員",
+            "value": "02"
+        },
+        {
+            "text": "顧問",
+            "value": "03"
+        },
+        {
+            "text": "助理研究員",
+            "value": "04"
+        },
+        {
+            "text": "行政人員",
+            "value": "05"
+        }
+    ],
+    "specialStatuList": [
+        {
+            "text": "原住民",
+            "value": "01"
+        },
+        {
+            "text": "身心障礙",
+            "value": "02"
+        },
+        {
+            "text": "無",
+            "value": "03"
+        }
+    ],
+    "drvingLicenseList": [
+        {
+            "text": "機車",
+            "value": "01"
+        },
+        {
+            "text": "汽車",
+            "value": "02"
+        },
+        {
+            "text": "無",
+            "value": "03"
+        }
+    ],
+    "maritalStatusList": [
+        {
+            "text": "未婚",
+            "value": "01"
+        },
+        {
+            "text": "已婚",
+            "value": "02"
+        },
+        {
+            "text": "其他",
+            "value": "03"
+        }
+    ],
+    "academicDegreeList": [
+        {
+            "text": "博士",
+            "value": "01"
+        },
+        {
+            "text": "碩士",
+            "value": "02"
+        },
+        {
+            "text": "學士",
+            "value": "03"
+        },
+        {
+            "text": "專科/高中",
+            "value": "04"
+        }
+    ],
+    "graduateStatusList": [
+        {
+            "text": "畢業",
+            "value": "01"
+        },
+        {
+            "text": "肄業",
+            "value": "02"
+        }
+    ],
+    "languageList": [
+        {
+            "text": "國語",
+            "value": "01"
+        },
+        {
+            "text": "台語",
+            "value": "02"
+        },
+        {
+            "text": "客語",
+            "value": "03"
+        },
+        {
+            "text": "英語",
+            "value": "04"
+        },
+        {
+            "text": "日語",
+            "value": "05"
+        }
+    ],
+    "expertiseList": [
+        {
+            "text": "Word",
+            "value": "01"
+        },
+        {
+            "text": "Ecxel",
+            "value": "02"
+        },
+        {
+            "text": "PowerPoint",
+            "value": "03"
+        },
+        {
+            "text": "Visio",
+            "value": "04"
+        },
+        {
+            "text": "GIS",
+            "value": "05"
+        }
+    ],
+    "professionalLicenseList": [
+        {
+            "text": "系統分析師 (CSM)",
+            "value": "01"
+        },
+        {
+            "text": "資料庫管理師 (Oracle Certified Professional)",
+            "value": "02"
+        },
+        {
+            "text": "雲端架構師 (AWS Certified Solutions Architect)",
+            "value": "03"
+        },
+        {
+            "text": "資訊安全管理師 (CISSP)",
+            "value": "04"
+        },
+        {
+            "text": "GIS工程師",
+            "value": "05"
+        }
+    ],
+    "paperTypeList": [
+        {
+            "text": "博士論文",
+            "value": "01"
+        },
+        {
+            "text": "碩士論文",
+            "value": "02"
+        },
+        {
+            "text": "期刊",
+            "value": "03"
+        },
+        {
+            "text": "研討會論文",
+            "value": "04"
+        },
+        {
+            "text": "其他",
+            "value": "05"
+        }
+    ]
+}

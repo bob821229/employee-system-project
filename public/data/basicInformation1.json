@@ -1,0 +1,213 @@
+{
+  "computerExpertise": [
+      {
+          "userPropertyId": 77,
+          "userId": 1,
+          "codeType": "experties",
+          "codeNo": "01",
+          "ifEnable": true,
+          "createDateTimeUtc": "2024-11-06T03:32:25.707",
+          "updateDateTimeUtc": null,
+          "createBy": 1,
+          "updateBy": null
+      },
+      {
+          "userPropertyId": 78,
+          "userId": 1,
+          "codeType": "experties",
+          "codeNo": "02",
+          "ifEnable": true,
+          "createDateTimeUtc": "2024-11-06T03:32:25.783",
+          "updateDateTimeUtc": null,
+          "createBy": 1,
+          "updateBy": null
+      }
+  ],
+  "drvingLicense": [],
+  "languages": [
+      {
+          "userPropertyId": 80,
+          "userId": 1,
+          "codeType": "language",
+          "codeNo": "01",
+          "ifEnable": true,
+          "createDateTimeUtc": "2024-11-06T03:32:26.603",
+          "updateDateTimeUtc": null,
+          "createBy": 1,
+          "updateBy": null
+      },
+      {
+          "userPropertyId": 81,
+          "userId": 1,
+          "codeType": "language",
+          "codeNo": "03",
+          "ifEnable": true,
+          "createDateTimeUtc": "2024-11-06T03:32:26.677",
+          "updateDateTimeUtc": null,
+          "createBy": 1,
+          "updateBy": null
+      },
+      {
+          "userPropertyId": 82,
+          "userId": 1,
+          "codeType": "language",
+          "codeNo": "04",
+          "ifEnable": true,
+          "createDateTimeUtc": "2024-11-06T03:32:26.75",
+          "updateDateTimeUtc": null,
+          "createBy": 1,
+          "updateBy": null
+      }
+  ],
+  "professionalLicense": [
+      {
+          "userPropertyId": 83,
+          "userId": 1,
+          "codeType": "professionalLicense",
+          "codeNo": "02",
+          "ifEnable": true,
+          "createDateTimeUtc": "2024-11-06T03:32:26.9",
+          "updateDateTimeUtc": null,
+          "createBy": 1,
+          "updateBy": null
+      }
+  ],
+  "specialStatus": [
+      {
+          "userPropertyId": 79,
+          "userId": 1,
+          "codeType": "specialStatu",
+          "codeNo": "01",
+          "ifEnable": true,
+          "createDateTimeUtc": "2024-11-06T03:32:26.453",
+          "updateDateTimeUtc": null,
+          "createBy": 1,
+          "updateBy": null
+      }
+  ],
+  "emergencyContacts": [
+      {
+          "emergencyContactId": 1,
+          "userId": 1,
+          "mobile": "0912554789",
+          "name": "許爸爸",
+          "relationship": "父子",
+          "ifEnable": true,
+          "createDateTimeUtc": "2024-11-06T02:19:25.963",
+          "updateDateTimeUtc": null,
+          "createBy": 1,
+          "updateBy": null
+      },
+      {
+          "emergencyContactId": 2,
+          "userId": 1,
+          "mobile": "0912554789",
+          "name": "許爸爸",
+          "relationship": "父子",
+          "ifEnable": true,
+          "createDateTimeUtc": "2024-11-06T02:45:35.107",
+          "updateDateTimeUtc": null,
+          "createBy": 1,
+          "updateBy": null
+      }
+  ],
+  "workExperiences": [
+      {
+          "workingExperienceId": 1,
+          "userId": 1,
+          "company": null,
+          "leavingReason": null,
+          "startFrom": null,
+          "endAt": null,
+          "position": null,
+          "salary": null,
+          "ifEnable": true,
+          "createDateTimeUtc": "2024-11-06T02:47:31.26",
+          "updateDateTimeUtc": null,
+          "createBy": 1,
+          "updateBy": null
+      },
+      {
+          "workingExperienceId": 2,
+          "userId": 1,
+          "company": "zxc科技公司222",
+          "leavingReason": "錢太少",
+          "startFrom": "2024-01-01T00:00:00",
+          "endAt": "2025-01-01T00:00:00",
+          "position": "前端工程師",
+          "salary": 22000,
+          "ifEnable": true,
+          "createDateTimeUtc": "2024-11-06T02:47:45.27",
+          "updateDateTimeUtc": "2024-11-06T03:32:25.22",
+          "createBy": 1,
+          "updateBy": 1
+      }
+  ],
+  "educationExperiences": [
+      {
+          "educationExperienceId": 1,
+          "userId": 1,
+          "academicDegree": "03",
+          "degreeStatus": "01",
+          "department": "化材系",
+          "name": "勤益科技大學",
+          "startFrom": "2020-09-01T00:00:00",
+          "endAt": "2025-09-10T00:00:00",
+          "ifEnable": true,
+          "createDateTimeUtc": "2024-11-06T03:03:53.65",
+          "updateDateTimeUtc": null,
+          "createBy": 1,
+          "updateBy": null
+      },
+      {
+          "educationExperienceId": 2,
+          "userId": 1,
+          "academicDegree": "02",
+          "degreeStatus": "01",
+          "department": "化材系",
+          "name": "勤益科技大學",
+          "startFrom": "2020-09-01T00:00:00",
+          "endAt": "2025-09-10T00:00:00",
+          "ifEnable": true,
+          "createDateTimeUtc": "2024-11-06T03:28:29.193",
+          "updateDateTimeUtc": null,
+          "createBy": 1,
+          "updateBy": null
+      }
+  ],
+  "userId": 1,
+  "account": "reco",
+  "pwd": null,
+  "userName": "許弘毅",
+  "sysNotes": null,
+  "loginFailedCount": null,
+  "latestTimeChangePasswordDatetimeUtc": null,
+  "bypassChangePasswordDateTimeUtc": null,
+  "blockLoginTillDateTimeUtc": null,
+  "email": "abc123@hotmail.com",
+  "department": "數位發展處",
+  "userRole": 0,
+  "arrivalDate": "2024-09-30T00:00:00",
+  "birthday": "2017-09-04T00:00:00",
+  "employeeId": "E003",
+  "homePhone": "03-3254845",
+  "idCardBackImageUrl": "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2Fimages%20(1).jpg?alt=media&token=e0c64420-2028-4276-bc00-d0886e77bbed",
+  "idCardFrontImageUrl": "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2Fimages%20(1).jpg?alt=media&token=3e759810-c170-42dc-a16a-5c76715dbb34",
+  "idNumber": "F123456789",
+  "maritalStatus": "未婚",
+  "phone": "0923547896",
+  "positionTitle": "開發人員",
+  "profileImageUrl": "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2F%E8%87%AA%E4%BF%A1%E5%BC%8F.jpg?alt=media&token=a630c06d-673e-4953-b824-a66d6bc302df",
+  "sex": "01",
+  "bankAccount": "4564654654564",
+  "bankName": "南崁分行",
+  "ifEnable": true,
+  "createDateTimeUtc": "2024-11-04T02:45:27.44",
+  "updateDateTimeUtc": "2024-11-06T03:32:25.073",
+  "createBy": -1,
+  "updateBy": 1,
+  "mailingAddress":"桃園市蘆竹區",
+  "mailingPostalCode":"033",
+  "residenceAddress":"桃園市蘆竹區",
+  "residencePostalCode":"033"
+}

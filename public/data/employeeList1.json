@@ -1,0 +1,42 @@
+[
+    {   
+        "userId": "01",
+        "role": "1",
+        "userName": "夏天恩",
+        "employeeId":"E001",
+        "department":"03",
+        "professionalLicense":["GIS工程師"]
+    },
+    {
+        "userId": "02",
+        "role": "3",
+        "userName": "倪佩君",
+        "employeeId":"E002",
+        "department":"09",
+        "professionalLicense":["系統分析師 (CSM)"]
+    },
+    {
+        "userId": "03",
+        "role": "1",
+        "userName": "許弘毅",
+        "employeeId":"E003",
+        "department":"08",
+        "professionalLicense":["系統分析師 (CSM)"]
+    },
+    {
+        "userId": "04",
+        "role": "2",
+        "userName": "康文龍",
+        "employeeId":"E004",
+        "department":"08",
+        "professionalLicense":["資料庫管理師 (Oracle Certified Professional)","雲端架構師 (AWS Certified Solutions Architect)"]
+    },
+    {
+        "userId": "05",
+        "role": "1",
+        "userName": "戴源里",
+        "employeeId":"E005",
+        "department":"08",
+        "professionalLicense":["資訊安全管理師 (CISSP)"]
+    }
+]

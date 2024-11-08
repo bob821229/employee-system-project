@@ -7,24 +7,26 @@
         </div>
       </template>
       <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="auto" class="demo-ruleForm">
-        <el-form-item label="帳號" prop="account" label-position="top">
-          <el-input v-model="ruleForm.account" autocomplete="off" clearable />
+        <el-form-item label="信箱" prop="email" label-position="top">
+          <el-input v-model="ruleForm.email" autocomplete="off" clearable />
         </el-form-item>
         <el-form-item label="密碼" prop="password" label-position="top">
           <el-input v-model="ruleForm.password" type="password" autocomplete="off" show-password />
         </el-form-item>
-        <!-- <el-form-item label="Confirm" prop="checkPass" label-position="top">
-          <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" />
-        </el-form-item> -->
+        <el-form-item label="" label-position="top">
+          <el-checkbox v-model="rememberMe" label="記住我" />
+        </el-form-item>
         <!-- {{ key }}<br> -->
-        <!-- name:{{ userN }} -->
         <div style="display: flex; justify-content: center;margin-top: 50px;">
           <div>
-            <el-button type="primary" @click="submitForm(ruleFormRef)">
+            <!-- <el-button type="primary" @click="submitForm(ruleFormRef)">
+              登入
+            </el-button> -->
+            <el-button type="primary" @click="login(ruleFormRef)">
               登入
             </el-button>
             <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-            <el-button @click="addItem()">新增</el-button>
+            <el-button @click="addItem()" v-if="false">新增</el-button>
           </div>
         </div>
       </el-form>
@@ -32,20 +34,20 @@
   </div>
 </template>
 <script setup>
-import { reactive, ref, computed } from 'vue'
+import { reactive, ref, computed, onMounted } from 'vue'
 import { useEmployeeStore } from '../stores/employee';
 import { ElMessage } from 'element-plus';
 import { db } from '../api/firebaseConfig';
 import {
   getDatabase, ref as dbRef, onValue, push as dbPush, remove, query, equalTo, orderByChild, set
 } from 'firebase/database';
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
+import { getLoginStatus,getProfile} from '../api/api';
 const router = useRouter();
 const employeeStore = useEmployeeStore();
 const ruleFormRef = ref()
-
-const userN = ref({})
-
+//記住我選項
+const rememberMe = ref(false)
 let obj = ref({
   key: 'abc789789',//帳號+密碼
   userName: '倪佩君',//用戶名
@@ -143,30 +145,40 @@ let obj = ref({
     ],//歷年計畫
   },//個人簡歷
 })
-
-
+onMounted(() => {
+  // 檢查是否有保存的帳號
+  checkLocalStorage()
+})
 //新增人員
 const addItem = () => {
-
-  // const itemsRef = dbRef(db, 'employees');
   const itemsRef = dbRef(db, 'users');
   dbPush(itemsRef, obj.value);
 };
-
+// 檢查是否有保存的帳號
+const checkLocalStorage=()=>{
+  const savedUserAccount = localStorage.getItem('savedUserAccount');
+  
+  // 如果有保存的帳號，則自動填充到表單中
+  if (savedUserAccount) {
+    ruleForm.value.email = savedUserAccount; // 自動填充帳號
+  }
+}
+//登入表單
 const ruleForm = ref({
-  account: '',//帳號
+  email: '',//帳號
   password: '',//密碼
 })
+// 帳號+密碼模擬登入(firebase用)
 const key = computed(() => {
-  return ruleForm.value.account + ruleForm.value.password
+  return ruleForm.value.email + ruleForm.value.password
 })
+// 表單驗證規則
 const rules = reactive({
-  account: [{ required: true, message: '請輸入帳號', trigger: 'blur' }],
+  email: [{ required: true, type: 'email', message: '請輸入正確的信箱', trigger: 'blur' }],
   password: [{ required: true, message: '請輸入密碼', trigger: 'blur' }]
 })
-
+// 登入(firebase用)
 const submitForm = (formEl) => {
-
   if (!formEl) return;
   formEl.validate((valid) => {
     if (valid) {
@@ -180,6 +192,15 @@ const submitForm = (formEl) => {
           const keys = Object.keys(data);
 
           if (keys.length > 0) {
+            // ========以下存取帳號==========
+            if (rememberMe.value) {
+              // 把信箱存到 localStorage
+              localStorage.setItem('savedUserAccount', ruleForm.value.email);
+            } else {
+              // 把 localStorage 中的帳號刪除
+              localStorage.removeItem('savedUserAccount');
+            }
+            // =============================
             const firstKey = keys[0];
             console.log(firstKey); // 這裡的 firstKey 就是 "-O3poUk0gA8ZdgKDFpIp"
 
@@ -187,8 +208,8 @@ const submitForm = (formEl) => {
             const firstItem = data[firstKey];
             firstItem.firebaseKey = firstKey;
             console.log(firstItem); // 這裡的 firstItem 是該 key 對應的資料
-            // userN.value = firstItem
             let role = firstItem.role;
+            console.log("使用者資訊:", firstItem);
             employeeStore.setUserInfo(firstItem)
 
             if (role === '2' || role === '3') {
@@ -212,9 +233,73 @@ const submitForm = (formEl) => {
     }
   });
 };
-
+//登入
+const login=async (formEl)=>{
+  if (!formEl) return;
+  formEl.validate(async(valid) => {
+      if (valid) {
+        try {
+        // const response= await getLoginStatus()
+        let params={
+          id: ruleForm.value.email,
+          key: ruleForm.value.password
+        }
+        // const response= await testApi(loginFailed)
+        const response= await getLoginStatus(params)
+        console.log("登入狀態:",response.data)
+        if (!response.data.success) {
+          ElMessage({
+          message: response.data.message,
+          type: 'error',
+          });
+        }else{
+          //取得員工資料
+          // const employeeData = await testApi('userInfo1.json')
+           //存取帳號
+          savedUserAccount()
+          // const employeeData = await testApi('userInfo3.json')
+          const employeeData = response.data
+          // const employeeData = await testApi('userInfo3.json')
+          console.log("員工資料:",employeeData.data)
+          let role=employeeData.data.role
+          employeeStore.setUserInfo(employeeData.data)
+          if (role === '2' || role === '3') {
+            router.push('/employeeList');
+          } else if (role === '1') {
+              const basicInf = await getProfile()
+              console.log("基本資料:",basicInf.data)
+              employeeStore.setTmpBasicInformation(basicInf.data)
+              router.push('/form');
+            } else {
+              router.push('/login');
+            }
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    } else {
+      //驗證失敗
+      ElMessage({
+        message: '驗證失敗，請檢查輸入',
+        type: 'error',
+      });
+    }
+  });
+  
+}
+const savedUserAccount=()=>{
+   // ========以下存取帳號==========
+    if (rememberMe.value) {
+      // 把信箱存到 localStorage
+      localStorage.setItem('savedUserAccount', ruleForm.value.email);
+    } else {
+      // 把 localStorage 中的帳號刪除
+      localStorage.removeItem('savedUserAccount');
+    }
+}
+// 重製表格
 const resetForm = (formEl) => {
-  ruleForm.value.account = ''
+  ruleForm.value.email = ''
   ruleForm.value.password = ''
   if (!formEl) return
   formEl.resetFields()

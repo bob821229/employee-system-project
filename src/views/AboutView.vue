@@ -10,7 +10,7 @@
                 </el-col>
                 <el-col :sm="24" :md="12" :lg="6">
                     <el-form-item label="姓名">
-                        <el-input v-model="curriculumVitae.name" placeholder="請輸入姓名" />
+                        <el-input v-model="curriculumVitae.userName" placeholder="請輸入姓名" />
                     </el-form-item>
                 </el-col>
                 <el-col :sm="24" :md="12" :lg="6">
@@ -19,14 +19,27 @@
                     </el-form-item>
                 </el-col>
                 <el-col :sm="24" :md="12" :lg="6">
-                    <el-form-item label="專長">
-                        <el-input v-model="curriculumVitae.expertise" placeholder="請輸入專長" />
-                    </el-form-item>
+                    <!-- <el-form-item label="專長">
+                        <el-input v-model="curriculumVitae.computerExpertise" placeholder="請輸入專長" />
+                    </el-form-item> -->
+                    <el-form-item label="特殊專長">
+                    <el-select v-model="curriculumVitae.computerExpertise" placeholder="選擇特殊專長" multiple filterable
+                        allow-create default-first-option :reserve-keyword="false">
+                        <el-option v-for="d in options.expertiseList" :key="d.value" :label="d.text" :value="d.text" />
+                    </el-select>
+                </el-form-item>
                 </el-col>
                 <el-col :sm="24" :md="12" :lg="6">
-                    <el-form-item label="專業證照">
+                    <!-- <el-form-item label="專業證照">
                         <el-input v-model="curriculumVitae.professionalLicense" placeholder="請輸入專業證照" />
-                    </el-form-item>
+                    </el-form-item> -->
+                    <el-form-item label="專業證照">
+                    <!-- <el-input v-model="currentData.professionalLicense" placeholder="請輸入專業證照" /> -->
+                    <el-select v-model="curriculumVitae.professionalLicense" placeholder="請輸入專業證照" multiple filterable
+                        allow-create default-first-option :reserve-keyword="false">
+                        <el-option v-for="d in options.professionalLicenseList" :key="d.value" :label="d.text" :value="d.text" />
+                    </el-select>
+                </el-form-item>
                 </el-col>
 
                 <el-col :span="24">
@@ -38,7 +51,7 @@
 
                     <el-form-item>
                         <el-row style="width: 100%;" :gutter="10"
-                            v-for="(item, index) in curriculumVitae.workExperience" :key="index"
+                            v-for="(item, index) in curriculumVitae.workExperiences" :key="index"
                             class="work-experience-item">
                             <el-col :span="6">
                                 <el-form-item label="單位">
@@ -51,7 +64,18 @@
                                 </el-form-item>
                             </el-col>
                             <el-col :span="9">
-                                <el-form-item label="起訖年月">
+                                <el-form-item label="起訖年月" :prop="'workExperiences.' + index + '.period'" :rules="{
+                                    type: 'array',
+                                    required: true,
+                                    trigger: 'change',
+                                    validator: (rule, value, callback) => {
+                                        if (value && value.length === 2 && value[0] !== null && value[1] !== null) {
+                                            callback();
+                                        } else {
+                                            callback(new Error('請選擇有效的起訖年月'));
+                                        }
+                                    }
+                                }">
                                     <el-date-picker v-model="item.period" type="monthrange" range-separator="至"
                                         start-placeholder="開始年月" end-placeholder="結束年月" format="YYYY-MM"
                                         value-format="YYYY-MM" />
@@ -75,22 +99,21 @@
                 </el-col>
 
                 <el-col :span="24">
-
                     <el-form-item>
                         <el-row style="width: 100%;" :gutter="10"
                             v-for="(item, index) in curriculumVitae.annualPublications" :key="index"
                             class="work-experience-item">
                             <el-col :span="4">
                                 <el-form-item label="類型">
-                                    <el-select v-model="item.category" placeholder="選擇類型" :multiple="false" filterable
+                                    <el-select v-model="item.paperType" placeholder="選擇類型" :multiple="false" filterable
                                         allow-create default-first-option :reserve-keyword="false">
-                                        <el-option v-for="c in categorys" :key="c" :label="c" :value="c" />
+                                        <el-option v-for="t in options.paperTypeList" :key="t.value" :label="t.text" :value="t.value" />
                                     </el-select>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="4">
                                 <el-form-item label="時間">
-                                    <el-date-picker v-model="item.period" type="month" value-format="YYYY-MM"
+                                    <el-date-picker v-model="item.issueDate" type="month" value-format="YYYY-MM"
                                         format="YYYY-MM" placeholder="時間" />
                                 </el-form-item>
                             </el-col>
@@ -124,11 +147,22 @@
                             class="work-experience-item">
                             <el-col :span="4">
                                 <el-form-item label="委託單位">
-                                    <el-input v-model="item.sponsorUnit" placeholder="請輸入委託單位" />
+                                    <el-input v-model="item.customer" placeholder="請輸入委託單位" />
                                 </el-form-item>
                             </el-col>
                             <el-col :span="9">
-                                <el-form-item label="起訖年月">
+                                <el-form-item label="起訖年月" :prop="'annualProjects.' + index + '.period'" :rules="{
+                                    type: 'array',
+                                    required: true,
+                                    trigger: 'change',
+                                    validator: (rule, value, callback) => {
+                                        if (value && value.length === 2 && value[0] !== null && value[1] !== null) {
+                                            callback();
+                                        } else {
+                                            callback(new Error('請選擇有效的起訖年月'));
+                                        }
+                                    }
+                                }">
                                     <el-date-picker v-model="item.period" type="monthrange" range-separator="至"
                                         start-placeholder="開始年月" end-placeholder="結束年月" format="YYYY-MM"
                                         value-format="YYYY-MM" />
@@ -164,18 +198,18 @@ import {
     getDatabase, ref as dbRef, push, onValue, remove, query, equalTo, orderByChild, set
 } from 'firebase/database';
 import { useEmployeeStore } from '../stores/employee';
+import { getOptions,saveProfile} from '../api/api';
 const employeeStore = useEmployeeStore();
 const role = ref(employeeStore.getUserInfo.role)
-const curriculumVitae = ref(employeeStore.tmpUserInfo.curriculumVitae);
+const curriculumVitae = ref(employeeStore.tmpCurriculumVitae);
 const checkUser = computed(() => {
-    return curriculumVitae.value.name === employeeStore.getUserInfo.userName || employeeStore.getUserInfo.role == '3'
+    return curriculumVitae.value.userId == employeeStore.getUserInfo.userId || employeeStore.getUserInfo.role == '3'
 })
-//類別列表
-const categorys = ref(['博士論文', '碩士論文', '期刊', '研討會論文', '其他'])
+
 
 // 新增經歷
 const addWorkExperience = () => {
-    curriculumVitae.value.workExperience.push({
+    curriculumVitae.value.workExperiences.push({
         company: "",//公司名稱
         position: "",//職務名稱
         period: null//服務起訖年月
@@ -184,19 +218,19 @@ const addWorkExperience = () => {
 // 移除經歷
 const removeWorkExperience = (index) => {
     const minWorkExperience = 1;
-    if (curriculumVitae.value.workExperience.length <= minWorkExperience) {
+    if (curriculumVitae.value.workExperiences.length <= minWorkExperience) {
         alert("最少一筆");
         return;
     }
-    curriculumVitae.value.workExperience.splice(index, 1);
+    curriculumVitae.value.workExperiences.splice(index, 1);
 };
 // 新增歷年著作
 const addAnnualPublications = () => {
     curriculumVitae.value.annualPublications.push({
-        category: '',//類型
-        date: '',//時間
-        name: ''//名稱
-    });
+        paperType:null,
+        date: null,
+        name: null
+      });
 };
 
 // 移除歷年著作
@@ -211,10 +245,10 @@ const removeAnnualPublications = (index) => {
 // 新增歷年計畫
 const addAnnualProjects = () => {
     curriculumVitae.value.annualProjects.push({
-        sponsorUnit: '',//委託單位
-        period: null,//起訖時間
-        projectName: ''//計畫名稱
-    });
+        customer: null,
+        projectName: null,
+        period:[null,null]
+      });
 };
 
 // 移除歷年計畫
@@ -226,10 +260,6 @@ const removeAnnualProjects = (index) => {
     }
     curriculumVitae.value.annualProjects.splice(index, 1);
 };
-// const updateData = () => {
-//     let keyId = curriculumVitae.value.key
-//     set(dbRef(db, `curriculumVitaes/${keyId}`), curriculumVitae.value);
-// }
 // 更新資料
 const updateData = () => {
     let firebaseKey = employeeStore.tmpUserInfo.firebaseKey
@@ -245,8 +275,57 @@ const updateData = () => {
     }
     set(dbRef(db, `users/${firebaseKey}`), employeeStore.tmpUserInfo);
 }
+// 下拉清單
+const options=ref({   
+    "departmentList": [
+        { "text": "研究一所", "value": "研究一所" }
+    ],    
+    "sexList":[
+        { "text": "男", "value": "男" }
+    ],
+    "positionTitleList": [
+        { "text": "開發人員", "value": "開發人員" }
+    ],
+    "specialStatuList": [
+        { "text": "原住民", "value": "原住民" }
+    ],
+    "drvingLicenseList":[
+        { "text": "無", "value": "無" }
+    ],
+    "maritalStatusList":[
+        { "text": "未婚", "value": "未婚" }
+    ],
+    "academicDegreeList":[
+        { "text": "博士", "value": "博士" }
+    ],
+    "graduateStatusList":[
+        { "text": "畢業", "value": "畢業" }
+    ],
+    "languageList": [
+        { "text": "國語", "value": "國語" }
+    ],
+    "expertiseList": [
+        { "text": "Word", "value": "Word" }
+    ],
+    "professionalLicenseList": [
+        { "text": "系統分析師 (CSM)", "value": "系統分析師 (CSM)" }
+    ],
+    "paperTypeList":[
+        { "text": "博士論文", "value": "博士論文" }
+    ]
+})
+//取得下拉選單
+async function fetchOptions(){
+  try {
+    const result = await getOptions()
+    options.value= result.data
+
+  } catch (error) {
+    console.log(error)
+  }
+}
 onMounted(() => {
-    // fetchItems();
+    fetchOptions()
 })
 </script>
 <style scoped lang="scss">
