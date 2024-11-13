@@ -7,11 +7,11 @@
         </div>
       </template>
       <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="auto" class="demo-ruleForm">
-        <el-form-item label="信箱" prop="email" label-position="top">
-          <el-input v-model="ruleForm.email" autocomplete="off" clearable />
+        <el-form-item label="網域帳號" prop="email" label-position="top">
+          <el-input v-model="ruleForm.email" autocomplete="off" clearable @keyup.enter="login(ruleFormRef)"/>
         </el-form-item>
         <el-form-item label="密碼" prop="password" label-position="top">
-          <el-input v-model="ruleForm.password" type="password" autocomplete="off" show-password />
+          <el-input v-model="ruleForm.password" type="password" autocomplete="off" show-password @keyup.enter="login(ruleFormRef)"/>
         </el-form-item>
         <el-form-item label="" label-position="top">
           <el-checkbox v-model="rememberMe" label="記住我" />
@@ -34,7 +34,7 @@
   </div>
 </template>
 <script setup>
-import { reactive, ref, computed, onMounted } from 'vue'
+import { reactive, ref, computed, onMounted,inject } from 'vue'
 import { useEmployeeStore } from '../stores/employee';
 import { ElMessage } from 'element-plus';
 import { db } from '../api/firebaseConfig';
@@ -42,7 +42,9 @@ import {
   getDatabase, ref as dbRef, onValue, push as dbPush, remove, query, equalTo, orderByChild, set
 } from 'firebase/database';
 import { useRouter } from 'vue-router';
-import { getLoginStatus,getProfile} from '../api/api';
+import { apiLogin,apiGetProfile} from '../api/api';
+//引用dayjs
+const dayjs = inject('dayjs')
 const router = useRouter();
 const employeeStore = useEmployeeStore();
 const ruleFormRef = ref()
@@ -174,7 +176,7 @@ const key = computed(() => {
 })
 // 表單驗證規則
 const rules = reactive({
-  email: [{ required: true, type: 'email', message: '請輸入正確的信箱', trigger: 'blur' }],
+  email: [{ required: true, message: '請輸入正確的網域帳號', trigger: 'blur' }],
   password: [{ required: true, message: '請輸入密碼', trigger: 'blur' }]
 })
 // 登入(firebase用)
@@ -239,13 +241,13 @@ const login=async (formEl)=>{
   formEl.validate(async(valid) => {
       if (valid) {
         try {
-        // const response= await getLoginStatus()
+        // const response= await apiLogin()
         let params={
           id: ruleForm.value.email,
           key: ruleForm.value.password
         }
         // const response= await testApi(loginFailed)
-        const response= await getLoginStatus(params)
+        const response= await apiLogin(params)
         console.log("登入狀態:",response.data)
         if (!response.data.success) {
           ElMessage({
@@ -266,10 +268,11 @@ const login=async (formEl)=>{
           if (role === '2' || role === '3') {
             router.push('/employeeList');
           } else if (role === '1') {
-              const basicInf = await getProfile()
-              console.log("基本資料:",basicInf.data)
-              employeeStore.setTmpBasicInformation(basicInf.data)
-              router.push('/form');
+            const result=await apiGetProfile()
+        let formatData=dataFormatHandle(result.data)
+        console.log("整理後e資料表:",formatData)
+        employeeStore.setTmpBasicInformation(formatData)
+        router.push('/form');
             } else {
               router.push('/login');
             }
@@ -303,6 +306,85 @@ const resetForm = (formEl) => {
   ruleForm.value.password = ''
   if (!formEl) return
   formEl.resetFields()
+}
+//把資料轉換成頁面要用的結構
+// 人員資料表資料格式化
+function dataFormatHandle(data){
+        //到職日格式化
+        data.arrivalDate=dayjs(data.arrivalDate).format('YYYY-MM-DD')
+        //到職日格式化
+        data.birthday=dayjs(data.birthday).format('YYYY-MM-DD')
+        //緊急聯絡人格式化
+        if(data.emergencyContacts.length==0){
+            data.emergencyContacts.push({
+                mobile: null,//緊急聯絡人手機
+                name: null,//緊急聯絡人名稱
+                phone: null,//緊急聯絡人電話
+                relationship: null,//緊急聯絡人關係
+            })
+            
+        }
+        // 工作經歷格式化
+        data.workExperiences.forEach((item) =>{
+            let startDate=dayjs(item.startFrom).format('YYYY-MM')
+            let endDate=dayjs(item.endAt).format('YYYY-MM')
+            item.period=[startDate,endDate]
+        })
+        if(data.workExperiences.length==0){
+            data.workExperiences.push({
+            company:null,
+            leavingReason: null,
+            position: null,
+            salary: null,
+            period:[null,null]
+        })
+        }
+        //教育經歷格式化
+        data.educationExperiences.forEach((item) =>{
+            let startDate=dayjs(item.startFrom).format('YYYY-MM')
+            let endDate=dayjs(item.endAt).format('YYYY-MM')
+            item.period=[startDate,endDate]
+        })
+        if(data.educationExperiences.length==0){
+            data.educationExperiences.push({
+            academicDegree:null,
+            degreeStatus:null,
+            department:null,
+            name:null,
+            period:[null,null]
+        })
+        }
+        //駕照格式化
+        if(data.drvingLicense.length>0){
+            const arr = data.drvingLicense.map(item => item.text);
+            console.log("整理後e資料表駕照:", arr);
+            data.drvingLicense = arr;
+        }
+        //特殊身分格式化
+        if(data.specialStatus.length>0){
+            const arr = data.specialStatus.map(item => item.text);
+            console.log("整理後e資料表身分:", arr);
+            data.specialStatus = arr;
+        }
+        //語言格式化
+        if(data.languages.length>0){
+            const arr = data.languages.map(item => item.text);
+            console.log("整理後e資料表語言:", arr);
+            data.languages = arr;
+        }
+        //特殊專長格式化
+        if(data.computerExpertise.length>0){
+            const arr = data.computerExpertise.map(item => item.text);
+            console.log("整理後e資料表專長:", arr);
+            data.computerExpertise = arr;
+        }
+        //專業證照格式化
+        if(data.professionalLicense.length>0){
+            const arr = data.professionalLicense.map(item => item.text);
+            console.log("整理後e資料表證照:", arr);
+            data.professionalLicense = arr;
+        }
+        return data
 }
 </script>
 

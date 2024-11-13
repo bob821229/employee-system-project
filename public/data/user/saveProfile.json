@@ -1,0 +1,253 @@
+{
+    "computerExpertise": [
+        {
+            "userPropertyId": 94,
+            "userId": 1,
+            "codeType": "experties",
+            "codeNo": "01",
+            "newText": null,
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-06T05:19:19.083",
+            "updateDateTimeUtc": null,
+            "createBy": 1,
+            "updateBy": null
+        },
+        {
+            "userPropertyId": 95,
+            "userId": 1,
+            "codeType": "experties",
+            "codeNo": "02",
+            "newText": null,
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-06T05:19:19.163",
+            "updateDateTimeUtc": null,
+            "createBy": 1,
+            "updateBy": null
+        }
+    ],
+    "drvingLicense": [
+        {
+            "userPropertyId": 96,
+            "userId": 1,
+            "codeType": "drvingLicense",
+            "codeNo": "01",
+            "newText": null,
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-06T05:19:19.317",
+            "updateDateTimeUtc": null,
+            "createBy": 1,
+            "updateBy": null
+        },
+        {
+            "userPropertyId": 97,
+            "userId": 1,
+            "codeType": "drvingLicense",
+            "codeNo": "02",
+            "newText": null,
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-06T05:19:19.393",
+            "updateDateTimeUtc": null,
+            "createBy": 1,
+            "updateBy": null
+        },
+        {
+            "userPropertyId": 98,
+            "userId": 1,
+            "codeType": "drvingLicense",
+            "codeNo": "drvingLicense-20241106051919",
+            "newText": "直升機",
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-06T05:19:19.667",
+            "updateDateTimeUtc": null,
+            "createBy": 1,
+            "updateBy": null
+        }
+    ],
+    "languages": [
+        {
+            "userPropertyId": 100,
+            "userId": 1,
+            "codeType": "language",
+            "codeNo": "01",
+            "newText": null,
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-06T05:19:19.973",
+            "updateDateTimeUtc": null,
+            "createBy": 1,
+            "updateBy": null
+        },
+        {
+            "userPropertyId": 101,
+            "userId": 1,
+            "codeType": "language",
+            "codeNo": "03",
+            "newText": null,
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-06T05:19:20.05",
+            "updateDateTimeUtc": null,
+            "createBy": 1,
+            "updateBy": null
+        }
+    ],
+    "professionalLicense": [
+        {
+            "userPropertyId": 102,
+            "userId": 1,
+            "codeType": "professionalLicense",
+            "codeNo": "02",
+            "newText": null,
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-06T05:19:20.197",
+            "updateDateTimeUtc": null,
+            "createBy": 1,
+            "updateBy": null
+        },
+        {
+            "userPropertyId": 103,
+            "userId": 1,
+            "codeType": "professionalLicense",
+            "codeNo": "professionalLicense-20241106051920",
+            "newText": "資安稽查員",
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-06T05:19:20.42",
+            "updateDateTimeUtc": null,
+            "createBy": 1,
+            "updateBy": null
+        }
+    ],
+    "specialStatus": [
+        {
+            "userPropertyId": 99,
+            "userId": 1,
+            "codeType": "specialStatu",
+            "codeNo": "01",
+            "newText": null,
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-06T05:19:19.817",
+            "updateDateTimeUtc": null,
+            "createBy": 1,
+            "updateBy": null
+        }
+    ],
+    "emergencyContacts": [
+        {
+            "emergencyContactId": 1,
+            "userId": 1,
+            "mobile": "0912554789",
+            "name": "許爸爸",
+            "relationship": "父子",
+            "ifEnable": null,
+            "createDateTimeUtc": null,
+            "updateDateTimeUtc": "2024-11-06T05:19:16.849814Z",
+            "createBy": null,
+            "updateBy": 1
+        },
+        {
+            "emergencyContactId": 2,
+            "userId": 1,
+            "mobile": "0912554789",
+            "name": "許大姐",
+            "relationship": "姐弟",
+            "ifEnable": null,
+            "createDateTimeUtc": null,
+            "updateDateTimeUtc": "2024-11-06T05:19:17.353036Z",
+            "createBy": null,
+            "updateBy": 1
+        }
+    ],
+    "workExperiences": [
+        {
+            "workingExperienceId": 2,
+            "userId": 1,
+            "company": "zxc科技公司222",
+            "leavingReason": "錢太少",
+            "startFrom": "2024-01-01T00:00:00",
+            "endAt": "2025-01-01T00:00:00",
+            "position": "前端工程師",
+            "salary": 22000,
+            "ifEnable": null,
+            "createDateTimeUtc": null,
+            "updateDateTimeUtc": "2024-11-06T05:19:17.666472Z",
+            "createBy": null,
+            "updateBy": 1
+        },
+        {
+            "workingExperienceId": 1,
+            "userId": 1,
+            "company": "abc科技公司",
+            "leavingReason": "錢太少2",
+            "startFrom": "2022-01-01T00:00:00",
+            "endAt": "2024-01-01T00:00:00",
+            "position": "前端工程師",
+            "salary": 18000,
+            "ifEnable": null,
+            "createDateTimeUtc": null,
+            "updateDateTimeUtc": "2024-11-06T05:19:17.986564Z",
+            "createBy": null,
+            "updateBy": 1
+        }
+    ],
+    "educationExperiences": [
+        {
+            "educationExperienceId": 1,
+            "userId": 1,
+            "academicDegree": "03",
+            "degreeStatus": "01",
+            "department": "化材系",
+            "name": "勤益科技大學",
+            "startFrom": "2020-09-01T00:00:00",
+            "endAt": "2025-09-10T00:00:00",
+            "ifEnable": null,
+            "createDateTimeUtc": null,
+            "updateDateTimeUtc": "2024-11-06T05:19:18.282449Z",
+            "createBy": null,
+            "updateBy": 1
+        },
+        {
+            "educationExperienceId": 2,
+            "userId": 1,
+            "academicDegree": "02",
+            "degreeStatus": "01",
+            "department": "化材系研究所",
+            "name": "勤益科技大學",
+            "startFrom": "2024-09-01T00:00:00",
+            "endAt": "2025-09-10T00:00:00",
+            "ifEnable": null,
+            "createDateTimeUtc": null,
+            "updateDateTimeUtc": "2024-11-06T05:19:18.604133Z",
+            "createBy": null,
+            "updateBy": 1
+        }
+    ],
+    "userId": 1,
+    "account": null,
+    "pwd": null,
+    "userName": "許弘毅",
+    "sysNotes": null,
+    "loginFailedCount": null,
+    "latestTimeChangePasswordDatetimeUtc": null,
+    "bypassChangePasswordDateTimeUtc": null,
+    "blockLoginTillDateTimeUtc": null,
+    "email": "abc123@hotmail.com",
+    "department": "數位發展處",
+    "userRole": 0,
+    "arrivalDate": "2024-09-30T00:00:00",
+    "birthday": "2017-09-04T00:00:00",
+    "employeeId": "E003",
+    "homePhone": "03-3254845",
+    "idCardBackImageUrl": "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2Fimages%20(1).jpg?alt=media&token=e0c64420-2028-4276-bc00-d0886e77bbed",
+    "idCardFrontImageUrl": "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2Fimages%20(1).jpg?alt=media&token=3e759810-c170-42dc-a16a-5c76715dbb34",
+    "idNumber": "F123456789",
+    "maritalStatus": "未婚",
+    "phone": "0923547896",
+    "positionTitle": "開發人員",
+    "profileImageUrl": "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2F%E8%87%AA%E4%BF%A1%E5%BC%8F.jpg?alt=media&token=a630c06d-673e-4953-b824-a66d6bc302df",
+    "sex": "男",
+    "bankAccount": "4564654654564",
+    "bankName": "南崁分行",
+    "ifEnable": null,
+    "createDateTimeUtc": null,
+    "updateDateTimeUtc": "2024-11-06T05:19:15.906591Z",
+    "createBy": null,
+    "updateBy": 1
+}

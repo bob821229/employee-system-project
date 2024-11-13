@@ -1,0 +1,127 @@
+{
+    "userId": 1,
+    "userName": "康文龍",
+    "annualProjects": [
+        {
+            "rid": 1,
+            "userId": 1,
+            "customer": "林務局",
+            "projectName": "113年阿里山稀有植物調查",
+            "startFrom": "2024-09-01T00:00:00",
+            "endAt": "2024-10-01T00:00:00",
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-08T07:18:29.177",
+            "updateDateTimeUtc": "2024-11-08T07:53:42.61",
+            "createBy": 1,
+            "updateBy": 1
+        },
+        {
+            "rid": 3,
+            "userId": 1,
+            "customer": "動保會",
+            "projectName": "112年高山地區稀有動作調查",
+            "startFrom": "2024-09-01T00:00:00",
+            "endAt": "2024-10-01T00:00:00",
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-08T07:21:22.427",
+            "updateDateTimeUtc": null,
+            "createBy": 1,
+            "updateBy": null
+        }
+    ],
+    "annualPublications": [
+        {
+            "rid": 1,
+            "userId": 1,
+            "paperType": "01",
+            "issueDate": "2020-09-01T00:00:00",
+            "name": "112年嘉屏地區一期作旱作種植調查報告及建議2",
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-08T07:18:29.34",
+            "updateDateTimeUtc": "2024-11-08T07:53:43.29",
+            "createBy": 1,
+            "updateBy": 1
+        },
+        {
+            "rid": 2,
+            "userId": 1,
+            "paperType": "02",
+            "issueDate": "2019-09-01T00:00:00",
+            "name": "108年嘉屏地區一期作旱作種植調查報告及建議1",
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-08T07:21:22.803",
+            "updateDateTimeUtc": null,
+            "createBy": 1,
+            "updateBy": null
+        }
+    ],
+    "highestEducation": {
+        "academicDegreeCaption": "學士",
+        "degreeStatusCaption": "畢業",
+        "rid": 1,
+        "userId": 1,
+        "academicDegree": "03",
+        "degreeStatus": "01",
+        "department": "化材系",
+        "name": "勤益科技大學2",
+        "startFrom": "2024-02-01T00:00:00",
+        "endAt": "2024-03-01T00:00:00",
+        "ifEnable": true,
+        "createDateTimeUtc": "2024-11-06T03:03:53.65",
+        "updateDateTimeUtc": "2024-11-08T09:14:32.79",
+        "createBy": 1,
+        "updateBy": 1
+    },
+    "professionalLicense": [
+        {
+            "text": "系統分析師 (CSM)",
+            "value": "01"
+        },
+        {
+            "text": "資訊安全管理師 (CISSP)",
+            "value": "04"
+        }
+    ],
+    "workExperiences": [
+        {
+            "rid": 1,
+            "userId": 1,
+            "company": "zyx",
+            "leavingReason": "錢太少2",
+            "startFrom": "2020-01-01T00:00:00",
+            "endAt": "2021-06-01T00:00:00",
+            "position": "RD",
+            "salary": 10000,
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-06T02:47:31.26",
+            "updateDateTimeUtc": "2024-11-08T09:14:32.007",
+            "createBy": 1,
+            "updateBy": 1
+        },
+        {
+            "rid": 3,
+            "userId": 1,
+            "company": "OOOO",
+            "leavingReason": "dlijerlij",
+            "startFrom": "2024-11-01T00:00:00",
+            "endAt": "2025-04-01T00:00:00",
+            "position": "aldskjfl",
+            "salary": 102939,
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-08T08:32:03.303",
+            "updateDateTimeUtc": "2024-11-08T09:14:32.533",
+            "createBy": 1,
+            "updateBy": 1
+        }
+    ],
+    "computerExpertise": [
+        {
+            "text": "Word",
+            "value": "01"
+        },
+        {
+            "text": "Visio",
+            "value": "04"
+        }
+    ]
+}

@@ -14,16 +14,22 @@
             <!-- 人員編號 -->
             <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="人員編號" prop="employeeId">
-                    <el-input v-model="currentData.employeeId" placeholder="請輸入編號" />
+                    <el-input v-model="currentData.employeeId" placeholder="請輸入編號" :disabled="!isHRUser"/>
                 </el-form-item>
             </el-col>
 
             <!-- 部門   -->
             <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="部門" prop="department">
-                    <el-select v-model="currentData.department" placeholder="請選擇部門">
+                    <el-select v-model="currentData.department" placeholder="請選擇部門" :disabled="!isHRUser">
                         <el-option v-for="d in options.departmentList" :key="d.value" :label="d.text" :value="d.value" />
                     </el-select>
+                </el-form-item>
+            </el-col>
+            <!-- 信箱 -->
+            <el-col :sm="24" :md="12" :lg="6">
+                <el-form-item label="信箱" prop="email" >
+                    <el-input v-model="currentData.email" placeholder="請輸入信箱" :disabled="!isHRUser" />
                 </el-form-item>
             </el-col>
             <!-- 到職日 -->
@@ -33,12 +39,7 @@
                         placeholder="請選擇到職日" format="YYYY/MM/DD" value-format="YYYY-MM-DD" />
                 </el-form-item>
             </el-col>
-            <!-- 信箱 -->
-            <el-col :sm="24" :md="12" :lg="6">
-                <el-form-item label="信箱" prop="email">
-                    <el-input v-model="currentData.email" placeholder="請輸入信箱" />
-                </el-form-item>
-            </el-col>
+
             <!-- 姓名 -->
             <el-col :sm="24" :md="12" :lg="6">
                 <el-form-item label="姓名" prop="userName">
@@ -121,10 +122,9 @@
                 </el-form-item>
             </el-col>
             <!-- 職稱 -->
-            <el-col :sm="24" :md="24" :lg="6" v-if="checkUser">
+            <el-col :sm="24" :md="24" :lg="6" >
                 <el-form-item label="職稱" prop="positionTitle">
-                    <el-select v-model="currentData.positionTitle" placeholder="選擇職稱" filterable allow-create
-                        default-first-option :reserve-keyword="false">
+                    <el-select v-model="currentData.positionTitle" placeholder="選擇職稱"  :disabled="!isHRUser">
                         <el-option v-for="d in options.positionTitleList" :key="d.value" :label="d.text" :value="d.text" />
                     </el-select>
                 </el-form-item>
@@ -156,7 +156,7 @@
                 </el-form-item>
             </el-col>
             <!-- 離職日期 -->
-            <el-col :span="24" v-if="checkUser">
+            <el-col :span="24" v-if="isHRUser">
                 <el-form-item label="離職日期" prop=" resignationDate">
                     <el-date-picker v-model="currentData.resignationDate" type="date" style="width: 100%;"
                         placeholder="請選擇離職日期" format="YYYY/MM/DD" value-format="YYYY-MM-DD" />
@@ -193,7 +193,7 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="4">
+                    <el-col :span="5">
                         <el-form-item label="學校名稱" :prop="'educationExperiences.' + index + '.name'" :rules="{
                             required: true,
                             message: '請輸入學校名稱',
@@ -202,7 +202,7 @@
                             <el-input v-model="school.name" placeholder="請輸入學校名稱" />
                         </el-form-item>
                     </el-col>
-                    <el-col :span="4">
+                    <el-col :span="5">
                         <el-form-item label="科系" :prop="'educationExperiences.' + index + '.department'" :rules="{
                             required: true,
                             message: '請輸入科系',
@@ -247,13 +247,21 @@
                                 value-format="YYYY-MM" />
                         </el-form-item>
                     </el-col>
-                    <el-col :span="3">
+                    <el-col :span="1">
                         <el-form-item
                             style="display: flex;align-items:flex-end;justify-content: center;width: 100%;height: 100%;">
-                            <el-button type="success" @click="addSchool()">新增</el-button>
-                            <el-button type="danger" @click="removeSchool(index)">刪除</el-button>
+                            <!-- <el-button type="success" @click="addSchool()">新增</el-button> -->
+                            <el-button plain type="danger" @click="removeSchool(index,school)">
+                                <!-- 刪除學歷 -->
+                                <el-icon><Delete /></el-icon>
+                            </el-button>
                         </el-form-item>
                     </el-col>
+                </el-row>
+            </el-col>
+            <el-col :span="24" >
+                <el-row justify="center">
+                    <el-button plain type="success" @click="addSchool()">新增</el-button>
                 </el-row>
             </el-col>
             <!-- TODO 職務經歷 -->
@@ -266,7 +274,7 @@
             <el-col :span="24">
                 <el-row style="width: 100%;align-items: end;" :gutter="10"
                     v-for="(experience, index) in currentData.workExperiences" :key="index" class="work-experience-item">
-                    <el-col :span="4">
+                    <el-col :span="5">
                         <el-form-item label="公司名稱" :prop="'workExperiences.' + index + '.company'" :rules="{
                             required: true,
                             message: '請輸入公司名稱',
@@ -275,7 +283,7 @@
                             <el-input v-model="experience.company" placeholder="請輸入公司名稱" />
                         </el-form-item>
                     </el-col>
-                    <el-col :span="4">
+                    <el-col :span="5">
                         <el-form-item label="職務名稱" :prop="'workExperiences.' + index + '.position'" :rules="{
                             required: true,
                             message: '請輸入職務名稱',
@@ -320,13 +328,22 @@
                                 value-format="YYYY-MM" />
                         </el-form-item>
                     </el-col>
-                    <el-col :span="3">
+                    <el-col :span="1">
                         <el-form-item
                             style="display: flex;align-items:flex-end;justify-content: center;width: 100%;height: 100%;">
-                            <el-button type="success" @click="addWorkExperience()">新增</el-button>
-                            <el-button type="danger" @click="removeWorkExperience(index)">刪除</el-button>
+                            <!-- <el-button type="success" @click="addWorkExperience()">新增</el-button> -->
+                            <el-button plain type="danger" @click="removeWorkExperience(index,experience)">
+                                <!-- 刪除經歷 -->
+                                <el-icon><Delete /></el-icon>
+                            </el-button>
                         </el-form-item>
                     </el-col>
+                </el-row>
+            </el-col>
+            <!-- 新增職務經歷 -->
+            <el-col :span="24" >
+                <el-row justify="center">
+                    <el-button plain type="success" @click="addWorkExperience()">新增</el-button>
                 </el-row>
             </el-col>
 
@@ -374,34 +391,11 @@
                     <el-text size="large" tag="b">緊急聯絡人</el-text>
                 </el-divider>
             </el-col>
-
-            <!-- <el-col :sm="12" :md="6" :lg="6">
-                <el-form-item label="姓名" prop="emergencyContact.name">
-                    <el-input v-model="currentData.emergencyContact.name" placeholder="請輸入姓名" />
-                </el-form-item>
-            </el-col>
-            <el-col :sm="12" :md="6" :lg="6">
-                <el-form-item label="關係" prop="emergencyContact.relationship">
-                    <el-input v-model="currentData.emergencyContact.relationship" placeholder="請輸入關係" />
-                </el-form-item>
-            </el-col>
-            <el-col :sm="12" :md="6" :lg="6">
-                <el-form-item label="連絡電話" prop="emergencyContact.phone">
-                    <el-input v-model="currentData.emergencyContact.phone" placeholder="請輸入電話" />
-                </el-form-item>
-            </el-col>
-            <el-col :sm="12" :md="6" :lg="6">
-                <el-form-item label="行動電話" prop="emergencyContact.mobile">
-                    <el-input v-model="currentData.emergencyContact.mobile" maxlength="10" show-word-limit
-                        placeholder="請輸入行動電話" />
-                </el-form-item>
-            </el-col> -->
-
             <!-- 緊急聯絡人 -->
             <el-col :span="24">
                 <el-row style="width: 100%;align-items: end;" :gutter="10"
                     v-for="(emergencyContact, index) in currentData.emergencyContacts" :key="index" class="work-experience-item">
-                    <el-col :span="5">
+                    <el-col :span="6">
                         <el-form-item label="姓名" :prop="'emergencyContacts.' + index + '.name'" :rules="{
                             required: true,
                             message: '請輸入姓名',
@@ -419,7 +413,7 @@
                             <el-input v-model="emergencyContact.relationship" placeholder="請輸入關係" />
                         </el-form-item>
                     </el-col>
-                    <el-col :span="5">
+                    <el-col :span="6">
                         <el-form-item label="連絡電話" :prop="'emergencyContacts.' + index + '.phone'" :rules="[
                             { required: true, trigger: 'blur',validator:validatePhoneOrMobile },
                             { pattern: /^0\d{1,3}-\d{6,8}$/, message: '請輸入正確的格式(ex:02-123456)', trigger: 'blur' }
@@ -427,7 +421,7 @@
                             <el-input v-model="emergencyContact.phone" placeholder="請輸入連絡電話" />
                         </el-form-item>
                     </el-col>
-                    <el-col :span="5">
+                    <el-col :span="6">
                         <el-form-item label="行動電話" :prop="'emergencyContacts.' + index + '.mobile'" :rules="[
                             {
                                 required: true,
@@ -439,13 +433,22 @@
                             <el-input v-model="emergencyContact.mobile" placeholder="請輸入行動電話" />
                         </el-form-item>
                     </el-col>
-                    <el-col :span="4">
+                    <el-col :span="1">
                         <el-form-item
                             style="display: flex;align-items:flex-end;justify-content: center;width: 100%;height: 100%;">
-                            <el-button type="success" @click="addeMergencyContacts()">新增</el-button>
-                            <el-button type="danger" @click="removeeMergencyContacts(index)">刪除</el-button>
+                            <!-- <el-button type="success" @click="addeMergencyContacts()">新增</el-button> -->
+                            <el-button  plain type="danger" @click="removeeMergencyContacts(index,emergencyContact)">
+                                <!-- 刪除緊急聯絡人 -->
+                                <el-icon><Delete /></el-icon>
+                            </el-button>
                         </el-form-item>
                     </el-col>
+                </el-row>
+            </el-col>
+            <!-- 新增緊急連絡人 -->
+            <el-col :span="24" >
+                <el-row justify="center">
+                    <el-button plain type="success" @click="addeMergencyContacts()">新增</el-button>
                 </el-row>
             </el-col>
 
@@ -521,13 +524,15 @@
                 </el-form-item>
             </el-col>
             <!-- 按鈕區 -->
+            <el-col :span="24" >
+                <el-divider>
+                </el-divider>
+            </el-col>
             <el-col :span="24">
                 <div style="text-align: center;margin: 20px 0;">
-                    <el-button type="primary" @click="validateForm(ruleFormRef)" >保存</el-button>
+                    <el-button size="large" type="primary" @click="validateForm(ruleFormRef)" >保存</el-button>
                     <el-button type="primary" @click="resetValidateForm" v-if="false">重置驗證</el-button>
                     <el-button type="primary" @click="submitForm(ruleFormRef)" v-if="false">保存</el-button>
-                    <el-button type="primary" @click="cancel" v-if="false">返回</el-button>
-                    <el-button type="primary" @click="updateData" v-if="false">updateData</el-button>
                     <el-button type="primary" @click="submitForm1(ruleFormRef)" v-if="false">submitForm1</el-button>
                 </div>
             </el-col>
@@ -547,17 +552,27 @@ import { useEmployeeStore } from '../stores/employee';
 import { useRouter } from 'vue-router';
 import { db, storage } from '../api/firebaseConfig';
 import { getDatabase, ref as dbRef, push, onValue, remove, set } from 'firebase/database';
-import { ElMessage } from 'element-plus';
+import { ElMessage,ElLoading,ElMessageBox  } from 'element-plus';
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { ref, reactive, onMounted, watch, computed, inject } from 'vue';
 import { Upload } from '@element-plus/icons-vue'
-import { getOptions,saveProfile} from '../api/api';
+import { apiGetMetaDataList,apiSaveProfile,apiDeleteEducationExperience,apiDeleteWorkingExperience,apiDeleteEmergencyContact} from '../api/api';
 
 //引用dayjs
 const dayjs = inject('dayjs')
+//取得store
+const employeeStore = useEmployeeStore();
+//取得路由
+const router = useRouter();
+//目前顯示的資料
+const currentData = ref(employeeStore.tmpBasicInformation);
 // 創建一個響應式引用來存儲表單元素
 const ruleFormRef = ref(null);
-console.log(dayjs().format('YYYY-MM-DD HH:mm:ss'))
+
+// =========================以下處理驗證=========================
+
+
+// 驗證 緊急聯絡人 手機或市話二選一填寫
 const validatePhoneOrMobile = (rule, value, callback) => {
      // 取得聯絡人 index
      const index = rule.field.split('.')[1]; // 提取 index，例如 "0"
@@ -582,6 +597,7 @@ const validateProfileImage = (rule, value, callback) => {
         callback()
     }
 }
+
 // 驗證身分證正面
 const validateIdCardFrontImage = (rule, value, callback) => {
     if (value === '' && previewimageUrl1.value === null) {
@@ -598,7 +614,6 @@ const validateIdCardBackImage = (rule, value, callback) => {
         callback()
     }
 }
-
 //驗證規則
 const rules = reactive({
     employeeId: [
@@ -694,11 +709,35 @@ const rules = reactive({
         }
     ],
 })
+//測試驗證功能
+const submitForm1 = async (formEl = ruleFormRef) => {
+    console.log('submitForm1')
+    console.log("ruleFormRef:", ruleFormRef.value)
+    console.log("formEl:", formEl)
+    if (!formEl) return;
+    formEl.validate((valid) => {
+        console.log('Validation result:', valid);
+        if (valid) {
+            console.log('驗證成功!');
+        } else {
+            console.log('驗證失敗!');
+        }
+    });
+}
+//重製驗證
+const resetValidateForm = () => {
+    if (!ruleFormRef.value) return
+    ruleFormRef.value.resetFields()
+}
+
+
+
+
 
 //取得下拉選單
 async function fetchOptions(){
   try {
-    const result = await getOptions()
+    const result = await apiGetMetaDataList()
     // console.log("@@opts:",result.data.departmentList)
     options.value= result.data
 
@@ -746,7 +785,6 @@ const options=ref({
     ]
 })
 
-const employeeStore = useEmployeeStore();
 
 //控制浮水印
 const config = reactive(
@@ -762,10 +800,8 @@ const config = reactive(
         rotate: -22,
         gap: [100, 100],
     })
-//路由
-const router = useRouter();
-//目前顯示的資料
-const currentData = ref(employeeStore.tmpBasicInformation);
+
+
 
 
 // 處理駕照選擇變化
@@ -784,9 +820,8 @@ const handleSpecialStatusChange = (value) => {
         currentData.value.specialStatus = value
     }
 }
-// 確認使用者身份
-const checkUser = computed(() => {
-    // return currentData.value.name === employeeStore.getUserInfo.userName || employeeStore.getUserInfo.role == '3'
+// 確認使用者身份是否為 人事 (HR)
+const isHRUser = computed(() => {
     return employeeStore.getUserInfo.role == '3'
 })
 //同戶籍地址資料
@@ -794,14 +829,19 @@ const copyResidence = () => {
     currentData.value.mailingPostalCode = deepCopy(currentData.value.residencePostalCode)
     currentData.value.mailingAddress = deepCopy(currentData.value.residenceAddress)
 }
+
 //新增學歷
 const addSchool = () => {
     let arrLength = currentData.value.educationExperiences.length
     if (arrLength == 5) {
-        alert("最多五筆")
+        ElMessage({
+            message: '最多五筆',
+            type: 'warning',
+            plain: true,
+        })
     } else {
         currentData.value.educationExperiences.push({
-            key: Date.now(),
+            rid:null,
             name: null,
             academicDegree: null,
             department: null,
@@ -811,22 +851,70 @@ const addSchool = () => {
     }
 }
 //移除學歷
-const removeSchool = (index) => {
+const removeSchool = (index,obj) => {
     let arrLength = currentData.value.educationExperiences.length
     if (arrLength == 1) {
-        alert("最少一筆")
+        ElMessage({
+            message: '最少一筆',
+            type: 'warning',
+            plain: true,
+        })
     } else {
-        currentData.value.educationExperiences.splice(index, 1);
+        console.log("想移除的教育經歷:",obj)
+        let rid=obj.rid
+        ElMessageBox.confirm(
+        '確定要移除該筆教育經歷嗎?',
+        '警告',
+        {
+          confirmButtonText: '確定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then(async() => {
+            if(obj.rid){
+                const loadingInstance1 = ElLoading.service({ fullscreen: true })
+                try {
+                    const response=await apiDeleteEducationExperience(rid)
+                    if(response.data.success){
+                        ElMessage({
+                        type: 'success',
+                        message: response.data.message??'刪除成功',
+                        })
+                        currentData.value.educationExperiences.splice(index, 1);
+                    }else{
+                        ElMessage({
+                        type: 'error',
+                        message: response.data.message??'刪除失敗',
+                        })
+                    }
+                    
+                    
+                } catch (error) {
+                    console.log(error)
+                }finally{
+                    loadingInstance1.close()
+                }
+            }else{
+                currentData.value.educationExperiences.splice(index, 1);
+            }
+        })
+        .catch(() => {
+            console.log(`取消刪除rid:${rid}`)
+        })
     }
 }
 //新增工作經歷
 const addWorkExperience = () => {
     let arrLength = currentData.value.workExperiences.length
     if (arrLength == 3) {
-        alert("最多三筆")
+        ElMessage({
+            message: '最多三筆',
+            type: 'warning',
+            plain: true,
+        })
     } else {
         currentData.value.workExperiences.push({
-            key: Date.now(),
+            rid:null,
             company: null,//公司名稱
             position: null,//職務名稱
             salary: null,//薪資
@@ -836,47 +924,124 @@ const addWorkExperience = () => {
     }
 }
 //移除工作經歷
-const removeWorkExperience = (index) => {
-    let arrLength = currentData.value.workExperiences.length
-    if (arrLength == 1) {
-        alert("最少一筆")
-    } else {
-        currentData.value.workExperiences.splice(index, 1);
+const removeWorkExperience = async (index,obj) => {
+    console.log("想移除的職務經歷:",obj)
+    let rid=obj.rid
+    ElMessageBox.confirm(
+    '確定要移除該筆職務經歷嗎?',
+    '警告',
+    {
+      confirmButtonText: '確定',
+      cancelButtonText: '取消',
+      type: 'warning',
     }
+  ).then(async() => {
+        if(obj.rid){
+            const loadingInstance1 = ElLoading.service({ fullscreen: true })
+            try {
+                const response=await apiDeleteWorkingExperience(rid)
+                if(response.data.success){
+                    ElMessage({
+                    type: 'success',
+                    message: response.data.message??'刪除成功',
+                    })
+                    currentData.value.workExperiences.splice(index, 1)
+                }else{
+                    ElMessage({
+                    type: 'error',
+                    message: response.data.message??'刪除失敗',
+                    })
+                }
+                
+                
+            } catch (error) {
+                console.log(error)
+            }finally{
+                loadingInstance1.close()
+            }
+        }else{
+            currentData.value.workExperiences.splice(index, 1)
+        }
+      
+    })
+    .catch(() => {
+        console.log(`取消刪除rid:${rid}`)
+    })
 }
-//新增工作經歷
+//新增緊急聯絡人
 const addeMergencyContacts = () => {
     let arrLength = currentData.value.emergencyContacts.length
     if (arrLength == 3) {
-        alert("最多三筆")
+        ElMessage({
+            message: '最多三筆',
+            type: 'warning',
+            plain: true,
+        })
     } else {
         currentData.value.emergencyContacts.push({
             mobile: null,//緊急聯絡人手機
             name: null,//緊急聯絡人名稱
             phone: null,//緊急聯絡人電話
             relationship: null,//緊急聯絡人關係
+            rid:null//緊急聯絡人編號
         });
     }
 }
-//移除工作經歷
-const removeeMergencyContacts = (index) => {
+//移除緊急聯絡人
+const removeeMergencyContacts = (index,obj) => {
     let arrLength = currentData.value.emergencyContacts.length
     if (arrLength == 1) {
-        alert("最少一筆")
+        ElMessage({
+            message: '最少一筆',
+            type: 'warning',
+            plain: true,
+        })
     } else {
-        currentData.value.emergencyContacts.splice(index, 1);
+        console.log("想移除的緊急聯絡人:",obj)
+        let rid=obj.rid
+        ElMessageBox.confirm(
+        '確定要移除該筆緊急聯絡人嗎?',
+        '警告',
+        {
+          confirmButtonText: '確定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then(async() => {
+            if(obj.rid){
+                const loadingInstance1 = ElLoading.service({ fullscreen: true })
+                try {
+                    const response=await apiDeleteEmergencyContact(rid)
+                    if(response.data.success){
+                        ElMessage({
+                        type: 'success',
+                        message: response.data.message??'刪除成功',
+                        })
+                        currentData.value.emergencyContacts.splice(index, 1);
+                    }else{
+                        ElMessage({
+                        type: 'error',
+                        message: response.data.message??'刪除失敗',
+                        })
+                    }
+                    
+                    
+                } catch (error) {
+                    console.log(error)
+                }finally{
+                    loadingInstance1.close()
+                }
+            }else{
+                currentData.value.emergencyContacts.splice(index, 1);
+            }
+        })
+        .catch(() => {
+            console.log(`取消刪除rid:${rid}`)
+        })
     }
 }
 
 
-//新增人員
-const addItem = () => {
-    let obj = {}
-    const itemsRef = dbRef(db, 'users');
-    obj = employeeStore.tmpUserInfo
-    console.log('obj:', obj)
-    push(itemsRef, obj);
-}
 // 更新資料
 const updateData = () => {
     let firebaseKey = employeeStore.tmpUserInfo.firebaseKey
@@ -932,7 +1097,6 @@ const submitForm = async () => {
                         type: 'success',
                     });
                 }
-                // cancel();
             } catch (error) {
                 console.error('上傳或保存資料失敗:', error);
                 ElMessage({
@@ -943,26 +1107,12 @@ const submitForm = async () => {
         }
     })
 }
-//測試驗證功能
-const submitForm1 = async (formEl = ruleFormRef) => {
-    console.log('submitForm1')
-    console.log("ruleFormRef:", ruleFormRef.value)
-    console.log("formEl:", formEl)
-    if (!formEl) return;
-    formEl.validate((valid) => {
-        console.log('Validation result:', valid);
-        if (valid) {
-            console.log('驗證成功!');
-        } else {
-            console.log('驗證失敗!');
-        }
-    });
-}
+
 //深拷貝
 const deepCopy = (obj) => {
     return JSON.parse(JSON.stringify(obj))
 }
-// 驗證
+// 驗證 & 儲存員工資料
 const validateForm = (elForm = ruleFormRef.value) => {
     console.log("驗證", ruleFormRef.value)
     ruleFormRef.value.validate(async (valid, fields) => {
@@ -981,32 +1131,27 @@ const validateForm = (elForm = ruleFormRef.value) => {
                 console.log(`欄位 ${field} 錯誤：`, fields[field][0].message);
             });
         } else {
-            ElMessage.success('驗證成功，可以提交表單');
+            
             let apiData = deepCopy(currentData.value)//深拷貝不影響原來數據
             apiData= dataFormatHandle(apiData)
             console.log("要更新的資料表處理前:",currentData.value)
             console.log("要更新的資料表處理後:",apiData)
+            const loadingInstance1 = ElLoading.service({ fullscreen: true })
             try {
-                const respone=await saveProfile(apiData)
+                const respone=await apiSaveProfile(apiData)
                 console.log("更新成功，返回的數據:", respone.data);
+                ElMessage.success('人員資料表 更新成功');
             } catch (error) {
                 console.log(error)
+                ElMessage.error('人員資料表 更新失敗');
+            }finally{
+                loadingInstance1.close()
             }
         }
     });
 };
 
-//重製驗證
-const resetValidateForm = () => {
-    if (!ruleFormRef.value) return
-    ruleFormRef.value.resetFields()
-}
-//清空資料 回到首頁
-const cancel = () => {
-    employeeStore.resetTmpUserInfo()
-    // 回到上一頁
-    router.back();
-};
+
 
 // ======以下處理上傳========
 const uploadProgress = ref(0);
