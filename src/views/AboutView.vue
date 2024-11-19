@@ -1,5 +1,9 @@
 <template>
-    <div class="about">
+    <div class="about" :key="randerKey">
+        <el-breadcrumb separator="/" v-if="employeeStore.getUserInfo.role!=1">
+            <el-breadcrumb-item><el-text size="large" tag="b">員工簡歷</el-text></el-breadcrumb-item>
+            <el-breadcrumb-item><el-text size="large" tag="b">{{ curriculumVitae.userName??'' }}</el-text></el-breadcrumb-item>
+        </el-breadcrumb>
         <el-form ref="ruleFormRef" :model="curriculumVitae" label-position="top" :size="'large'" :disabled="!checkUser" :rules="rules">
             <h1 style="text-align: center;margin-top: 20px;">個人簡歷</h1>
             <el-row :gutter="10">
@@ -118,8 +122,7 @@
                                 }
                             }
                         }">
-                                    <el-select v-model="item.paperType" placeholder="選擇類型" :multiple="false" filterable
-                                        allow-create default-first-option :reserve-keyword="false">
+                                    <el-select v-model="item.paperType" placeholder="選擇類型" :multiple="false" >
                                         <el-option v-for="t in options.paperTypeList" :key="t.value" :label="t.text" :value="t.value" />
                                     </el-select>
                                 </el-form-item>
@@ -232,6 +235,29 @@ import {
 import { useEmployeeStore } from '../stores/employee';
 import { apiGetMetaDataList,apiSaveResume,apiDeleteWorkingExperience,apiDeleteUserPublication,apiDeleteUserProject} from '../api/api';
 import { ElLoading,ElMessage,ElMessageBox } from 'element-plus'
+// TODO 設定動態新增的項目上下限
+//控制可動態新增的項目的最大、最小數量
+const dataConstraints=reactive({
+    //工作經歷
+    workExperiences:{
+        min:0,
+        max:10
+    },
+    //歷年著作
+    annualPublications:{
+        min:0,
+        max:10
+    },
+    //歷年參與之專案計畫
+    annualProjects:{
+        min:0,
+        max:3
+    }
+})
+//控制刷新
+// const randerKey=computed(()=>{
+//     return employeeStore.tmpCurriculumVitae
+// })
 // 創建一個響應式引用來存儲表單元素
 const ruleFormRef = ref(null);
 //驗證規則
@@ -242,7 +268,8 @@ const rules = reactive({
 })
 const employeeStore = useEmployeeStore();
 const role = ref(employeeStore.getUserInfo.role)
-const curriculumVitae = ref(employeeStore.tmpCurriculumVitae);
+// const curriculumVitae = ref(employeeStore.tmpCurriculumVitae);
+const curriculumVitae = computed(()=>employeeStore.tmpCurriculumVitae);
 const checkUser = computed(() => {
     return curriculumVitae.value.userId == employeeStore.getUserInfo.userId || employeeStore.getUserInfo.role == '3'
 })
@@ -255,20 +282,30 @@ const highestEducationTxt=computed(()=>{
 
 // 新增經歷
 const addWorkExperience = () => {
-    curriculumVitae.value.workExperiences.push({
-        company: "",//公司名稱
-        position: "",//職務名稱
-        period: [null,null],//服務起訖年月
-        rid:null//編號
-    });
+    let max=dataConstraints.workExperiences.max
+    let arrLength = curriculumVitae.value.workExperiences.length
+    if (arrLength == max) {
+        ElMessage({
+            message: `最多${max}筆`,
+            type: 'warning',
+            plain: true,
+        })
+    } else {
+        curriculumVitae.value.workExperiences.push({
+            company: "",//公司名稱
+            position: "",//職務名稱
+            period: [null,null],//服務起訖年月
+            rid:null//編號
+        });
+    }
 };
 // 移除經歷
 const removeWorkExperience = (index,obj) => {
-
+    let min=dataConstraints.workExperiences.min
     let arrLength = curriculumVitae.value.workExperiences.length
-    if (arrLength == 1) {
+    if (arrLength == min) {
         ElMessage({
-            message: '最少一筆',
+            message: `最少${min}筆`,
             type: 'warning',
             plain: true,
         })
@@ -318,21 +355,31 @@ const removeWorkExperience = (index,obj) => {
 };
 // 新增歷年著作
 const addAnnualPublications = () => {
-    curriculumVitae.value.annualPublications.push({
-        paperType:null,//論文類型
-        issueDate: null,//發表日期
-        name: null,//論文名稱
-        rid:null//編號
-      });
+    let max=dataConstraints.annualPublications.max
+    let arrLength = curriculumVitae.value.annualPublications.length
+    if (arrLength == max) {
+        ElMessage({
+            message: `最多${max}筆`,
+            type: 'warning',
+            plain: true,
+        })
+    } else {
+        curriculumVitae.value.annualPublications.push({
+            paperType:null,//論文類型
+            issueDate: null,//發表日期
+            name: null,//論文名稱
+            rid:null//編號
+          });
+    }
 };
 
 // 移除歷年著作
 const removeAnnualPublications = (index,obj) => {
-
     let arrLength = curriculumVitae.value.annualPublications.length
-    if (arrLength == 1) {
+    let min=dataConstraints.annualPublications.min
+    if (arrLength == min) {
         ElMessage({
-            message: '最少一筆',
+            message: `最少${min}筆`,
             type: 'warning',
             plain: true,
         })
@@ -382,21 +429,32 @@ const removeAnnualPublications = (index,obj) => {
 };
 // 新增歷年計畫
 const addAnnualProjects = () => {
-    curriculumVitae.value.annualProjects.push({
-        customer: null,
-        projectName: null,
-        period:[null,null],
-        rid:null
-      });
+    let max=dataConstraints.annualProjects.max
+    let arrLength = curriculumVitae.value.annualProjects.length
+    if (arrLength == max) {
+        ElMessage({
+            message: `最多${max}筆`,
+            type: 'warning',
+            plain: true,
+        })
+    } else {
+        curriculumVitae.value.annualProjects.push({
+            customer: null,
+            projectName: null,
+            period:[null,null],
+            rid:null
+          });
+    }
 };
 
 // 移除歷年計畫
 const removeAnnualProjects = (index,obj) => {
 
     let arrLength = curriculumVitae.value.annualProjects.length
-    if (arrLength == 1) {
+    let min=dataConstraints.annualProjects.min
+    if (arrLength == min) {
         ElMessage({
-            message: '最少一筆',
+            message: `最少${min}筆`,
             type: 'warning',
             plain: true,
         })
@@ -604,6 +662,10 @@ onMounted(() => {
 })
 </script>
 <style scoped lang="scss">
+.el-breadcrumb{
+    width: 80%;
+    margin: 20px auto;
+}
 .el-form {
     width: 80%;
     margin: auto;

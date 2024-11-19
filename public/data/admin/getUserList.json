@@ -1,7 +1,7 @@
 [
     {
         "professionalLicenseJsonString": "[{\"captionZhTw\":\"系統分析師 (CSM)\"},{\"captionZhTw\":\"資訊安全管理師 (CISSP)\"}]",
-        "departmentCaption": "研究一所",
+        "departmentCaption": null,
         "userId": 1,
         "account": "reco",
         "pwd": null,
@@ -55,7 +55,7 @@
         "userRole": 1,
         "arrivalDate": "2024-11-04T00:00:00",
         "birthday": "2024-11-01T00:00:00",
-        "employeeId": "E001",
+        "employeeId": null,
         "homePhone": "02-10293213",
         "idCardBackImageUrl": null,
         "idCardFrontImageUrl": null,
@@ -78,7 +78,7 @@
         "updateBy": 2
     },
     {
-        "professionalLicenseJsonString": "[{\"captionZhTw\":\"系統分析師 (CSM)\"},{\"captionZhTw\":\"資訊安全管理師 (CISSP)\"}]",
+        "professionalLicenseJsonString": null,
         "departmentCaption": "研究一所",
         "userId": 1,
         "account": "reco",
@@ -1093,7 +1093,7 @@
     },
     {
         "professionalLicenseJsonString": "[{\"captionZhTw\":\"系統分析師 (CSM)\"},{\"captionZhTw\":\"資訊安全管理師 (CISSP)\"}]",
-        "departmentCaption": "研究一所",
+        "departmentCaption": "研究四所",
         "userId": 1,
         "account": "reco",
         "pwd": null,
@@ -1131,8 +1131,8 @@
         "updateBy": 1
     },
     {
-        "professionalLicenseJsonString": "[{\"captionZhTw\":\"雲端架構師 (AWS Certified Solutions Architect)\"},{\"captionZhTw\":\"GIS工程師\"}]",
-        "departmentCaption": "數位發展處",
+        "professionalLicenseJsonString": null,
+        "departmentCaption": "研究二所",
         "userId": 2,
         "account": "bob",
         "pwd": null,

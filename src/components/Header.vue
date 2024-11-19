@@ -47,6 +47,7 @@ onMounted(() => {
     fetchOptions()
   }
 )
+const options=ref({})
 //取得下拉選單
 async function fetchOptions(){
   try {
@@ -61,7 +62,7 @@ const employeeStore = useEmployeeStore();
 const userName = ref(employeeStore.getUserInfo.userName || '未登入')
 const role = ref(employeeStore.getUserInfo.role || '0')
 const router = useRouter();
-const options=ref({})
+
 const route = useRoute()
 //目前路徑
 const activeIndex = computed(() => route.path)
@@ -113,12 +114,15 @@ function getDepartmentValue(department) {
 }
 // 人員資料表資料格式化
 function dataFormatHandle(data){
-        //部門 格式化
-        const tmpDepartment = data.department || data.departmentFromADServer;
-        if (tmpDepartment) {
-            data.department = getDepartmentValue(tmpDepartment);
-        } else {
-            data.department = null;
+        //第一次登入還沒有員工資料時，從AD Server取得資料
+        if(!data.department){
+          //部門 格式化
+          const tmpDepartment = data.departmentFromADServer;
+          if (tmpDepartment) {
+              data.department = getDepartmentValue(tmpDepartment);
+          } else {
+              data.department = null;
+          }
         }
         
         //到職日 格式化
@@ -142,16 +146,16 @@ function dataFormatHandle(data){
             let endDate=dayjs(item.endAt).format('YYYY-MM')
             item.period=[startDate,endDate]
         })
-        if(data.workExperiences.length==0){
-            data.workExperiences.push({
-            rid:null,
-            company: null,//公司名稱
-            position: null,//職務名稱
-            salary: null,//薪資
-            leavingReason: null,//離職原因
-            period: [null, null]//服務起訖年月
-        })
-        }
+        // if(data.workExperiences.length==0){
+        //     data.workExperiences.push({
+        //     rid:null,
+        //     company: null,//公司名稱
+        //     position: null,//職務名稱
+        //     salary: null,//薪資
+        //     leavingReason: null,//離職原因
+        //     period: [null, null]//服務起訖年月
+        //   })
+        // }
         //教育經歷 格式化
         data.educationExperiences.forEach((item) =>{
             let startDate=dayjs(item.startFrom).format('YYYY-MM')
@@ -166,7 +170,7 @@ function dataFormatHandle(data){
             department: null,
             degreeStatus: null,
             period: [null, null],
-        })
+          })
         }
         //駕照 格式化
         if(data.drvingLicense.length>0){
@@ -209,13 +213,13 @@ function dataFormat(data){
             let endDate=dayjs(item.endAt).format('YYYY-MM')
             item.period=[startDate,endDate]
         })
-        if(data.workExperiences.length==0){
-                data.workExperiences.push({
-                company: null,
-                position: null,
-                period:[null,null]
-            })
-        }
+        // if(data.workExperiences.length==0){
+        //         data.workExperiences.push({
+        //         company: null,
+        //         position: null,
+        //         period:[null,null]
+        //     })
+        // }
         // 歷年著作格式化
         data.annualPublications.forEach((item) =>{
             item.issueDate=dayjs(item.issueDate).format('YYYY-MM')
@@ -227,13 +231,13 @@ function dataFormat(data){
             let endDate=dayjs(item.endAt).format('YYYY-MM')
             item.period=[startDate,endDate]
         })
-        if(data.annualProjects.length==0){
-            data.annualProjects.push({
-            entrustUnit: null,
-            projectName: null,
-            period:[null,null]
-            })
-        }
+        // if(data.annualProjects.length==0){
+        //     data.annualProjects.push({
+        //     entrustUnit: null,
+        //     projectName: null,
+        //     period:[null,null]
+        //     })
+        // }
         //特殊專長格式化
         if(data.computerExpertise.length>0){
             const arr = data.computerExpertise.map(item => item.text);

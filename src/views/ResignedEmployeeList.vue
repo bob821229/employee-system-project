@@ -1,5 +1,4 @@
 <template>
-
   <div style="width: 100%;max-width: 1500px;margin: auto;">
     <div style="display: flex;justify-content: space-between;padding: 10px 0;">
       <el-button  plain v-if="false" @click="dialogFormVisible = true">
@@ -7,12 +6,12 @@
       </el-button>
       <el-input v-model="searchText" style="width: 240px" placeholder="搜尋" />
     </div>
-    <el-table :data="paginatedData" style="width: 100%" size="large" 
-      border>
-      <el-table-column width="120" header-align="center" fixed prop="employeeId" label="人員編號" />
-      <el-table-column width="150" header-align="center" prop="userName" label="姓名" />
+    <el-table :data="paginatedData"  style="width: 100%" size="large" 
+      border @sort-change="sortChange" @filter-change="filterMethod">
+      <el-table-column width="120" header-align="center" fixed prop="employeeId" label="人員編號" sortable='custom'/>
+      <el-table-column width="150" header-align="center" prop="userName" label="姓名" sortable='custom'/>
       <el-table-column width="250" header-align="center" prop="departmentCaption" label="部門"
-        :filters="departments" :filter-method="filterHandler" filter-multiple />
+        :filters="departments"  filter-multiple />
       <el-table-column header-align="center" prop="professionalLicenseJsonString" label="專業證照" />
       <el-table-column width="200" align="center" header-align="center" fixed="right" label="編輯" v-if="role === '3'">
         <template #default="scope">
@@ -41,13 +40,11 @@
         :page-sizes="[5, 10, 15, 20]"
         background
         layout=" total, prev, pager, next,sizes"
-        :total="filteredTableData.length"
-        @current-change="handleCurrentChange"
+        :total="filterDepartmentData.length"
         />
       </div>
     </div>
   </div>
-
   <!-- 刪除確認彈框 -->
   <el-dialog v-model="centerDialogVisible" title="警告" width="500" align-center>
     <span>您確定要啟用該筆資料?</span>
@@ -116,10 +113,11 @@
       </div>
     </template>
   </el-dialog>
-
+  <!-- {{ filterDepartmentData }}<hr><br> -->
 </template>
+
 <script setup>
-import { reactive, ref, onMounted, computed,inject } from 'vue'
+import { reactive, ref, onMounted, computed,inject,watch } from 'vue'
 import { useEmployeeStore } from '../stores/employee';
 import { useRouter } from 'vue-router';
 
@@ -131,6 +129,7 @@ import { ElMessage,ElLoading,ElMessageBox  } from 'element-plus';
 import { apiGetUserList ,apiGetMetaDataList,apiEnableUser,apiGetProfile,apiGetResume,apiSaveUserRole} from '../api/api';
 
 const options=ref([])
+
 
 //引用dayjs
 const dayjs = inject('dayjs')
@@ -166,6 +165,7 @@ const userRules = reactive({
     { required: true, message: '請輸入密碼', trigger: 'blur' },
   ]
 })
+
 //驗證表單
 const submitForm2 = async (formEl) => {
   if (!formEl) return;
@@ -206,6 +206,47 @@ const departments = ref([
 
 const tableData1 = ref([])
 
+// =============
+
+// 记录筛选条件
+let filterConditions = ref({});
+// 筛选方法
+
+// function filterHandler(value, row, column) {
+//     const property = column['property'];
+//     return row[property] === value;
+// }
+function filterMethod(filters) {
+  // 更新篩選條件
+  Object.assign(filterConditions.value, filters);
+  // console.log("filters:", filters)// 結果: { "el-table_1_column_3": ["研究一所"] }
+
+
+  // tableData.value.displayDataPool = tableData.value.queryDataPool.filter(el =>
+  //   Object.entries(filterConditions.value).every(
+  //     item => item[1].includes(el["departmentCaption"]) || item[1].length == 0
+  //   )
+  // );
+
+  // // 先將查詢數據池的資料過濾
+  // tableData.value.filterDataPool = tableData.value.queryDataPool.filter(el => {
+  //   // 檢查每個篩選條件
+  //   return Object.entries(filterConditions.value).every(([key, values]) => {
+  //     // 如果沒有選擇篩選值,則返回true
+  //     if (!values || values.length === 0) {
+  //       return true;
+  //     }
+  //     // 檢查數據是否符合篩選條件中的任一值
+  //     return values.includes(el[key]);
+  //   });
+  // });
+
+  // // 將過濾後的數據賦值給顯示數據池
+  // tableData.value.displayDataPool = tableData.value.filterDataPool;
+}
+
+
+// ==========
 const searchText = ref('')
 // 目前頁數
 const currentPage = ref(1);
@@ -219,21 +260,78 @@ const filteredTableData = computed(() => {
   return tableData1.value.filter(item => {
 
     let { employeeId, userName, departmentCaption, professionalLicenseJsonString } = item
-    const licenseMatch = professionalLicenseJsonString.some(license => license.toLowerCase().includes(searchTxt));
+    // 檢查每個屬性是否為 null 或空字串
+    const employeeIdMatch = employeeId ? employeeId.toLowerCase().includes(searchTxt) : false;
+    const userNameMatch = userName ? userName.toLowerCase().includes(searchTxt) : false;
+    const departmentCaptionMatch = departmentCaption ? departmentCaption.toLowerCase().includes(searchTxt) : false;
+    const licenseMatch = professionalLicenseJsonString?professionalLicenseJsonString.some(license => license.toLowerCase().includes(searchTxt)):false;
     return (
-      employeeId.toLowerCase().includes(searchTxt) ||
-      userName.toLowerCase().includes(searchTxt) ||
-      departmentCaption.toLowerCase().includes(searchTxt) ||
+      employeeIdMatch ||
+      userNameMatch ||
+      departmentCaptionMatch ||
       licenseMatch
     );
   })
+})
+//部門過濾
+const filterDepartmentData = computed(() => {
+  return filteredTableData.value.filter(el =>
+    Object.entries(filterConditions.value).every(
+      item => item[1].includes(el["departmentCaption"]) || item[1].length == 0
+    )
+  );
+})
+// 當搜尋條件改變,重置頁面
+watch(filterDepartmentData,()=>{
+  currentPage.value = 1
 })
 // 當前頁面的資料
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value;
   const end = start + pageSize.value;
-  return filteredTableData.value.slice(start, end);
+  return filterDepartmentData.value.slice(start, end);
 });
+const sortChange=({ prop, order })=> {
+      tableData1.value.sort(compare(prop,order));
+}
+const compare = (propertyName, sort) => {
+  return function (obj1, obj2) {
+    let value1 = obj1[propertyName]
+    let value2 = obj2[propertyName]
+
+    // 將 null 轉換為一個特殊的值
+    if (value1 === null) value1 = 'Infinity'
+    if (value2 === null) value2 = 'Infinity'
+
+    // 如果兩個值都是字符串
+    if (typeof value1 === 'string' && typeof value2 === 'string') {
+      const res = value1.localeCompare(value2, 'zh')
+      return sort === 'ascending' ? res : -res
+    }
+
+    // 如果兩個值都是數字
+    if (typeof value1 === 'number' && typeof value2 === 'number') {
+      return sort === 'ascending' ? value1 - value2 : value2 - value1
+    }
+
+    // 如果一個是字符串，一個是數字
+    if (typeof value1 === 'string' && typeof value2 === 'number') {
+      return sort === 'ascending' ? -1 : 1
+    }
+    if (typeof value1 === 'number' && typeof value2 === 'string') {
+      return sort === 'ascending' ? 1 : -1
+    }
+
+    // 其他情況（如日期、布爾值等）
+    if (value1 < value2) {
+      return sort === 'ascending' ? -1 : 1
+    } else if (value1 > value2) {
+      return sort === 'ascending' ? 1 : -1
+    } else {
+      return 0
+    }
+  }
+}
 const formatterDepartment=(row, column, cellValue, index)=>{
   let txt=''
   let result=departments.value.find((item)=>{
@@ -244,11 +342,7 @@ const formatterDepartment=(row, column, cellValue, index)=>{
   }
   return txt
 }
-//篩選函式
-const filterHandler = (value, row, column) => {
-  console.log('value:', value, 'row:', row, 'column:', column)
-  return row.department === value
-}
+
 //編輯
 const editHandler = async (data) => {
   const loadingInstance1 = ElLoading.service({ fullscreen: true })
@@ -267,23 +361,23 @@ const editHandler = async (data) => {
 }
 
 //取得
-const fetchItems = () => {
-  console.log("查員工資料表")
-  tableData1.value.length = 0
-  let itemsRef = dbRef(db, '/users');
-  itemsRef = query(itemsRef, orderByChild('ifEnable'), equalTo(true));
-  onValue(itemsRef, (snapshot) => {
-    snapshot.forEach((childSnapshot) => {
-      const childKey = childSnapshot.key;
-      const obj = childSnapshot.val();
+// const fetchItems = () => {
+//   console.log("查員工資料表")
+//   tableData1.value.length = 0
+//   let itemsRef = dbRef(db, '/users');
+//   itemsRef = query(itemsRef, orderByChild('ifEnable'), equalTo(true));
+//   onValue(itemsRef, (snapshot) => {
+//     snapshot.forEach((childSnapshot) => {
+//       const childKey = childSnapshot.key;
+//       const obj = childSnapshot.val();
 
-      // obj.key = childKey;
-      obj.firebaseKey = childKey;
-      tableData1.value.push(obj);
-    })
-  });
-  console.log("tableData1:", tableData1.value)
-};
+//       // obj.key = childKey;
+//       obj.firebaseKey = childKey;
+//       tableData1.value.push(obj);
+//     })
+//   });
+//   console.log("tableData1:", tableData1.value)
+// };
 //取得員工資料表
 const fetchEmployeeList = async()=>{
 
@@ -309,7 +403,7 @@ const fetchEmployeeList = async()=>{
       //   item.department=departments.value[departmentIndex].value
       // }
     })
-    console.log("員工清單:",response.data)
+    // console.log("員工清單:",response.data)
     tableData1.value=response.data
   } catch (error) {
     console.log(error)
@@ -469,8 +563,11 @@ function deepCopy(obj) {
 async function fetchOptions(){
   try {
     const result = await apiGetMetaDataList()
-    console.log("@@opts:",result.data.departmentList)
-    departments.value = result.data.departmentList
+    departments.value=[]
+    departments.value=result.data.departmentList.map((item) => {
+      return {text: item.text,value: item.text}
+    })
+    // departments.value.push({text:'空',value:null})
 
   } catch (error) {
     console.log(error)
@@ -489,12 +586,15 @@ function getDepartmentValue(department) {
 }
 // 人員資料表資料格式化
 function dataFormatHandle(data){
-        //部門 格式化
-        const tmpDepartment = data.department || data.departmentFromADServer;
-        if (tmpDepartment) {
-            data.department = getDepartmentValue(tmpDepartment);
-        } else {
-            data.department = null;
+        //第一次登入還沒有員工資料時，從AD Server取得資料
+        if(!data.department){
+          //部門 格式化
+          const tmpDepartment = data.departmentFromADServer;
+          if (tmpDepartment) {
+              data.department = getDepartmentValue(tmpDepartment);
+          } else {
+              data.department = null;
+          }
         }
         
         //到職日 格式化
@@ -518,16 +618,16 @@ function dataFormatHandle(data){
             let endDate=dayjs(item.endAt).format('YYYY-MM')
             item.period=[startDate,endDate]
         })
-        if(data.workExperiences.length==0){
-            data.workExperiences.push({
-            rid:null,
-            company: null,//公司名稱
-            position: null,//職務名稱
-            salary: null,//薪資
-            leavingReason: null,//離職原因
-            period: [null, null]//服務起訖年月
-        })
-        }
+        // if(data.workExperiences.length==0){
+        //     data.workExperiences.push({
+        //     rid:null,
+        //     company: null,//公司名稱
+        //     position: null,//職務名稱
+        //     salary: null,//薪資
+        //     leavingReason: null,//離職原因
+        //     period: [null, null]//服務起訖年月
+        //   })
+        // }
         //教育經歷 格式化
         data.educationExperiences.forEach((item) =>{
             let startDate=dayjs(item.startFrom).format('YYYY-MM')
@@ -542,7 +642,7 @@ function dataFormatHandle(data){
             department: null,
             degreeStatus: null,
             period: [null, null],
-        })
+          })
         }
         //駕照 格式化
         if(data.drvingLicense.length>0){
@@ -584,16 +684,16 @@ function dataFormat(data){
             let endDate=dayjs(item.endAt).format('YYYY-MM')
             item.period=[startDate,endDate]
         })
-        if(data.workExperiences.length==0){
-                data.workExperiences.push({
-                company: null,
-                position: null,
-                period:[null,null]
-            })
-        }
+        // if(data.workExperiences.length==0){
+        //         data.workExperiences.push({
+        //         company: null,
+        //         position: null,
+        //         period:[null,null]
+        //     })
+        // }
         // 歷年著作格式化
         data.annualPublications.forEach((item) =>{
-            item.date=dayjs(item.date).format('YYYY-MM')
+            item.issueDate=dayjs(item.issueDate).format('YYYY-MM')
         })
 
         //歷年參與之專案計畫格式化
@@ -602,13 +702,13 @@ function dataFormat(data){
             let endDate=dayjs(item.endAt).format('YYYY-MM')
             item.period=[startDate,endDate]
         })
-        if(data.annualProjects.length==0){
-            data.annualProjects.push({
-            entrustUnit: null,
-            projectName: null,
-            period:[null,null]
-            })
-        }
+        // if(data.annualProjects.length==0){
+        //     data.annualProjects.push({
+        //     entrustUnit: null,
+        //     projectName: null,
+        //     period:[null,null]
+        //     })
+        // }
         //特殊專長格式化
         if(data.computerExpertise.length>0){
             const arr = data.computerExpertise.map(item => item.text);
