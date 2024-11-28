@@ -20,12 +20,14 @@ import router from './router'
 //引入pinia持久化套件
 import piniaPersist from 'pinia-plugin-persist'
 import dayjs from 'dayjs'
-
-
+// import CONFIG from '/config.js?url'
+console.log('CONFIG:',CONFIG)
 const pinia = createPinia()
 pinia.use(piniaPersist)
-
+console.log("版本:",__APP_VERSION__)
 const app = createApp(App)
+
+app.provide('config', CONFIG)//將CONFIG注入到應用中 控制匯出按鈕顯示
 app.provide('dayjs', dayjs) // 將dayjs注入到應用中
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)

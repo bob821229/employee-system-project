@@ -10,7 +10,8 @@
       border @sort-change="sortChange" @filter-change="filterMethod">
       <el-table-column width="120" header-align="center" fixed prop="employeeId" label="人員編號" sortable='custom'/>
       <el-table-column width="150" header-align="center" prop="userName" label="姓名" sortable='custom'/>
-      <el-table-column width="250" header-align="center" prop="departmentCaption" label="部門"
+      <el-table-column width="150" header-align="center" prop="userRole" label="權限" sortable="custom"  />
+      <el-table-column width="200" header-align="center" prop="departmentCaption" label="部門"
         :filters="departments"  filter-multiple />
       <el-table-column header-align="center" prop="professionalLicenseJsonString" label="專業證照" />
       <el-table-column width="200" align="center" header-align="center" fixed="right" label="編輯" v-if="role === '3'">
@@ -51,7 +52,7 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="centerDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="deleteItem">
+        <el-button type="primary" @click="enableItem">
           確定
         </el-button>
       </div>
@@ -114,6 +115,12 @@
     </template>
   </el-dialog>
   <!-- {{ filterDepartmentData }}<hr><br> -->
+      <!-- 匯出按鈕 -->
+  <div style="position: fixed;right: 20px; bottom: 20px;" v-if="configExportBtn.resignedEmployeeList.isShowExportBtn">
+    <el-tooltip content="匯出離職人員資料表清單" placement="left-start" effect="dark">
+      <el-button :icon="Upload" type="primary" plain round @click="exportExcel()">匯出</el-button>
+    </el-tooltip>
+  </div>
 </template>
 
 <script setup>
@@ -126,10 +133,10 @@ import {
   getDatabase, ref as dbRef, push, onValue, remove, query, equalTo, orderByChild, set
 } from 'firebase/database';
 import { ElMessage,ElLoading,ElMessageBox  } from 'element-plus';
-import { apiGetUserList ,apiGetMetaDataList,apiEnableUser,apiGetProfile,apiGetResume,apiSaveUserRole} from '../api/api';
+import { apiGetUserList ,apiGetMetaDataList,apiEnableUser,apiGetProfile,apiGetResume,apiSaveUserRole,apiGetUserListExcelFile} from '../api/api';
 
 const options=ref([])
-
+const configExportBtn = inject('config')
 
 //引用dayjs
 const dayjs = inject('dayjs')
@@ -259,16 +266,18 @@ const filteredTableData = computed(() => {
   }
   return tableData1.value.filter(item => {
 
-    let { employeeId, userName, departmentCaption, professionalLicenseJsonString } = item
+    let { employeeId, userName, departmentCaption, professionalLicenseJsonString ,userRole} = item
     // 檢查每個屬性是否為 null 或空字串
     const employeeIdMatch = employeeId ? employeeId.toLowerCase().includes(searchTxt) : false;
     const userNameMatch = userName ? userName.toLowerCase().includes(searchTxt) : false;
     const departmentCaptionMatch = departmentCaption ? departmentCaption.toLowerCase().includes(searchTxt) : false;
-    const licenseMatch = professionalLicenseJsonString?professionalLicenseJsonString.some(license => license.toLowerCase().includes(searchTxt)):false;
+    const userRoleMatch = userRole ? userRole.toLowerCase().includes(searchTxt) : false;
+    const licenseMatch = professionalLicenseJsonString ? professionalLicenseJsonString.some(license => license.toLowerCase().includes(searchTxt)) : false;
     return (
       employeeIdMatch ||
       userNameMatch ||
       departmentCaptionMatch ||
+      userRoleMatch ||
       licenseMatch
     );
   })
@@ -281,6 +290,17 @@ const filterDepartmentData = computed(() => {
     )
   );
 })
+const userRoleFormat=(role)=>{
+  if(role=='1'){
+    return '員工'
+  }else if(role=='2'){
+    return '主管'
+  }else if(role=='3'){
+    return '人資'
+  }else{
+    return 'N/A'
+  }
+}
 // 當搜尋條件改變,重置頁面
 watch(filterDepartmentData,()=>{
   currentPage.value = 1
@@ -393,6 +413,7 @@ const fetchEmployeeList = async()=>{
           return license.captionZhTw
         })
       }
+      item.userRole=userRoleFormat(item.userRole)
       // // 對部門進行處理
       // const departmentIndex=departments.value.findIndex((department)=>{
       //   return department.text===item.department
@@ -503,13 +524,37 @@ const selectedItem = ref({})
 const confirmDelete = (obj) => {
   selectedItem.value = obj
   selectedUserId.value = obj.userId
-  centerDialogVisible.value = true
+  // centerDialogVisible.value = true
+  let selectedUser={
+      userId: obj.userId,
+      lastWorkingDate: null,
+      userName: obj.userName
+    }
+  // let obj = deleteEmployee.value
+  ElMessageBox.confirm(
+    `確定將${obj.userName}設定為啟用嗎?`,
+    '警告',
+    {
+      confirmButtonText: '確定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  ).then(async () => {
+
+    console.log("啟用目標:", obj)
+
+    // api
+    enableItem(selectedUser)
+  })
+    .catch(() => {
+      console.log(`取消將${obj.userName}設定為離職`)
+    })
 }
 //刪除
-const deleteItem = async () => {
+const enableItem = async (selectedUser) => {
   try {
-    console.log("啟用目標的UserId:",selectedUserId.value)   
-    const response=await apiEnableUser(selectedUserId.value)
+    console.log("啟用目標的UserId:",selectedUser)   
+    const response=await apiEnableUser(selectedUser.userId)
     if(response.data.success){
       ElMessage({
         message: response.data.message??'啟用成功',
@@ -579,6 +624,17 @@ onMounted(async() => {
     fetchEmployeeList()
   }
 )
+// 匯出員工清單
+async function exportExcel() {
+  try {
+    const response = await apiGetUserListExcelFile(false)
+    let url = response.data.data
+    console.log("前往這網站:", url)
+    window.open(url)
+  } catch (error) {
+    console.log(error);
+  }
+}
 //===========把資料轉換成頁面要用的結構
 function getDepartmentValue(department) {
     const departmentIndex = departments.value.findIndex(d => d.text === department);

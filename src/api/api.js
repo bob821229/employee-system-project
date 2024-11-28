@@ -202,8 +202,16 @@ export const apiGetUserList = (ifEnable=null) => {
   }
   return userRequest.post(url);
 }
+// 取得員工清單
+export const apiGetFieldDataUpdateLogList = (from, to) => {
+  let url = endpoints.admin.getFieldDataUpdateLogList;
+  if (from && to) {
+    url += `?from=${from}&to=${to}`;
+  }
+  return userRequest.post(url);
+}
 // 啟用員工
-export const apiEnableUser = (userId) => {
+export const apiEnableUser = (userId) =>{
   if (userId) {
     let url = endpoints.admin.enableUser;
     url += `?userId=${userId}`;
@@ -211,18 +219,38 @@ export const apiEnableUser = (userId) => {
   }else{
     return
   }
-}
+} 
 // 停用員工
-export const apiDisableUser = (userId) => {
+export const apiDisableUser = (params) => userRequest.post(endpoints.admin.disableUser,params);
+//更新員工權限
+export const apiSaveUserRole = (params) => userRequest.post(endpoints.admin.saveUserRole, params);
+
+//匯出人員資料表
+export const apiGetUserProfileFile = (userId) =>{
   if (userId) {
-    let url = endpoints.admin.disableUser;
+    let url = endpoints.admin.getUserProfileFile;
     url += `?userId=${userId}`;
     return userRequest.post(url);
   }else{
     return
   }
-}
-//更新員工權限
-export const apiSaveUserRole = (params) => userRequest.post(endpoints.admin.saveUserRole, params);
-
+} 
+//匯出員工簡歷
+export const apiGetUserCvFile = (userId) => {
+  if (userId) {
+    let url = endpoints.admin.getUserCvFile;
+    url += `?userId=${userId}`;
+    return userRequest.post(url);
+  }else{
+    return
+  }
+} 
+//匯出員工清單
+export const apiGetUserListExcelFile = (ifEnable) =>{
+let url=endpoints.admin.getUserListExcelFile;
+url += `?ifEnable=${ifEnable}`;
+return userRequest.post(url);
+} 
+//取得台灣郵遞區號
+export const apiGetTwZipCode  = () =>axios.get('/data/twZipCode.json')
 

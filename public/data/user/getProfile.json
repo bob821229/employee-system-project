@@ -9,12 +9,7 @@
             "value": "04"
         }
     ],
-    "drvingLicense": [
-        {
-            "text": "機車",
-            "value": "01"
-        }
-    ],
+    "drvingLicense": null,
     "languages": [
         {
             "text": "國語",
@@ -73,38 +68,7 @@
             "updateBy": 1
         }
     ],
-    "workExperiences": [
-        {
-            "rid": 1,
-            "userId": 1,
-            "company": "zyx",
-            "leavingReason": "錢太少2",
-            "startFrom": "2020-01-01T00:00:00",
-            "endAt": "2021-06-01T00:00:00",
-            "position": "RD",
-            "salary": 10000,
-            "ifEnable": true,
-            "createDateTimeUtc": "2024-11-06T02:47:31.26",
-            "updateDateTimeUtc": "2024-11-08T09:14:32.007",
-            "createBy": 1,
-            "updateBy": 1
-        },
-        {
-            "rid": 3,
-            "userId": 1,
-            "company": "OOOO",
-            "leavingReason": "dlijerlij",
-            "startFrom": "2024-11-01T00:00:00",
-            "endAt": "2025-04-01T00:00:00",
-            "position": "aldskjfl",
-            "salary": 102939,
-            "ifEnable": true,
-            "createDateTimeUtc": "2024-11-08T08:32:03.303",
-            "updateDateTimeUtc": "2024-11-08T09:14:32.533",
-            "createBy": 1,
-            "updateBy": 1
-        }
-    ],
+    "workExperiences": null,
     "educationExperiences": [
         {
             "rid": 1,
@@ -147,12 +111,13 @@
     "bypassChangePasswordDateTimeUtc": null,
     "blockLoginTillDateTimeUtc": null,
     "email": "reco@hotmail.com",
-    "department": "08",
+    "department":"02",
     "departmentFromADServer": "研究一所",
     "userRole": 1,
-    "arrivalDate": "2024-11-05T00:00:00",
+    "arrivalDate": "2016-10-31T00:00:00",
+    "lastWorkingDate": null,
     "birthday": "2016-10-31T00:00:00",
-    "employeeId": "E003",
+    "employeeId": "1051031A",
     "homePhone": "02-1020391",
     "idCardBackImageUrl": "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2Fimages%20(1).jpg?alt=media&token=e0c64420-2028-4276-bc00-d0886e77bbed",
     "idCardFrontImageUrl": "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2Fimages%20(1).jpg?alt=media&token=3e759810-c170-42dc-a16a-5c76715dbb34",
@@ -164,10 +129,14 @@
     "sex": "女",
     "bankAccount": "4564654654564",
     "bankName": "南崁分行",
-    "mailingAddress": "桃園市蘆竹區9993",
-    "mailingPostalCode": "03",
-    "residenceAddress": "桃園市蘆竹區112",
-    "residencePostalCode": "03",
+    "mailingAddress": "金海街888",
+    "mailingCity": null,
+    "mailingDistrict": null,
+    "mailingPostalCode": null,
+    "residenceCity": "新北市",
+    "residenceDistrict": "淡水區",
+    "residenceAddress": "金海街123",
+    "residencePostalCode": "338",
     "ifEnable": true,
     "createDateTimeUtc": "2024-11-04T02:45:27.44",
     "updateDateTimeUtc": "2024-11-13T02:51:38.29",

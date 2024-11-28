@@ -1,0 +1,5 @@
+{
+    "data": "/api/Admin/downloadFile?filePath=/UserData/disposable/個人簡歷-20241121152158.xlsx",
+    "message": "用網頁開啟 .data 給的連結",
+    "statusCode": 200
+}

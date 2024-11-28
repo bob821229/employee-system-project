@@ -5,7 +5,11 @@ const API_CONFIG = {
       getUserList:'admin/getUserList.json',//取得員工清單
       enableUser:'admin/enableUser.json',//啟用員工
       disableUser:'admin/disableUser.json',//停用員工
-      saveUserRole:'admin/saveUserRole.json'//更新員工權限
+      saveUserRole:'admin/saveUserRole.json',//更新員工權限
+      getUserProfileFile:'admin/getUserProfileFile.json',//匯出人員資料表
+      getUserCvFile:'admin/getUserCvFile.json',//匯出員工簡歷
+      getUserListExcelFile:'admin/getUserListExcelFile.json',//匯出員工清單
+      getFieldDataUpdateLogList:'admin/getFieldDataUpdateLogList.json',//資料異動log清單
     },
     user:{
       getProfile:'user/getProfile.json',//取得員工資料

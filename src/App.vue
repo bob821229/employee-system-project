@@ -14,7 +14,7 @@
 
       <!-- 頁腳 -->
       <el-footer v-if="!isLoginPage">
-        Footer
+        Copyright © 台灣水資源與農業研究院
       </el-footer>
 
     </el-container>

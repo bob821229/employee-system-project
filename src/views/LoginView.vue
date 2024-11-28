@@ -8,10 +8,11 @@
       </template>
       <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" label-width="auto" class="demo-ruleForm">
         <el-form-item label="網域帳號" prop="email" label-position="top">
-          <el-input v-model="ruleForm.email" autocomplete="off" clearable @keyup.enter="login(ruleFormRef)"/>
+          <el-input v-model="ruleForm.email" autocomplete="off" clearable @keyup.enter="login(ruleFormRef)" />
         </el-form-item>
         <el-form-item label="密碼" prop="password" label-position="top">
-          <el-input v-model="ruleForm.password" type="password" autocomplete="off" show-password @keyup.enter="login(ruleFormRef)"/>
+          <el-input v-model="ruleForm.password" type="password" autocomplete="off" show-password
+            @keyup.enter="login(ruleFormRef)" />
         </el-form-item>
         <el-form-item label="" label-position="top">
           <el-checkbox v-model="rememberMe" label="記住我" />
@@ -34,15 +35,15 @@
   </div>
 </template>
 <script setup>
-import { reactive, ref, computed, onMounted,inject } from 'vue'
+import { reactive, ref, computed, onMounted, inject } from 'vue'
 import { useEmployeeStore } from '../stores/employee';
-import { ElMessage } from 'element-plus';
+import { ElMessage,ElLoading } from 'element-plus';
 import { db } from '../api/firebaseConfig';
 import {
   getDatabase, ref as dbRef, onValue, push as dbPush, remove, query, equalTo, orderByChild, set
 } from 'firebase/database';
 import { useRouter } from 'vue-router';
-import { apiLogin,apiGetProfile,apiGetMetaDataList} from '../api/api';
+import { apiLogin, apiGetProfile, apiGetMetaDataList } from '../api/api';
 //引用dayjs
 const dayjs = inject('dayjs')
 const router = useRouter();
@@ -147,18 +148,18 @@ let obj = ref({
     ],//歷年計畫
   },//個人簡歷
 })
-onMounted(async() => {
+onMounted(async () => {
   await fetchOptions()
   // 檢查是否有保存的帳號
   checkLocalStorage()
 })
 
-const options=ref({})
+const options = ref({})
 //取得下拉選單
-async function fetchOptions(){
+async function fetchOptions() {
   try {
     const result = await apiGetMetaDataList()
-    console.log("@@opts:",result.data)
+    console.log("@@opts:", result.data)
     options.value = result.data
   } catch (error) {
     console.log(error)
@@ -170,9 +171,9 @@ const addItem = () => {
   dbPush(itemsRef, obj.value);
 };
 // 檢查是否有保存的帳號
-const checkLocalStorage=()=>{
+const checkLocalStorage = () => {
   const savedUserAccount = localStorage.getItem('savedUserAccount');
-  
+
   // 如果有保存的帳號，則自動填充到表單中
   if (savedUserAccount) {
     ruleForm.value.email = savedUserAccount; // 自動填充帳號
@@ -249,49 +250,52 @@ const submitForm = (formEl) => {
   });
 };
 //登入
-const login=async (formEl)=>{
+const login = async (formEl) => {
   if (!formEl) return;
-  formEl.validate(async(valid) => {
-      if (valid) {
-        try {
+  formEl.validate(async (valid) => {
+    if (valid) {
+      const loadingInstance1 = ElLoading.service({ fullscreen: true })
+      try {
         // const response= await apiLogin()
-        let params={
+        let params = {
           id: ruleForm.value.email,
           key: ruleForm.value.password
         }
         // const response= await testApi(loginFailed)
-        const response= await apiLogin(params)
-        console.log("登入狀態:",response.data)
+        const response = await apiLogin(params)
+        console.log("登入狀態:", response.data)
         if (!response.data.success) {
           ElMessage({
-          message: response.data.message,
-          type: 'error',
+            message: response.data.message,
+            type: 'error',
           });
-        }else{
+        } else {
           //取得員工資料
           // const employeeData = await testApi('userInfo1.json')
-           //存取帳號
+          //存取帳號
           savedUserAccount()
           // const employeeData = await testApi('userInfo3.json')
           const employeeData = response.data
           // const employeeData = await testApi('userInfo3.json')
-          console.log("員工資料:",employeeData.data)
-          let role=employeeData.data.role
+          console.log("員工資料:", employeeData.data)
+          let role = employeeData.data.role
           employeeStore.setUserInfo(employeeData.data)
           if (role === '2' || role === '3') {
             router.push('/employeeList');
           } else if (role === '1') {
-            const result=await apiGetProfile()
-        let formatData=dataFormatHandle(result.data)
-        console.log("整理後e資料表:",formatData)
-        employeeStore.setTmpBasicInformation(formatData)
-        router.push('/form');
-            } else {
-              router.push('/login');
-            }
+            const result = await apiGetProfile()
+            let formatData = dataFormatHandle(result.data)
+            console.log("整理後e資料表:", formatData)
+            employeeStore.setTmpBasicInformation(formatData)
+            router.push('/form');
+          } else {
+            router.push('/login');
+          }
         }
       } catch (error) {
         console.log(error)
+      } finally {
+        loadingInstance1.close()
       }
     } else {
       //驗證失敗
@@ -301,17 +305,17 @@ const login=async (formEl)=>{
       });
     }
   });
-  
+
 }
-const savedUserAccount=()=>{
-   // ========以下存取帳號==========
-    if (rememberMe.value) {
-      // 把信箱存到 localStorage
-      localStorage.setItem('savedUserAccount', ruleForm.value.email);
-    } else {
-      // 把 localStorage 中的帳號刪除
-      localStorage.removeItem('savedUserAccount');
-    }
+const savedUserAccount = () => {
+  // ========以下存取帳號==========
+  if (rememberMe.value) {
+    // 把信箱存到 localStorage
+    localStorage.setItem('savedUserAccount', ruleForm.value.email);
+  } else {
+    // 把 localStorage 中的帳號刪除
+    localStorage.removeItem('savedUserAccount');
+  }
 }
 // 重製表格
 const resetForm = (formEl) => {
@@ -320,103 +324,178 @@ const resetForm = (formEl) => {
   if (!formEl) return
   formEl.resetFields()
 }
-//把資料轉換成頁面要用的結構
-//把資料轉換成頁面要用的結構
-function getDepartmentValue(department) {
-    const departmentIndex = options.value.departmentList.findIndex(d => d.text === department);
+
+function getDepartmentValue(department,departmentFromADServer) {
+  if(department){
+    return department
+  }else{
+    const departmentIndex = options.value.departmentList.findIndex(d => d.text === departmentFromADServer);
     return departmentIndex >= 0 ? options.value.departmentList[departmentIndex].value : null;
+  }
+}
+function dataFormatHandle(data) {
+  // 輔助函數：格式化日期
+  const formatDate = (date) => date ? dayjs(date).format('YYYY-MM-DD') : null;
+
+  // 輔助函數：格式化陣列
+  const formatArray = (arr) => arr?.map(item => item.text) ?? [];
+
+  // 處理部門
+  // data.department = data.departmentFromADServer
+  //   ? getDepartmentValue(data.departmentFromADServer)
+  //   : null;
+  data.department = getDepartmentValue(data.department,data.departmentFromADServer)
+
+  // 格式化日期字段
+  data.arrivalDate = formatDate(data.arrivalDate);
+  data.lastWorkingDate = formatDate(data.lastWorkingDate);
+  data.birthday = formatDate(data.birthday);
+
+  // 處理緊急聯絡人
+  data.emergencyContacts = data.emergencyContacts?.length === 0
+    ? [{ mobile: null, name: null, phone: null, relationship: null, rid: null }]
+    : data.emergencyContacts;
+
+  // 處理工作經歷
+  data.workExperiences = data.workExperiences?.map(item => ({
+    ...item,
+    period: [dayjs(item.startFrom).format('YYYY-MM'), dayjs(item.endAt).format('YYYY-MM')]
+  })) ?? [];
+
+  // 處理教育經歷
+  data.educationExperiences = data.educationExperiences?.map(item => ({
+    ...item,
+    period: [dayjs(item.startFrom).format('YYYY-MM'), dayjs(item.endAt).format('YYYY-MM')]
+  })) ?? [];
+  if (data.educationExperiences?.length === 0) {
+    data.educationExperiences.push({
+      rid: null,
+      name: null,
+      academicDegree: null,
+      department: null,
+      degreeStatus: null,
+      period: [null, null]
+    });
+  }
+
+  // 處理其他陣列字段
+  data.drvingLicense = formatArray(data.drvingLicense);
+  data.specialStatus = formatArray(data.specialStatus);
+  data.languages = formatArray(data.languages);
+  data.computerExpertise = formatArray(data.computerExpertise);
+  data.professionalLicense = formatArray(data.professionalLicense);
+
+  return data;
 }
 // 人員資料表資料格式化
-function dataFormatHandle(data){
-        //第一次登入還沒有員工資料時，從AD Server取得資料
-        if(!data.department){
-          //部門 格式化
-          const tmpDepartment = data.departmentFromADServer;
-          if (tmpDepartment) {
-              data.department = getDepartmentValue(tmpDepartment);
-          } else {
-              data.department = null;
-          }
-        }
-        
-        //到職日 格式化
-        data.arrivalDate=dayjs(data.arrivalDate).format('YYYY-MM-DD')
-        //到職日 格式化
-        data.birthday=dayjs(data.birthday).format('YYYY-MM-DD')
-        //緊急聯絡人 格式化
-        if(data.emergencyContacts.length==0){
-            data.emergencyContacts.push({
-            mobile: null,//緊急聯絡人手機
-            name: null,//緊急聯絡人名稱
-            phone: null,//緊急聯絡人電話
-            relationship: null,//緊急聯絡人關係
-            rid:null//緊急聯絡人編號
-            })
-            
-        }
-        // 工作經歷 格式化
-        data.workExperiences.forEach((item) =>{
-            let startDate=dayjs(item.startFrom).format('YYYY-MM')
-            let endDate=dayjs(item.endAt).format('YYYY-MM')
-            item.period=[startDate,endDate]
+function dataFormatHandle1(data) {
+  //第一次登入還沒有員工資料時，從AD Server取得資料
+  if (!data.department) {
+    //部門 格式化
+    const tmpDepartment = data.departmentFromADServer;
+    if (tmpDepartment) {
+      data.department = getDepartmentValue(tmpDepartment);
+    } else {
+      data.department = null;
+    }
+  }
+
+  //到職日 格式化
+  data.arrivalDate?dayjs(data.arrivalDate).format('YYYY-MM-DD'):null
+  //離職日 格式化
+  data.lastWorkingDate?dayjs(data.lastWorkingDate).format('YYYY-MM-DD'):null
+  //到職日 格式化
+  data.birthday?dayjs(data.birthday).format('YYYY-MM-DD'):null
+  //緊急聯絡人 格式化
+  if(data.emergencyContacts){
+    if (data.emergencyContacts.length == 0) {
+        data.emergencyContacts=[]
+        data.emergencyContacts.push({
+          mobile: null,//緊急聯絡人手機
+          name: null,//緊急聯絡人名稱
+          phone: null,//緊急聯絡人電話
+          relationship: null,//緊急聯絡人關係
+          rid: null//緊急聯絡人編號
         })
-        // if(data.workExperiences.length==0){
-        //     data.workExperiences.push({
-        //     rid:null,
-        //     company: null,//公司名稱
-        //     position: null,//職務名稱
-        //     salary: null,//薪資
-        //     leavingReason: null,//離職原因
-        //     period: [null, null]//服務起訖年月
-        //   })
-        // }
-        //教育經歷 格式化
-        data.educationExperiences.forEach((item) =>{
-            let startDate=dayjs(item.startFrom).format('YYYY-MM')
-            let endDate=dayjs(item.endAt).format('YYYY-MM')
-            item.period=[startDate,endDate]
-        })
-        if(data.educationExperiences.length==0){
-            data.educationExperiences.push({
-            rid:null,
-            name: null,
-            academicDegree: null,
-            department: null,
-            degreeStatus: null,
-            period: [null, null],
-          })
-        }
-        //駕照 格式化
-        if(data.drvingLicense.length>0){
-            const arr = data.drvingLicense.map(item => item.text);
-            console.log("整理後e資料表駕照:", arr);
-            data.drvingLicense = arr;
-        }
-        //特殊身分 格式化
-        if(data.specialStatus.length>0){
-            const arr = data.specialStatus.map(item => item.text);
-            console.log("整理後e資料表身分:", arr);
-            data.specialStatus = arr;
-        }
-        //語言 格式化
-        if(data.languages.length>0){
-            const arr = data.languages.map(item => item.text);
-            console.log("整理後e資料表語言:", arr);
-            data.languages = arr;
-        }
-        //特殊專長 格式化
-        if(data.computerExpertise.length>0){
-            const arr = data.computerExpertise.map(item => item.text);
-            console.log("整理後e資料表專長:", arr);
-            data.computerExpertise = arr;
-        }
-        //專業證照 格式化
-        if(data.professionalLicense.length>0){
-            const arr = data.professionalLicense.map(item => item.text);
-            console.log("整理後e資料表證照:", arr);
-            data.professionalLicense = arr;
-        }
-        return data
+    }
+  }
+  
+  // 工作經歷 格式化
+  if(data.workExperiences){
+    data.workExperiences.forEach((item) => {
+      let startDate = dayjs(item.startFrom).format('YYYY-MM')
+      let endDate = dayjs(item.endAt).format('YYYY-MM')
+      item.period = [startDate, endDate]
+    })
+  }else{
+    data.workExperiences=[]
+  }
+  
+  
+  //教育經歷 格式化
+  if(data.educationExperiences){
+    data.educationExperiences.forEach((item) => {
+      let startDate = dayjs(item.startFrom).format('YYYY-MM')
+      let endDate = dayjs(item.endAt).format('YYYY-MM')
+      item.period = [startDate, endDate]
+    })
+  }
+  if(data.educationExperiences){
+    if (data.educationExperiences.length == 0) {
+      data.educationExperiences=[]
+      data.educationExperiences.push({
+        rid: null,
+        name: null,
+        academicDegree: null,
+        department: null,
+        degreeStatus: null,
+        period: [null, null],
+      })
+    }
+  }
+  //駕照 格式化
+  if(data.drvingLicense){
+    if (data.drvingLicense.length > 0 ) {
+      const arr = data.drvingLicense.map(item => item.text);
+      console.log("整理後e資料表駕照:", arr);
+      data.drvingLicense = arr;
+    }else{
+      data.drvingLicense=[]
+    }
+  }
+  //特殊身分 格式化
+  if(data.specialStatus){
+    if (data.specialStatus.length > 0) {
+      const arr = data.specialStatus.map(item => item.text);
+      console.log("整理後e資料表身分:", arr);
+      data.specialStatus = arr;
+    }
+  }
+  //語言 格式化
+  if(data.languages){
+    if (data.languages.length > 0) {
+      const arr = data.languages.map(item => item.text);
+      console.log("整理後e資料表語言:", arr);
+      data.languages = arr;
+    }
+  }
+  //特殊專長 格式化
+  if(data.computerExpertise){
+    if (data.computerExpertise.length > 0) {
+      const arr = data.computerExpertise.map(item => item.text);
+      console.log("整理後e資料表專長:", arr);
+      data.computerExpertise = arr;
+    }
+  }
+  //專業證照 格式化
+  if(data.professionalLicense){
+    if (data.professionalLicense.length > 0) {
+      const arr = data.professionalLicense.map(item => item.text);
+      console.log("整理後e資料表證照:", arr);
+      data.professionalLicense = arr;
+    }
+  }
+  return data
 }
 </script>
 
