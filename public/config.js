@@ -1,24 +1,74 @@
 // 控制匯出按鈕顯示
 const CONFIG = {
-    profile:{
-        //人員資料表
-        isShowExportBtn:false,
+    //人員資料表
+    profile: {
+        isShowExportBtn: false,//是否顯示匯出按鈕
+        //動態項目設定
+        dataConstraints: {
+            //教育程度
+            educationExperiences: {
+                hasMinLimit: true,
+                hasMaxLimit: true,
+                min: 1,
+                max: 5,
+            },
+            //職務經歷
+            workExperiences: {
+                hasMinLimit: false,
+                hasMaxLimit: true,
+                min: 0,
+                max: 3,
+            },
+            //緊急聯絡人
+            emergencyContacts: {
+                hasMinLimit: true,
+                hasMaxLimit: true,
+                min: 1,
+                max: 3,
+            },
+        },
     },
-    resume:{
-        //個人簡歷
-        isShowExportBtn:false,
+    //個人簡歷
+    resume: {
+        isShowExportBtn: false,//是否顯示匯出按鈕
+        //動態項目設定
+        dataConstraints: {
+            //工作經歷
+            workExperiences: {
+                hasMinLimit: false,
+                hasMaxLimit: false,
+                min: 2,
+                max: 4,
+            },
+            //歷年著作
+            annualPublications: {
+                hasMinLimit: false,
+                hasMaxLimit: false,
+                min: 1,
+                max: 4,
+            },
+            //歷年參與之專案計畫
+            annualProjects: {
+                hasMinLimit: false,
+                hasMaxLimit: false,
+                min: 1,
+                max: 3,
+            },
+        },
     },
-    employeeList:{
-        //人員資料表清單
-        isShowExportBtn:true,
+    //人員資料表清單
+    employeeList: {
+        isShowExportBtn: true,//是否顯示匯出按鈕
     },
-    resignedEmployeeList:{
-        //已離職人員清單
-        isShowExportBtn:true,
+    //已離職人員清單
+    resignedEmployeeList: {
+        isShowExportBtn: true,//是否顯示匯出按鈕
     },
-    dataUpdateLogList:{
-        //資料異動紀錄
-        isShowExportBtn:false,
-    }
-  }
+    //資料異動紀錄
+    dataUpdateLogList: {
+        isShowExportBtn: false,//是否顯示匯出按鈕
+    },
+};
 //   export default CONFIG;
+
+

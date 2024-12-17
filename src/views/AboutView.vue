@@ -1,5 +1,5 @@
 <template>
-    <div class="about" :key="randerKey">
+    <div class="about">
         <el-breadcrumb separator="/" v-if="employeeStore.getUserInfo.role != 1">
             <el-breadcrumb-item><el-text size="large" tag="b">員工簡歷</el-text></el-breadcrumb-item>
             <el-breadcrumb-item><el-text size="large" tag="b">{{ curriculumVitae.userName ?? ''
@@ -18,18 +18,18 @@
                 <!-- 姓名 -->
                 <el-col :sm="24" :md="12" :lg="12">
                     <el-form-item label="姓名" prop="userName">
-                            <el-text >
-                                {{ curriculumVitae.userName }}
-                            </el-text>
+                        <el-text>
+                            {{ curriculumVitae.userName }}
+                        </el-text>
                         <!-- <el-input v-model="curriculumVitae.userName" placeholder="請輸入姓名" :disabled="!isHRUser" /> -->
                     </el-form-item>
                 </el-col>
                 <!-- 學歷 -->
                 <el-col :sm="24" :md="12" :lg="12">
                     <el-form-item label="學歷">
-                        <el-text >
+                        <el-text>
                             {{ highestEducationTxt }}
-                        </el-text >
+                        </el-text>
                         <!-- <el-input v-model="highestEducationTxt" placeholder="請輸入學歷"  disabled/> -->
                     </el-form-item>
                 </el-col>
@@ -247,7 +247,7 @@
 
             </el-row>
         </el-form>
-        <div style="position: fixed;right: 20px; bottom: 20px;" v-if="config.resume.isShowExportBtn">
+        <div style="position: fixed;right: 20px; bottom: 20px;" v-if="CONFIG.resume.isShowExportBtn">
             <el-tooltip content="匯出個人簡歷" placement="left-start" effect="dark">
                 <el-button :icon="Upload" type="primary" plain round @click="exportExcel()">匯出</el-button>
             </el-tooltip>
@@ -264,30 +264,10 @@ import { useEmployeeStore } from '../stores/employee';
 import { apiGetMetaDataList, apiSaveResume, apiDeleteWorkingExperience, apiDeleteUserPublication, apiDeleteUserProject, apiGetUserCvFile } from '../api/api';
 import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import { Upload } from '@element-plus/icons-vue'
-const config = inject('config')
-// TODO 設定動態新增的項目上下限
-//控制可動態新增的項目的最大、最小數量
-const dataConstraints = reactive({
-    //工作經歷
-    workExperiences: {
-        min: 0,
-        max: 10
-    },
-    //歷年著作
-    annualPublications: {
-        min: 0,
-        max: 10
-    },
-    //歷年參與之專案計畫
-    annualProjects: {
-        min: 0,
-        max: 3
-    }
-})
-//控制刷新
-// const randerKey=computed(()=>{
-//     return employeeStore.tmpCurriculumVitae
-// })
+
+
+const CONFIG = inject('config')
+
 // 創建一個響應式引用來存儲表單元素
 const ruleFormRef = ref(null);
 //驗證規則
@@ -316,9 +296,10 @@ const highestEducationTxt = computed(() => {
 
 // 新增經歷
 const addWorkExperience = () => {
-    let max = dataConstraints.workExperiences.max
+    let hasMaxLimit = CONFIG.resume.dataConstraints.workExperiences.hasMaxLimit
+    let max = CONFIG.resume.dataConstraints.workExperiences.max
     let arrLength = curriculumVitae.value.workExperiences.length
-    if (arrLength == max) {
+    if (hasMaxLimit && arrLength >= max) {
         ElMessage({
             message: `最多${max}筆`,
             type: 'warning',
@@ -335,9 +316,10 @@ const addWorkExperience = () => {
 };
 // 移除經歷
 const removeWorkExperience = (index, obj) => {
-    let min = dataConstraints.workExperiences.min
+    let hasMinLimit = CONFIG.resume.dataConstraints.workExperiences.hasMinLimit
+    let min = CONFIG.resume.dataConstraints.workExperiences.min
     let arrLength = curriculumVitae.value.workExperiences.length
-    if (arrLength == min) {
+    if (hasMinLimit&&arrLength <= min) {
         ElMessage({
             message: `最少${min}筆`,
             type: 'warning',
@@ -389,9 +371,10 @@ const removeWorkExperience = (index, obj) => {
 };
 // 新增歷年著作
 const addAnnualPublications = () => {
-    let max = dataConstraints.annualPublications.max
+    let hasMaxLimit = CONFIG.resume.dataConstraints.annualPublications.hasMaxLimit
+    let max = CONFIG.resume.dataConstraints.annualPublications.max
     let arrLength = curriculumVitae.value.annualPublications.length
-    if (arrLength == max) {
+    if (hasMaxLimit && arrLength >= max) {
         ElMessage({
             message: `最多${max}筆`,
             type: 'warning',
@@ -399,19 +382,20 @@ const addAnnualPublications = () => {
         })
     } else {
         curriculumVitae.value.annualPublications.push({
-            paperType: null,//論文類型
-            issueDate: null,//發表日期
-            name: null,//論文名稱
-            rid: null//編號
-        });
+                paperType: null,//論文類型
+                issueDate: null,//發表日期
+                name: null,//論文名稱
+                rid: null//編號
+            });
     }
 };
 
 // 移除歷年著作
 const removeAnnualPublications = (index, obj) => {
+    let hasMinLimit = CONFIG.resume.dataConstraints.annualPublications.hasMinLimit
     let arrLength = curriculumVitae.value.annualPublications.length
-    let min = dataConstraints.annualPublications.min
-    if (arrLength == min) {
+    let min = CONFIG.resume.dataConstraints.annualPublications.min
+    if (hasMinLimit&&arrLength <= min) {
         ElMessage({
             message: `最少${min}筆`,
             type: 'warning',
@@ -463,9 +447,10 @@ const removeAnnualPublications = (index, obj) => {
 };
 // 新增歷年計畫
 const addAnnualProjects = () => {
-    let max = dataConstraints.annualProjects.max
+    let hasMaxLimit = CONFIG.resume.dataConstraints.annualProjects.hasMaxLimit
+    let max = CONFIG.resume.dataConstraints.annualProjects.max
     let arrLength = curriculumVitae.value.annualProjects.length
-    if (arrLength == max) {
+    if (hasMaxLimit && arrLength >= max) {
         ElMessage({
             message: `最多${max}筆`,
             type: 'warning',
@@ -473,20 +458,20 @@ const addAnnualProjects = () => {
         })
     } else {
         curriculumVitae.value.annualProjects.push({
-            customer: null,
-            projectName: null,
-            period: [null, null],
-            rid: null
-        });
+                customer: null,
+                projectName: null,
+                period: [null, null],
+                rid: null
+            });
     }
 };
 
 // 移除歷年計畫
 const removeAnnualProjects = (index, obj) => {
-
+    let hasMinLimit = CONFIG.resume.dataConstraints.annualProjects.hasMinLimit
     let arrLength = curriculumVitae.value.annualProjects.length
-    let min = dataConstraints.annualProjects.min
-    if (arrLength == min) {
+    let min = CONFIG.resume.dataConstraints.annualProjects.min
+    if (hasMinLimit&&arrLength <= min) {
         ElMessage({
             message: `最少${min}筆`,
             type: 'warning',
@@ -535,6 +520,7 @@ const removeAnnualProjects = (index, obj) => {
                 console.log(`取消刪除rid:${rid}`)
             })
     }
+    
 };
 // firebase更新資料
 const updateData = () => {

@@ -110,15 +110,15 @@
                 <el-row style="width: 100%;align-items: end;" :gutter="10">
                     <!-- 郵遞區號 -->
                     <el-col :sm="24" :md="24" :lg="3">
-                        <el-form-item label="郵遞區號(戶籍)" prop="residencePostalCode">
+                        <el-form-item label="戶籍地址" prop="residencePostalCode">
                             <el-input v-model="currentData.residencePostalCode" disabled placeholder="請輸入郵遞區號">
                             </el-input>
                         </el-form-item>
                     </el-col>
                     <!-- 縣市 -->
                     <el-col :sm="24" :md="24" :lg="4">
-                        <el-form-item label="縣市(戶籍)" prop="residenceCity">
-                            <el-select v-model="currentData.residenceCity" placeholder="請選擇縣市" 
+                        <el-form-item label=" " prop="residenceCity">
+                            <el-select v-model="currentData.residenceCity" placeholder="請選擇縣市"
                                 @change="changeResidenceCity">
                                 <el-option v-for="c in zipData" :key="c.county" :label="c.county" :value="c.county" />
                             </el-select>
@@ -126,8 +126,8 @@
                     </el-col>
                     <!-- 行政區 -->
                     <el-col :sm="24" :md="24" :lg="4">
-                        <el-form-item label="行政區(戶籍)" prop="residenceDistrict">
-                            <el-select v-model="currentData.residenceDistrict" placeholder="請先選擇縣市" 
+                        <el-form-item label=" " prop="residenceDistrict">
+                            <el-select v-model="currentData.residenceDistrict" placeholder="請選擇行政區"
                                 @change="changeResidenceDistrict">
                                 <el-option v-for="c in residenceDistrictList" :key="c.district" :label="c.district"
                                     :value="c.district" />
@@ -136,8 +136,8 @@
                     </el-col>
                     <!-- 戶籍地址 -->
                     <el-col :sm="24" :md="24" :lg="10">
-                        <el-form-item label="戶籍地址(不含郵地區號、縣市、行政區)" prop="residenceAddress">
-                            <el-input v-model="currentData.residenceAddress" placeholder="請輸入戶籍地址">
+                        <el-form-item label=" " prop="residenceAddress">
+                            <el-input v-model="currentData.residenceAddress" placeholder="請輸入戶籍地址(不含郵地區號、縣市、行政區)">
                             </el-input>
                         </el-form-item>
                     </el-col>
@@ -156,24 +156,23 @@
             <!-- TODO 通訊地址 資料 -->
             <!-- 郵遞區號 -->
             <el-col :sm="24" :md="24" :lg="3">
-                <el-form-item label="郵遞區號(通訊)" prop="mailingPostalCode">
+                <el-form-item label="通訊地址" prop="mailingPostalCode">
                     <el-input v-model="currentData.mailingPostalCode" disabled placeholder="請輸入郵遞區號">
                     </el-input>
                 </el-form-item>
             </el-col>
             <!-- 縣市 -->
             <el-col :sm="24" :md="24" :lg="4">
-                <el-form-item label="縣市(通訊)" prop="mailingCity">
-                    <el-select v-model="currentData.mailingCity" placeholder="請選擇縣市" 
-                        @change="changeMailingCity">
+                <el-form-item label=" " prop="mailingCity">
+                    <el-select v-model="currentData.mailingCity" placeholder="請選擇縣市" @change="changeMailingCity">
                         <el-option v-for="c in zipData" :key="c.county" :label="c.county" :value="c.county" />
                     </el-select>
                 </el-form-item>
             </el-col>
             <!-- 行政區 -->
             <el-col :sm="24" :md="24" :lg="4">
-                <el-form-item label="行政區(通訊)" prop="mailingDistrict">
-                    <el-select v-model="currentData.mailingDistrict" placeholder="請先選擇縣市" 
+                <el-form-item label=" " prop="mailingDistrict">
+                    <el-select v-model="currentData.mailingDistrict" placeholder="請選擇行政區"
                         @change="changeMailingDistrict">
                         <el-option v-for="c in mailingDistrictList" :key="c.district" :label="c.district"
                             :value="c.district" />
@@ -182,8 +181,8 @@
             </el-col>
             <!-- 通訊地址 -->
             <el-col :sm="24" :md="24" :lg="13">
-                <el-form-item label="通訊地址(不含郵地區號、縣市、行政區)" prop="mailingAddress">
-                    <el-input v-model="currentData.mailingAddress" placeholder="請輸入通訊地址">
+                <el-form-item label=" " prop="mailingAddress">
+                    <el-input v-model="currentData.mailingAddress" placeholder="請輸入通訊地址(不含郵地區號、縣市、行政區)">
                     </el-input>
                 </el-form-item>
             </el-col>
@@ -613,7 +612,7 @@
             </el-col>
         </el-row>
     </el-form>
-    <div style="position: fixed;right: 20px; bottom: 20px;" v-if="configExportBtn.profile.isShowExportBtn">
+    <div style="position: fixed;right: 20px; bottom: 20px;" v-if="CONFIG.profile.isShowExportBtn">
         <el-tooltip content="匯出人員資料表" placement="left-start" effect="dark">
             <el-button :icon="Upload" type="primary" plain round @click="exportExcel()">匯出</el-button>
         </el-tooltip>
@@ -632,7 +631,7 @@ import { ref, reactive, onMounted, watch, computed, inject } from 'vue';
 import { Upload } from '@element-plus/icons-vue'
 import { apiGetTwZipCode, apiGetMetaDataList, apiSaveProfile, apiDeleteEducationExperience, apiDeleteWorkingExperience, apiDeleteEmergencyContact, apiGetUserProfileFile } from '../api/api';
 //是否顯示匯出按鈕控制config
-const configExportBtn = inject('config')
+const CONFIG = inject('config')
 //變更到職日自動生成人員編號
 const changeArrivalDate = () => {
     console.log('changeArrivalDate')
@@ -671,25 +670,7 @@ const changeResidenceDistrict = () => {
     currentData.value.residencePostalCode = residenceDistrictList.value.find(d => d.district === currentData.value.residenceDistrict).zipcode
 }
 
-// TODO 設定動態新增的項目上下限
-//控制可動態新增的項目的最大、最小數量
-const dataConstraints = reactive({
-    //教育程度
-    educationExperiences: {
-        min: 1,
-        max: 5
-    },
-    // 工作經歷
-    workExperiences: {
-        min: 0,
-        max: 3
-    },
-    // 緊急聯絡人
-    emergencyContacts: {
-        min: 1,
-        max: 3
-    },
-})
+
 //引用dayjs
 const dayjs = inject('dayjs')
 //取得store
@@ -989,9 +970,10 @@ const copyResidence = () => {
 
 //新增學歷
 const addEducationExperience = () => {
-    let max = dataConstraints.educationExperiences.max
+    let max = CONFIG.profile.dataConstraints.educationExperiences.max
+    let hasMaxLimit = CONFIG.profile.dataConstraints.educationExperiences.hasMaxLimit
     let arrLength = currentData.value.educationExperiences.length
-    if (arrLength == max) {
+    if (hasMaxLimit && arrLength >= max) {
         ElMessage({
             message: `最多${max}筆`,
             type: 'warning',
@@ -1005,14 +987,15 @@ const addEducationExperience = () => {
             department: null,
             degreeStatus: null,
             period: [null, null],
-        });
+        })
     }
 }
 //移除學歷
 const removeEducationExperience = (index, obj) => {
-    let min = dataConstraints.educationExperiences.min
+    let hasMinLimit = CONFIG.profile.dataConstraints.educationExperiences.hasMinLimit
+    let min = CONFIG.profile.dataConstraints.educationExperiences.min
     let arrLength = currentData.value.educationExperiences.length
-    if (arrLength <= min) {
+    if (hasMinLimit&&arrLength <= min) {
         ElMessage({
             message: `最少${min}筆`,
             type: 'warning',
@@ -1064,9 +1047,10 @@ const removeEducationExperience = (index, obj) => {
 }
 //新增工作經歷
 const addWorkExperience = () => {
-    let max = dataConstraints.workExperiences.max
+    let max = CONFIG.profile.dataConstraints.workExperiences.max
+    let hasMaxLimit = CONFIG.profile.dataConstraints.workExperiences.hasMaxLimit
     let arrLength = currentData.value.workExperiences.length
-    if (arrLength == max) {
+    if (hasMaxLimit && arrLength >= max) {
         ElMessage({
             message: `最多${max}筆`,
             type: 'warning',
@@ -1080,14 +1064,15 @@ const addWorkExperience = () => {
             salary: null,//薪資
             leavingReason: null,//離職原因
             period: [null, null]//服務起訖年月
-        });
+        })
     }
 }
 //移除工作經歷
 const removeWorkExperience = async (index, obj) => {
-    let min = dataConstraints.workExperiences.min
+    let hasMinLimit = CONFIG.profile.dataConstraints.workExperiences.hasMinLimit
+    let min = CONFIG.profile.dataConstraints.workExperiences.min
     let arrLength = currentData.value.workExperiences.length
-    if (arrLength <= min) {
+    if (hasMinLimit&&arrLength <= min) {
         ElMessage({
             message: `最少${min}筆`,
             type: 'warning',
@@ -1140,9 +1125,10 @@ const removeWorkExperience = async (index, obj) => {
 }
 //新增緊急聯絡人
 const addeMergencyContacts = () => {
-    let max = dataConstraints.emergencyContacts.max
+    let max = CONFIG.profile.dataConstraints.emergencyContacts.max
+    let hasMaxLimit = CONFIG.profile.dataConstraints.emergencyContacts.hasMaxLimit
     let arrLength = currentData.value.emergencyContacts.length
-    if (arrLength == max) {
+    if (hasMaxLimit && arrLength >= max) {
         ElMessage({
             message: `最多${max}筆`,
             type: 'warning',
@@ -1155,14 +1141,15 @@ const addeMergencyContacts = () => {
             phone: null,//緊急聯絡人電話
             relationship: null,//緊急聯絡人關係
             rid: null//緊急聯絡人編號
-        });
+        })
     }
 }
 //移除緊急聯絡人
 const removeeMergencyContacts = (index, obj) => {
-    let min = dataConstraints.emergencyContacts.min
+    let hasMinLimit = CONFIG.profile.dataConstraints.emergencyContacts.hasMinLimit
+    let min = CONFIG.profile.dataConstraints.emergencyContacts.min
     let arrLength = currentData.value.emergencyContacts.length
-    if (arrLength <= min) {
+    if (hasMinLimit&&arrLength <= min) {
         ElMessage({
             message: `最少${min}筆`,
             type: 'warning',
@@ -1827,9 +1814,8 @@ async function exportExcel() {
     display: flex;
     flex: auto;
 }
+
 // 調整字體大小
 // ::v-deep .el-form-item__label{
 //     font-size: 50px;
-// }
-
-</style>
+// }</style>

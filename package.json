@@ -16,6 +16,7 @@
     "firebase": "^10.12.4",
     "pinia": "^2.1.7",
     "pinia-plugin-persist": "^1.0.0",
+    "qs": "^6.13.1",
     "sweetalert2": "^11.14.4",
     "twzipcode.js": "^3.1.0",
     "vue": "^3.4.29",

@@ -5,7 +5,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 // import { API_CONFIG } from '/api-config.js'
 import { useRouter } from 'vue-router'
-const router = useRouter();
+// const router = useRouter();
 
 // User相關的 api
 const userRequest = axios.create({
@@ -41,7 +41,7 @@ userRequest.interceptors.response.use(
             allowOutsideClick: false,
             allowEscapeKey: false,
           }).then(() => {
-            router.push('/login');
+            window.location.href = '/';
           });
           break;
         default:
@@ -78,7 +78,7 @@ export const handleErrorResponse = (error) => {
           allowOutsideClick: false,
           allowEscapeKey: false,
         }).then(() => {
-          router.push('/login');
+          window.location.href = '/';
         });
         break;
       case 400:

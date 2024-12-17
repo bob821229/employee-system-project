@@ -46,6 +46,7 @@ import { useRouter } from 'vue-router';
 import { apiLogin, apiGetProfile, apiGetMetaDataList } from '../api/api';
 //引用dayjs
 const dayjs = inject('dayjs')
+const qs = inject('qs')
 const router = useRouter();
 const employeeStore = useEmployeeStore();
 const ruleFormRef = ref()
@@ -148,10 +149,12 @@ let obj = ref({
     ],//歷年計畫
   },//個人簡歷
 })
+
 onMounted(async () => {
   await fetchOptions()
   // 檢查是否有保存的帳號
   checkLocalStorage()
+
 })
 
 const options = ref({})
@@ -173,10 +176,13 @@ const addItem = () => {
 // 檢查是否有保存的帳號
 const checkLocalStorage = () => {
   const savedUserAccount = localStorage.getItem('savedUserAccount');
-
   // 如果有保存的帳號，則自動填充到表單中
   if (savedUserAccount) {
     ruleForm.value.email = savedUserAccount; // 自動填充帳號
+    rememberMe.value = true; // 設定記住帳號的選項為已選
+  }else{
+    rememberMe.value = false; // 設定記住帳號的選項為未選
+
   }
 }
 //登入表單
@@ -280,16 +286,23 @@ const login = async (formEl) => {
           console.log("員工資料:", employeeData.data)
           let role = employeeData.data.role
           employeeStore.setUserInfo(employeeData.data)
-          if (role === '2' || role === '3') {
-            router.push('/employeeList');
-          } else if (role === '1') {
-            const result = await apiGetProfile()
-            let formatData = dataFormatHandle(result.data)
-            console.log("整理後e資料表:", formatData)
-            employeeStore.setTmpBasicInformation(formatData)
-            router.push('/form');
-          } else {
-            router.push('/login');
+          const search = window.location.search.substring(1);
+          const params = search ? qs.parse(search) : {};
+          console.log("redirectUrl:", params?.redirectUrl || 'no redirectUrl')
+          if (params?.redirectUrl) {
+            router.push(params.redirectUrl)
+          } else{
+            if (role === '2' || role === '3') {
+              router.push('/employeeList');
+            } else if (role === '1') {
+              const result = await apiGetProfile()
+              let formatData = dataFormatHandle(result.data)
+              console.log("整理後e資料表:", formatData)
+              employeeStore.setTmpBasicInformation(formatData)
+              router.push('/form');
+            } else {
+              router.push('/login');
+            }
           }
         }
       } catch (error) {
@@ -312,7 +325,7 @@ const savedUserAccount = () => {
   if (rememberMe.value) {
     // 把信箱存到 localStorage
     localStorage.setItem('savedUserAccount', ruleForm.value.email);
-  } else {
+  }else {
     // 把 localStorage 中的帳號刪除
     localStorage.removeItem('savedUserAccount');
   }
@@ -497,6 +510,10 @@ function dataFormatHandle1(data) {
   }
   return data
 }
+
+
+
+
 </script>
 
 <style scoped lang="scss">
