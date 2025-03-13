@@ -63,7 +63,7 @@
                     <el-row style="width: 100%;align-items: end;" :gutter="10"
                         v-for="(item, index) in curriculumVitae.workExperiences" :key="index"
                         class="work-experience-item">
-                        <el-col :span="7">
+                        <el-col :span="8">
                             <el-form-item label="單位" :prop="'workExperiences.' + index + '.company'"
                                 :rules="{ required: true, message: '請輸入單位', trigger: 'blur' }">
                                 <el-input v-model="item.company" placeholder="請輸入單位" />
@@ -75,7 +75,21 @@
                                 <el-input v-model="item.position" placeholder="請輸入職稱" />
                             </el-form-item>
                         </el-col>
-                        <el-col :span="9">
+                        <el-col :span="4">
+                        <el-form-item label="開始年月" :prop="'workExperiences.' + index + '.startFrom'"
+                            :rules="{ type: 'date', required: false, message: '請選擇服務起年月', trigger: 'change' }">
+                            <el-date-picker v-model="item.startFrom" type="month" 
+                                placeholder="開始年月" format="YYYY-MM" value-format="YYYY-MM" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="4">
+                        <el-form-item label="結束年月" :prop="'workExperiences.' + index + '.endAt'"
+                            :rules="{ type: 'date', required: false, message: '請選擇服務訖年月', trigger: 'change' }">
+                            <el-date-picker v-model="item.endAt" type="month"
+                                placeholder="結束年月" format="YYYY-MM" value-format="YYYY-MM" />
+                        </el-form-item>
+                    </el-col>
+                        <!-- <el-col :span="9">
                             <el-form-item label="起訖年月" :prop="'workExperiences.' + index + '.period'" :rules="{
                                 type: 'array',
                                 required: true,
@@ -92,7 +106,7 @@
                                     start-placeholder="開始年月" end-placeholder="結束年月" format="YYYY-MM"
                                     value-format="YYYY-MM" />
                             </el-form-item>
-                        </el-col>
+                        </el-col> -->
                         <el-col :span="1">
                             <el-form-item
                                 style="display: flex;align-items:flex-end;justify-content: center;width: 100%;height: 100%;">
@@ -242,7 +256,7 @@
                 </el-col>
                 <el-col :span="24" style="text-align:center;margin-top:30px;" v-if="checkUser">
                     <!-- <el-button  size="large" type="primary" @click="updateData()">保存</el-button> -->
-                    <el-button size="large" type="primary" @click="saveResume(ruleFormRef)">保存</el-button>
+                    <el-button size="large" type="primary" @click="submit(ruleFormRef)">保存</el-button>
                 </el-col>
 
             </el-row>
@@ -253,15 +267,16 @@
             </el-tooltip>
         </div>
     </div>
+    <!-- isModified:{{ isModified }} -->
 </template>
 <script setup>
-import { ref, onMounted, computed, reactive, inject } from 'vue'
+import { ref, onMounted, computed, reactive, inject,watch } from 'vue'
 import { db } from '../api/firebaseConfig';
 import {
     getDatabase, ref as dbRef, push, onValue, remove, query, equalTo, orderByChild, set
 } from 'firebase/database';
 import { useEmployeeStore } from '../stores/employee';
-import { apiGetMetaDataList, apiSaveResume, apiDeleteWorkingExperience, apiDeleteUserPublication, apiDeleteUserProject, apiGetUserCvFile } from '../api/api';
+import { apiGetMetaDataList,apiGetResume, apiSaveResume, apiDeleteWorkingExperience, apiDeleteUserPublication, apiDeleteUserProject, apiGetUserCvFile } from '../api/api';
 import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import { Upload } from '@element-plus/icons-vue'
 
@@ -280,6 +295,11 @@ const employeeStore = useEmployeeStore();
 const role = ref(employeeStore.getUserInfo.role)
 // const curriculumVitae = ref(employeeStore.tmpCurriculumVitae);
 const curriculumVitae = computed(() => employeeStore.tmpCurriculumVitae);
+//檢查資料是否被變更
+const isModified = ref(false);
+watch(() => curriculumVitae.value, (newValue) => {
+    isModified.value = true;
+}, { deep: true });
 const checkUser = computed(() => {
     return curriculumVitae.value.userId == employeeStore.getUserInfo.userId || employeeStore.getUserInfo.role == '3'
 })
@@ -307,10 +327,12 @@ const addWorkExperience = () => {
         })
     } else {
         curriculumVitae.value.workExperiences.push({
-            company: "",//公司名稱
-            position: "",//職務名稱
-            period: [null, null],//服務起訖年月
-            rid: null//編號
+            company: null,//公司名稱
+            position: null,//職務名稱
+            // period: [null, null],//服務起訖年月
+            rid: null,//編號
+            startFrom: null,//服務起
+            endAt: null,//服務迄
         });
     }
 };
@@ -319,7 +341,7 @@ const removeWorkExperience = (index, obj) => {
     let hasMinLimit = CONFIG.resume.dataConstraints.workExperiences.hasMinLimit
     let min = CONFIG.resume.dataConstraints.workExperiences.min
     let arrLength = curriculumVitae.value.workExperiences.length
-    if (hasMinLimit&&arrLength <= min) {
+    if (hasMinLimit && arrLength <= min) {
         ElMessage({
             message: `最少${min}筆`,
             type: 'warning',
@@ -382,11 +404,11 @@ const addAnnualPublications = () => {
         })
     } else {
         curriculumVitae.value.annualPublications.push({
-                paperType: null,//論文類型
-                issueDate: null,//發表日期
-                name: null,//論文名稱
-                rid: null//編號
-            });
+            paperType: null,//論文類型
+            issueDate: null,//發表日期
+            name: null,//論文名稱
+            rid: null//編號
+        });
     }
 };
 
@@ -395,7 +417,7 @@ const removeAnnualPublications = (index, obj) => {
     let hasMinLimit = CONFIG.resume.dataConstraints.annualPublications.hasMinLimit
     let arrLength = curriculumVitae.value.annualPublications.length
     let min = CONFIG.resume.dataConstraints.annualPublications.min
-    if (hasMinLimit&&arrLength <= min) {
+    if (hasMinLimit && arrLength <= min) {
         ElMessage({
             message: `最少${min}筆`,
             type: 'warning',
@@ -458,11 +480,11 @@ const addAnnualProjects = () => {
         })
     } else {
         curriculumVitae.value.annualProjects.push({
-                customer: null,
-                projectName: null,
-                period: [null, null],
-                rid: null
-            });
+            customer: null,
+            projectName: null,
+            period: [null, null],
+            rid: null
+        });
     }
 };
 
@@ -471,7 +493,7 @@ const removeAnnualProjects = (index, obj) => {
     let hasMinLimit = CONFIG.resume.dataConstraints.annualProjects.hasMinLimit
     let arrLength = curriculumVitae.value.annualProjects.length
     let min = CONFIG.resume.dataConstraints.annualProjects.min
-    if (hasMinLimit&&arrLength <= min) {
+    if (hasMinLimit && arrLength <= min) {
         ElMessage({
             message: `最少${min}筆`,
             type: 'warning',
@@ -520,7 +542,7 @@ const removeAnnualProjects = (index, obj) => {
                 console.log(`取消刪除rid:${rid}`)
             })
     }
-    
+
 };
 // firebase更新資料
 const updateData = () => {
@@ -538,44 +560,109 @@ const updateData = () => {
     set(dbRef(db, `users/${firebaseKey}`), employeeStore.tmpUserInfo);
 }
 // 驗證 & 儲存員工簡歷
-const saveResume = async () => {
+// const submit = async () => {
 
-    // console.log("驗證", ruleFormRef.value)
-    ruleFormRef.value.validate(async (valid, fields) => {
-        if (!valid) {
-            // 使用 Object.keys 列出所有未通過的欄位名稱
-            const errorFields = Object.keys(fields);
+//     // console.log("驗證", ruleFormRef.value)
+//     ruleFormRef.value.validate(async (valid, fields) => {
+//         if (!valid) {
+//             // 使用 Object.keys 列出所有未通過的欄位名稱
+//             const errorFields = Object.keys(fields);
 
-            // 顯示具體的錯誤訊息
-            console.log("未通過驗證的欄位：", errorFields);
-            console.log("詳細錯誤信息：", fields); // 會顯示欄位及對應的錯誤訊息
+//             // 顯示具體的錯誤訊息
+//             console.log("未通過驗證的欄位：", errorFields);
+//             console.log("詳細錯誤信息：", fields); // 會顯示欄位及對應的錯誤訊息
 
-            ElMessage.error('驗證失敗，請檢查輸入');
+//             ElMessage.error('驗證失敗，請檢查輸入');
 
-            // 若要進一步顯示每個欄位的錯誤訊息
-            errorFields.forEach(field => {
-                console.log(`欄位 ${field} 錯誤：`, fields[field][0].message);
-            });
-        } else {
-            // console.log('目前資料curriculumVitae:',curriculumVitae.value);
-            const loadingInstance1 = ElLoading.service({ fullscreen: true })
-            let apiData = deepCopy(curriculumVitae.value)//深拷貝不影響原來數據
-            apiData = dataFormatHandle(apiData)
-            console.log("要更新的簡歷處理前:", curriculumVitae.value)
-            console.log("要更新的簡歷處理後:", apiData)
-            try {
-                const respone = await apiSaveResume(apiData)
-                console.log("更新成功，返回的數據:", respone.data);
-                ElMessage.success('個人簡歷 更新成功');
-            } catch (error) {
-                console.log(error)
-                ElMessage.error('個人簡歷 更新失敗');
-            } finally {
-                loadingInstance1.close()
+//             // 若要進一步顯示每個欄位的錯誤訊息
+//             errorFields.forEach(field => {
+//                 console.log(`欄位 ${field} 錯誤：`, fields[field][0].message);
+//             });
+//         } else {
+//             const loadingInstance1 = ElLoading.service({ fullscreen: true })
+//             let apiData = deepCopy(curriculumVitae.value)//深拷貝不影響原來數據
+//             apiData = dataFormatHandle(apiData)
+//             try {
+//                 const respone = await apiSaveResume(apiData)
+//                 // console.log("更新成功，返回的數據:", respone.data);
+//                 employeeStore.setTmpCurriculumVitae(respone.data)
+//                 ElMessage.success('個人簡歷 更新成功');
+//             } catch (error) {
+//                 console.log(error)
+//                 ElMessage.error('個人簡歷 更新失敗');
+//             } finally {
+//                 loadingInstance1.close()
+//             }
+//         }
+//     });
+// }
+// 驗證 & 儲存員工簡歷
+const submit = async () => {
+    return new Promise((resolve) => {
+        ruleFormRef.value.validate(async (valid, fields) => {
+            if (!valid) {
+                handleValidationErrors(fields);
+                resolve(false);
+            } else {
+                const apiData = prepareApiData(curriculumVitae.value);
+                const loadingInstance1 = ElLoading.service({ fullscreen: true })
+
+                try {
+                    await saveResume(apiData)
+                    await refreshResumeData(curriculumVitae.value.userId)
+                    ElMessage.success('個人簡歷 更新成功');
+                    isModified.value = false
+                    resolve(true);
+                } catch (error) {
+                    console.log(error)
+                    ElMessage.error(`個人簡歷 更新失敗：${error.message}`);
+                    resolve(false);
+                } finally {
+                    loadingInstance1.close()
+                }
             }
-        }
+        });
     });
 }
+/** 處理驗證錯誤 */
+const handleValidationErrors = (fields) => {
+    const errorFields = Object.keys(fields);
+    console.log("未通過驗證的欄位：", errorFields);
+    console.log("詳細錯誤信息：", fields);
+
+    ElMessage.error('驗證失敗，請檢查輸入');
+    errorFields.forEach((field) => {
+        console.log(`欄位 ${field} 錯誤：`, fields[field][0].message);
+    });
+};
+/** 深拷貝與格式化 API 資料 */
+const prepareApiData = (data) => {
+    const copiedData = deepCopy(data);
+    return dataFormatHandle(copiedData);
+};
+
+/** 儲存資料 */
+const saveResume = async (apiData) => {
+    try {
+        await apiSaveResume(apiData);
+        console.log("資料儲存成功");
+    } catch (error) {
+        console.error("儲存資料失敗:", error);
+        throw new Error("儲存資料失敗");
+    }
+};
+
+/** 重新獲取最新資料 */
+const refreshResumeData = async (userId) => {
+    try {
+        const updatedResponse = await apiGetResume(userId);~
+        employeeStore.setTmpCurriculumVitae(updatedResponse.data);
+        console.log("資料更新成功");
+    } catch (error) {
+        console.error("獲取最新資料失敗:", error);
+        throw new Error("獲取最新資料失敗");
+    }
+};
 //深拷貝
 const deepCopy = (obj) => {
     return JSON.parse(JSON.stringify(obj))
@@ -602,8 +689,12 @@ function dataFormatHandle(data) {
     // 工作經歷格式化
     if (data.workExperiences) {
         data.workExperiences.forEach((item) => {
-            item.startFrom = item.period[0] + "-01"
-            item.endAt = item.period[1] + "-01"
+            if(item.startFrom!=null){
+                item.startFrom = item.startFrom + "-01"
+            }
+            if(item.endAt!=null){
+                item.endAt = item.endAt + "-01"
+            }
         })
     } else {
         data.workExperiences = []
@@ -701,7 +792,7 @@ onMounted(() => {
     fetchOptions()
 })
 // 匯出個人簡歷
-async function exportExcel() {
+async function exportExcel1() {
     let userId = curriculumVitae.value.userId
     try {
         const response = await apiGetUserCvFile(userId)
@@ -710,6 +801,42 @@ async function exportExcel() {
         window.open(url)
     } catch (error) {
         console.log(error);
+    }
+}
+// 匯出人員資料表
+async function exportExcel() {
+    // 人員編號
+    const userId = curriculumVitae.value.userId;
+    //檢查資瞭是否有被修改
+    const isDataModified = isModified.value;
+
+    if (isDataModified) {
+        console.log("資料已被修改，正在驗證並保存");
+        const validationResult = await submit();
+        console.log("驗證完成，結果:", validationResult);
+
+        if (validationResult) {
+            console.log("驗證成功,準備導出");
+            await performExport(userId);
+        } else {
+            console.log("驗證失敗,導出操作取消");
+            ElMessage.error("驗證失敗,無法進行導出");
+        }
+    } else {
+        console.log("資料未被修改，直接匯出");
+        await performExport(userId);
+    }
+}
+
+async function performExport(userId) {
+    try {
+        const response = await apiGetUserCvFile(userId);
+        const url = response.data.data;
+        console.log("前往這個網站:", url);
+        window.open(url);
+    } catch (error) {
+        console.error("導出錯誤:", error);
+        ElMessage.error("導出失敗,請稍後再試");
     }
 }
 </script>
@@ -735,19 +862,8 @@ async function exportExcel() {
     margin: 50px 0 30px 0;
 }
 
-// ::v-deep .el-form {
-//     font-size: 30px;
 
-//     input,
-//     span,
-//     .el-form-item__label,
-//     .el-text {
-//         font-size: 18px;
+// .el-text {
+//     font-size: 18px;
 
-//     }
-// }
-.el-text {
-    font-size: 18px;
-
-}
-</style>
+// }</style>

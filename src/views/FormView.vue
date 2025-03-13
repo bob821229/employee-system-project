@@ -342,7 +342,7 @@
                 <el-row style="width: 100%;align-items: end;" :gutter="10"
                     v-for="(experience, index) in currentData.workExperiences" :key="index"
                     class="work-experience-item">
-                    <el-col :span="5">
+                    <el-col :span="8">
                         <el-form-item label="公司名稱" :prop="'workExperiences.' + index + '.company'" :rules="{
                             required: true,
                             message: '請輸入公司名稱',
@@ -351,7 +351,7 @@
                             <el-input v-model="experience.company" placeholder="請輸入公司名稱" />
                         </el-form-item>
                     </el-col>
-                    <el-col :span="5">
+                    <el-col :span="7">
                         <el-form-item label="職務名稱" :prop="'workExperiences.' + index + '.position'" :rules="{
                             required: true,
                             message: '請輸入職務名稱',
@@ -361,6 +361,21 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
+                        <el-form-item label="開始年月" :prop="'workExperiences.' + index + '.startFrom'"
+                            :rules="{ type: 'date', required: false, message: '請選擇服務起年月', trigger: 'change' }">
+                            <el-date-picker v-model="experience.startFrom" type="month" 
+                                placeholder="開始年月" format="YYYY-MM" value-format="YYYY-MM" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="4">
+                        <el-form-item label="結束年月" :prop="'workExperiences.' + index + '.endAt'"
+                            :rules="{ type: 'date', required: false, message: '請選擇服務訖年月', trigger: 'change' }">
+                            <el-date-picker v-model="experience.endAt" type="month"
+                                placeholder="結束年月" format="YYYY-MM" value-format="YYYY-MM" />
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="4" v-if="false">
                         <el-form-item label="薪資" :prop="'workExperiences.' + index + '.salary'" :rules="[{
                             required: true,
                             message: '請輸入薪資',
@@ -369,7 +384,7 @@
                             <el-input v-model.number="experience.salary" placeholder="請輸入薪資" />
                         </el-form-item>
                     </el-col>
-                    <el-col :span="5">
+                    <el-col :span="5" v-if="false">
                         <el-form-item label="離職原因" :prop="'workExperiences.' + index + '.leavingReason'" :rules="{
                             required: true,
                             message: '請輸入離職原因',
@@ -378,7 +393,7 @@
                             <el-input v-model="experience.leavingReason" placeholder="請輸入離職原因" />
                         </el-form-item>
                     </el-col>
-                    <el-col :span="4">
+                    <!-- <el-col :span="9">
                         <el-form-item label="服務起訖年月" :prop="'workExperiences.' + index + '.period'" :rules="{
                             type: 'array',
                             required: true,
@@ -395,7 +410,8 @@
                                 start-placeholder="開始年月" end-placeholder="結束年月" format="YYYY-MM"
                                 value-format="YYYY-MM" />
                         </el-form-item>
-                    </el-col>
+                    </el-col> -->
+
                     <el-col :span="1">
                         <el-form-item
                             style="display: flex;align-items:flex-end;justify-content: center;width: 100%;height: 100%;">
@@ -408,6 +424,8 @@
                             </el-button>
                         </el-form-item>
                     </el-col>
+
+                    
                 </el-row>
             </el-col>
             <!-- 新增職務經歷 -->
@@ -617,7 +635,7 @@
             <el-button :icon="Upload" type="primary" plain round @click="exportExcel()">匯出</el-button>
         </el-tooltip>
     </div>
-
+    <!-- isModified:{{ isModified }} -->
 </template>
 
 <script setup>
@@ -629,7 +647,7 @@ import { ElMessage, ElLoading, ElMessageBox } from 'element-plus';
 import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { ref, reactive, onMounted, watch, computed, inject } from 'vue';
 import { Upload } from '@element-plus/icons-vue'
-import { apiGetTwZipCode, apiGetMetaDataList, apiSaveProfile, apiDeleteEducationExperience, apiDeleteWorkingExperience, apiDeleteEmergencyContact, apiGetUserProfileFile } from '../api/api';
+import { apiGetTwZipCode, apiGetMetaDataList, apiGetProfile, apiSaveProfile, apiDeleteEducationExperience, apiDeleteWorkingExperience, apiDeleteEmergencyContact, apiGetUserProfileFile } from '../api/api';
 //是否顯示匯出按鈕控制config
 const CONFIG = inject('config')
 //變更到職日自動生成人員編號
@@ -682,7 +700,11 @@ const currentData = computed(() => employeeStore.tmpBasicInformation);
 const router = useRouter();
 // 創建一個響應式引用來存儲表單元素
 const ruleFormRef = ref(null);
-
+//檢查資料是否被變更
+const isModified = ref(false);
+watch(() => currentData.value, (newValue) => {
+    isModified.value = true;
+}, { deep: true });
 // =========================以下處理驗證=========================
 
 
@@ -763,7 +785,7 @@ const rules = reactive({
         { type: 'date', required: true, message: '請選擇生日', trigger: 'change' }
     ],
     homePhone: [
-        { required: true, message: '請輸入連絡電話', trigger: 'blur' },
+        { required: false, message: '請輸入連絡電話', trigger: 'blur' },
         { pattern: /^0\d{1,3}-\d{6,8}$/, message: '請輸入正確的格式(ex:03-3216549)', trigger: 'blur' }
     ],
     phone: [
@@ -995,7 +1017,7 @@ const removeEducationExperience = (index, obj) => {
     let hasMinLimit = CONFIG.profile.dataConstraints.educationExperiences.hasMinLimit
     let min = CONFIG.profile.dataConstraints.educationExperiences.min
     let arrLength = currentData.value.educationExperiences.length
-    if (hasMinLimit&&arrLength <= min) {
+    if (hasMinLimit && arrLength <= min) {
         ElMessage({
             message: `最少${min}筆`,
             type: 'warning',
@@ -1063,7 +1085,9 @@ const addWorkExperience = () => {
             position: null,//職務名稱
             salary: null,//薪資
             leavingReason: null,//離職原因
-            period: [null, null]//服務起訖年月
+            // period: [null, null],//服務起訖年月
+            startFrom: null,//服務起
+            endAt: null,//服務迄
         })
     }
 }
@@ -1072,7 +1096,7 @@ const removeWorkExperience = async (index, obj) => {
     let hasMinLimit = CONFIG.profile.dataConstraints.workExperiences.hasMinLimit
     let min = CONFIG.profile.dataConstraints.workExperiences.min
     let arrLength = currentData.value.workExperiences.length
-    if (hasMinLimit&&arrLength <= min) {
+    if (hasMinLimit && arrLength <= min) {
         ElMessage({
             message: `最少${min}筆`,
             type: 'warning',
@@ -1149,7 +1173,7 @@ const removeeMergencyContacts = (index, obj) => {
     let hasMinLimit = CONFIG.profile.dataConstraints.emergencyContacts.hasMinLimit
     let min = CONFIG.profile.dataConstraints.emergencyContacts.min
     let arrLength = currentData.value.emergencyContacts.length
-    if (hasMinLimit&&arrLength <= min) {
+    if (hasMinLimit && arrLength <= min) {
         ElMessage({
             message: `最少${min}筆`,
             type: 'warning',
@@ -1273,43 +1297,72 @@ const deepCopy = (obj) => {
 }
 // 驗證 & 儲存員工資料
 const validateForm = (elForm = ruleFormRef.value) => {
-    console.log("驗證", ruleFormRef.value)
-    ruleFormRef.value.validate(async (valid, fields) => {
-        if (!valid) {
-            // 使用 Object.keys 列出所有未通過的欄位名稱
-            const errorFields = Object.keys(fields);
-
-            // 顯示具體的錯誤訊息
-            console.log("未通過驗證的欄位：", errorFields);
-            console.log("詳細錯誤信息：", fields); // 會顯示欄位及對應的錯誤訊息
-
-            ElMessage.error('驗證失敗，請檢查輸入');
-
-            // 若要進一步顯示每個欄位的錯誤訊息
-            errorFields.forEach(field => {
-                console.log(`欄位 ${field} 錯誤：`, fields[field][0].message);
-            });
-        } else {
-
-            let apiData = deepCopy(currentData.value)//深拷貝不影響原來數據
-            apiData = dataFormatHandle(apiData)
-            console.log("要更新的資料表處理前:", currentData.value)
-            console.log("要更新的資料表處理後:", apiData)
-            const loadingInstance1 = ElLoading.service({ fullscreen: true })
-            try {
-                const respone = await apiSaveProfile(apiData)
-                console.log("更新成功，返回的數據:", respone.data);
-                ElMessage.success('人員資料表 更新成功');
-            } catch (error) {
-                console.log(error)
-                ElMessage.error('人員資料表 更新失敗');
-            } finally {
-                loadingInstance1.close()
+    return new Promise((resolve) => {
+        ruleFormRef.value.validate(async (valid, fields) => {
+            if (!valid) {
+                handleValidationErrors(fields);
+                return;
             }
-        }
+
+            const apiData = prepareApiData(currentData.value);
+            const loadingInstance = ElLoading.service({ fullscreen: true });
+
+            try {
+                await saveProfile(apiData);
+                await refreshProfileData(currentData.value.userId);
+                ElMessage.success('人員資料表 更新成功');
+                isModified.value = false;
+                resolve(true);
+            } catch (error) {
+                ElMessage.error(`人員資料表 更新失敗：${error.message}`);
+                resolve(false);
+            } finally {
+                loadingInstance.close();
+            }
+        });
     });
 };
 
+/** 處理驗證錯誤 */
+const handleValidationErrors = (fields) => {
+    const errorFields = Object.keys(fields);
+    console.log("未通過驗證的欄位：", errorFields);
+    console.log("詳細錯誤信息：", fields);
+
+    ElMessage.error('驗證失敗，請檢查輸入');
+    errorFields.forEach((field) => {
+        console.log(`欄位 ${field} 錯誤：`, fields[field][0].message);
+    });
+};
+
+/** 深拷貝與格式化 API 資料 */
+const prepareApiData = (data) => {
+    const copiedData = deepCopy(data);
+    return dataFormatHandle(copiedData);
+};
+
+/** 儲存資料 */
+const saveProfile = async (apiData) => {
+    try {
+        await apiSaveProfile(apiData);
+        console.log("資料儲存成功");
+    } catch (error) {
+        console.error("儲存資料失敗:", error);
+        throw new Error("儲存資料失敗");
+    }
+};
+
+/** 重新獲取最新資料 */
+const refreshProfileData = async (userId) => {
+    try {
+        const updatedResponse = await apiGetProfile(userId);
+        employeeStore.setTmpBasicInformation(updatedResponse.data);
+        console.log("資料更新成功");
+    } catch (error) {
+        console.error("獲取最新資料失敗:", error);
+        throw new Error("獲取最新資料失敗");
+    }
+};
 
 
 // ======以下處理上傳========
@@ -1583,8 +1636,12 @@ function dataFormatHandle(data) {
     // 工作經歷格式化
     if (data.workExperiences) {
         data.workExperiences.forEach((item) => {
-            item.startFrom = item.period[0] + "-01"
-            item.endAt = item.period[1] + "-01"
+            if(item.startFrom!=null){
+                item.startFrom = item.startFrom + "-01"
+            }
+            if(item.endAt!=null){
+                item.endAt = item.endAt + "-01"
+            }
         })
     } else {
         data.workExperiences = []
@@ -1723,13 +1780,35 @@ function dataFormatHandle(data) {
 // 匯出人員資料表
 async function exportExcel() {
     let userId = currentData.value.userId
+    //檢查資瞭是否有被修改
+    const isDataModified = isModified.value;
+
+    if (isDataModified) {
+        console.log("資料已被修改，正在驗證並保存");
+        const validationResult = await validateForm();
+        console.log("驗證完成，結果:", validationResult);
+
+        if (validationResult) {
+            console.log("驗證成功,準備導出");
+            await performExport(userId);
+        } else {
+            console.log("驗證失敗,導出操作取消");
+            ElMessage.error("驗證失敗,無法進行導出");
+        }
+    } else {
+        console.log("資料未被修改，直接匯出");
+        await performExport(userId);
+    }
+}
+async function performExport(userId) {
     try {
-        const response = await apiGetUserProfileFile(userId)
-        let url = response.data.data
-        console.log("前往這網站:", url)
-        window.open(url)
+        const response = await apiGetUserProfileFile(userId);
+        const url = response.data.data;
+        console.log("前往這個網站:", url);
+        window.open(url);
     } catch (error) {
-        console.log(error);
+        console.error("導出錯誤:", error);
+        ElMessage.error("導出失敗,請稍後再試");
     }
 }
 </script>

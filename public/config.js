@@ -2,7 +2,7 @@
 const CONFIG = {
     //人員資料表
     profile: {
-        isShowExportBtn: false,//是否顯示匯出按鈕
+        isShowExportBtn: true,//是否顯示匯出按鈕
         //動態項目設定
         dataConstraints: {
             //教育程度
@@ -15,7 +15,7 @@ const CONFIG = {
             //職務經歷
             workExperiences: {
                 hasMinLimit: false,
-                hasMaxLimit: true,
+                hasMaxLimit: false,
                 min: 0,
                 max: 3,
             },
@@ -30,7 +30,7 @@ const CONFIG = {
     },
     //個人簡歷
     resume: {
-        isShowExportBtn: false,//是否顯示匯出按鈕
+        isShowExportBtn: true,//是否顯示匯出按鈕
         //動態項目設定
         dataConstraints: {
             //工作經歷

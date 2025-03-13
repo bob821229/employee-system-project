@@ -117,6 +117,134 @@ export const handleErrorResponse = (error) => {
 };
 
 
+// =====================================資料格式化================================================
+//人員資料表 資料格式化
+function dataFormatHandle(data) {
+  // 輔助函數：格式化日期
+  const formatDate = (date) => date ? dayjs(date).format('YYYY-MM-DD') : null;
+
+  // 輔助函數：格式化陣列
+  const formatArray = (arr) => arr?.map(item => item.text) ?? [];
+
+  // 處理部門
+  const getDepartmentValue=(department,departmentFromADServer)=>{
+    if(department){
+    return department
+  }else{
+    const departmentIndex = options.value.departmentList.findIndex(d => d.text === departmentFromADServer);
+    return departmentIndex >= 0 ? options.value.departmentList[departmentIndex].value : null;
+  }
+  }
+  data.department = getDepartmentValue(data.department,data.departmentFromADServer)
+
+  // 格式化日期字段
+  data.arrivalDate = formatDate(data.arrivalDate);
+  data.lastWorkingDate = formatDate(data.lastWorkingDate);
+  data.birthday = formatDate(data.birthday);
+
+  // 處理緊急聯絡人
+  data.emergencyContacts = data.emergencyContacts?.length === 0
+    ? [{ mobile: null, name: null, phone: null, relationship: null, rid: null }]
+    : data.emergencyContacts;
+
+  // 處理工作經歷
+  data.workExperiences = data.workExperiences?.map(item => ({
+    ...item,
+    period: [dayjs(item.startFrom).format('YYYY-MM'), dayjs(item.endAt).format('YYYY-MM')]
+  })) ?? [];
+
+  // 處理教育經歷
+  data.educationExperiences = data.educationExperiences?.map(item => ({
+    ...item,
+    period: [dayjs(item.startFrom).format('YYYY-MM'), dayjs(item.endAt).format('YYYY-MM')]
+  })) ?? [];
+  if (data.educationExperiences?.length === 0) {
+    data.educationExperiences.push({
+      rid: null,
+      name: null,
+      academicDegree: null,
+      department: null,
+      degreeStatus: null,
+      period: [null, null]
+    });
+  }
+
+  // 處理其他陣列字段
+  data.drvingLicense = formatArray(data.drvingLicense);
+  data.specialStatus = formatArray(data.specialStatus);
+  data.languages = formatArray(data.languages);
+  data.computerExpertise = formatArray(data.computerExpertise);
+  data.professionalLicense = formatArray(data.professionalLicense);
+
+  return data;
+}
+//個人簡歷 資料格式化
+function dataFormat(data){
+  //經歷格式化
+  if(data.workExperiences){
+    data.workExperiences.forEach((item) =>{
+        let startDate=dayjs(item.startFrom).format('YYYY-MM')
+        let endDate=dayjs(item.endAt).format('YYYY-MM')
+        item.period=[startDate,endDate]
+    })
+  }else{
+    data.workExperiences=[]
+  }
+  // if(data.workExperiences.length==0){
+  //         data.workExperiences.push({
+  //         company: null,
+  //         position: null,
+  //         period:[null,null]
+  //     })
+  // }
+  // 歷年著作格式化
+  if(data.annualPublications){
+    data.annualPublications.forEach((item) =>{
+        item.issueDate=dayjs(item.issueDate).format('YYYY-MM')
+    })
+  }else{
+    data.annualPublications=[]
+  }
+
+  //歷年參與之專案計畫格式化
+  if(data.annualProjects){
+    data.annualProjects.forEach((item) =>{
+        let startDate=dayjs(item.startFrom).format('YYYY-MM')
+        let endDate=dayjs(item.endAt).format('YYYY-MM')
+        item.period=[startDate,endDate]
+    })
+  }else{
+    data.annualProjects=[]
+  }
+  // if(data.annualProjects.length==0){
+  //     data.annualProjects.push({
+  //     entrustUnit: null,
+  //     projectName: null,
+  //     period:[null,null]
+  //     })
+  // }
+  //特殊專長格式化
+  if(data.computerExpertise){
+    if(data.computerExpertise.length>0){
+        const arr = data.computerExpertise.map(item => item.text);
+        console.log("整理後e資料表專長:", arr);
+        data.computerExpertise = arr;
+    }
+  }else{
+    data.computerExpertise=[]
+  }
+  //專業證照格式化
+  if(data.professionalLicense){
+    if(data.professionalLicense.length>0){
+        const arr = data.professionalLicense.map(item => item.text);
+        console.log("整理後e資料表證照:", arr);
+        data.professionalLicense = arr;
+    }
+  }else{
+    data.professionalLicense=[]
+  }
+  return data
+}
 // =====================================通用================================================
 
 
@@ -239,17 +367,17 @@ export const apiGetUserProfileFile = (userId) =>{
 export const apiGetUserCvFile = (userId) => {
   if (userId) {
     let url = endpoints.admin.getUserCvFile;
-    url += `?userId=${userId}`;
+    url += `?rid=${userId}`;
     return userRequest.post(url);
   }else{
     return
   }
 } 
 //匯出員工清單
-export const apiGetUserListExcelFile = (ifEnable) =>{
+export const apiGetUserListExcelFile = (queryString,parameters) =>{
 let url=endpoints.admin.getUserListExcelFile;
-url += `?ifEnable=${ifEnable}`;
-return userRequest.post(url);
+url += `?${queryString}`;
+return userRequest.post(url,parameters);
 } 
 //取得台灣郵遞區號
 export const apiGetTwZipCode  = () =>axios.get('/data/twZipCode.json')

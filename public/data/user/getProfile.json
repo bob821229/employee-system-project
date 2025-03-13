@@ -5,104 +5,78 @@
             "value": "01"
         },
         {
-            "text": "Visio",
-            "value": "04"
+            "text": "Ecxel",
+            "value": "02"
+        },
+        {
+            "text": "Vue.js",
+            "value": "expertise-20250217061230-3-1801"
         }
     ],
-    "drvingLicense": null,
+    "drvingLicense": [],
     "languages": [
         {
             "text": "國語",
             "value": "01"
         },
         {
-            "text": "外星語",
-            "value": "language-20241108085100"
-        }
-    ],
-    "professionalLicense": [
-        {
-            "text": "系統分析師 (CSM)",
-            "value": "01"
-        },
-        {
-            "text": "資訊安全管理師 (CISSP)",
+            "text": "英語",
             "value": "04"
         }
     ],
-    "specialStatus": [
-        {
-            "text": "原住民",
-            "value": "01"
-        },
-        {
-            "text": "身心障礙",
-            "value": "02"
-        }
-    ],
+    "professionalLicense": [],
+    "specialStatus": [],
     "emergencyContacts": [
         {
-            "rid": 2,
-            "userId": 1,
-            "mobile": "0912554999",
-            "phone": "04-3547810",
-            "name": "Sys",
-            "relationship": "姐弟2",
+            "rid": 19,
+            "userId": 18,
+            "mobile": "0983008262",
+            "phone": "",
+            "name": "許庭瑀",
+            "relationship": "姊弟",
             "ifEnable": true,
-            "createDateTimeUtc": "2024-11-06T02:45:35.107",
-            "updateDateTimeUtc": "2024-11-08T09:14:31.497",
-            "createBy": 1,
-            "updateBy": 1
-        },
-        {
-            "rid": 11,
-            "userId": 1,
-            "mobile": "0939742393",
-            "phone": "02-1029293",
-            "name": "bro",
-            "relationship": "slibing",
-            "ifEnable": true,
-            "createDateTimeUtc": "2024-11-08T08:28:34.957",
-            "updateDateTimeUtc": "2024-11-08T09:14:31.757",
-            "createBy": 1,
-            "updateBy": 1
+            "createDateTimeUtc": "2024-11-26T06:37:34.627",
+            "updateDateTimeUtc": "2025-02-17T06:12:30.247",
+            "createBy": 18,
+            "updateBy": 18
         }
     ],
-    "workExperiences": null,
+    "workExperiences": [
+        {
+            "rid": 14,
+            "userId": 18,
+            "company": "旭富製藥",
+            "leavingReason": "職涯規劃",
+            "startFrom": "2019-03-01T00:00:00",
+            "endAt": "2023-02-01T00:00:00",
+            "position": "技術員",
+            "salary": 40010,
+            "ifEnable": true,
+            "createDateTimeUtc": "2024-11-26T06:37:34.68",
+            "updateDateTimeUtc": "2025-02-17T06:12:30.25",
+            "createBy": 18,
+            "updateBy": 18
+        }
+    ],
     "educationExperiences": [
         {
-            "rid": 1,
-            "userId": 1,
+            "rid": 17,
+            "userId": 18,
             "academicDegree": "03",
             "degreeStatus": "01",
             "department": "化材系",
-            "name": "勤益科技大學2",
-            "startFrom": "2024-02-01T00:00:00",
-            "endAt": "2024-03-01T00:00:00",
+            "name": "勤益科技大學",
+            "startFrom": "2012-07-01T00:00:00",
+            "endAt": "2017-09-01T00:00:00",
             "ifEnable": true,
-            "createDateTimeUtc": "2024-11-06T03:03:53.65",
-            "updateDateTimeUtc": "2024-11-08T09:14:32.79",
-            "createBy": 1,
-            "updateBy": 1
-        },
-        {
-            "rid": 2,
-            "userId": 1,
-            "academicDegree": "02",
-            "degreeStatus": "02",
-            "department": "化材系研究所",
-            "name": "勤益科技大學3",
-            "startFrom": "2025-05-01T00:00:00",
-            "endAt": "2025-12-01T00:00:00",
-            "ifEnable": true,
-            "createDateTimeUtc": "2024-11-06T03:28:29.193",
-            "updateDateTimeUtc": "2024-11-08T09:14:33.09",
-            "createBy": 1,
-            "updateBy": 1
+            "createDateTimeUtc": "2024-11-26T06:37:34.737",
+            "updateDateTimeUtc": "2025-02-17T06:12:30.257",
+            "createBy": 18,
+            "updateBy": 18
         }
     ],
-    "userId": 1,
-    "account": "reco",
+    "userId": 18,
+    "account": "blue821229",
     "pwd": null,
     "userName": "許弘毅",
     "sysNotes": null,
@@ -110,36 +84,36 @@
     "latestTimeChangePasswordDatetimeUtc": null,
     "bypassChangePasswordDateTimeUtc": null,
     "blockLoginTillDateTimeUtc": null,
-    "email": "reco@hotmail.com",
-    "department":"02",
-    "departmentFromADServer": "研究一所",
+    "email": "blue821229@triwra.org.tw",
+    "department": "91",
+    "departmentFromADServer": "數位發展處",
     "userRole": 1,
-    "arrivalDate": "2016-10-31T00:00:00",
-    "lastWorkingDate": null,
-    "birthday": "2016-10-31T00:00:00",
-    "employeeId": "1051031A",
-    "homePhone": "02-1020391",
-    "idCardBackImageUrl": "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2Fimages%20(1).jpg?alt=media&token=e0c64420-2028-4276-bc00-d0886e77bbed",
-    "idCardFrontImageUrl": "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2Fimages%20(1).jpg?alt=media&token=3e759810-c170-42dc-a16a-5c76715dbb34",
-    "idNumber": "A098877666",
-    "maritalStatus": "其他",
-    "phone": "0929999999",
-    "positionTitle": "開發人員",
-    "profileImageUrl": "https://firebasestorage.googleapis.com/v0/b/employeesystemproject.appspot.com/o/images%2F%E8%87%AA%E4%BF%A1%E5%BC%8F.jpg?alt=media&token=a630c06d-673e-4953-b824-a66d6bc302df",
-    "sex": "女",
-    "bankAccount": "4564654654564",
-    "bankName": "南崁分行",
-    "mailingAddress": "金海街888",
-    "mailingCity": null,
-    "mailingDistrict": null,
-    "mailingPostalCode": null,
-    "residenceCity": "新北市",
-    "residenceDistrict": "淡水區",
-    "residenceAddress": "金海街123",
+    "arrivalDate": "2023-11-20T00:00:00",
+    "birthday": "1993-12-29T00:00:00",
+    "employeeId": null,
+    "homePhone": "03-3541869",
+    "idCardBackImageUrl": null,
+    "idCardFrontImageUrl": null,
+    "idNumber": null,
+    "maritalStatus": "未婚",
+    "phone": "0923272040",
+    "positionTitle": null,
+    "profileImageUrl": null,
+    "sex": "男",
+    "bankAccount": null,
+    "bankName": null,
+    "mailingAddress": "北新路184巷82號",
+    "mailingPostalCode": "251",
+    "residenceAddress": "金海街13巷2號",
     "residencePostalCode": "338",
+    "mailingCity": "新北市",
+    "mailingDistrict": "淡水區",
+    "residenceCity": "桃園市",
+    "residenceDistrict": "蘆竹區",
+    "lastWorkingDate": null,
     "ifEnable": true,
-    "createDateTimeUtc": "2024-11-04T02:45:27.44",
-    "updateDateTimeUtc": "2024-11-13T02:51:38.29",
+    "createDateTimeUtc": "2024-11-26T06:07:01.553",
+    "updateDateTimeUtc": "2025-02-17T06:12:30.207",
     "createBy": -1,
-    "updateBy": 1
+    "updateBy": 18
 }
