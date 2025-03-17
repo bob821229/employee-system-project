@@ -309,20 +309,16 @@ export const useEmployeeStore = defineStore(
             data.workExperiences =
                 data.workExperiences?.map((item) => ({
                     ...item,
-                    startFrom: dayjs(item.startFrom).format("YYYY-MM"),
-                    endAt: dayjs(item.endAt).format("YYYY-MM"),
+                    startFrom: item.startFrom ? dayjs(item.startFrom).format("YYYY-MM") : null,
+                    endAt: item.endAt ? dayjs(item.endAt).format("YYYY-MM") : null,
                 })) ?? [];
 
             // 處理教育經歷
             data.educationExperiences =
                 data.educationExperiences?.map((item) => ({
                     ...item,
-                    period: [
-                        dayjs(item.startFrom).format("YYYY-MM"),
-                        dayjs(item.endAt).format("YYYY-MM"),
-                    ],
-                    startFrom: dayjs(item.startFrom).format("YYYY-MM"),
-                    endAt: dayjs(item.endAt).format("YYYY-MM"),
+                    startFrom: item.startFrom ? dayjs(item.startFrom).format("YYYY-MM") : null,
+                    endAt: item.endAt ? dayjs(item.endAt).format("YYYY-MM") : null,
                 })) ?? [];
             if (data.educationExperiences?.length === 0) {
                 data.educationExperiences.push({
@@ -331,7 +327,9 @@ export const useEmployeeStore = defineStore(
                     academicDegree: null,
                     department: null,
                     degreeStatus: null,
-                    period: [null, null],
+                    startFrom: null,
+                    endAt: null,
+                    // period: [null, null],
                 });
             }
 
@@ -351,8 +349,8 @@ export const useEmployeeStore = defineStore(
             if (data.workExperiences) {
                 data.workExperiences =data.workExperiences?.map((item) => ({
                     ...item,
-                    startFrom: dayjs(item.startFrom).format("YYYY-MM"),
-                    endAt: dayjs(item.endAt).format("YYYY-MM"),
+                    startFrom: item.startFrom ? dayjs(item.startFrom).format("YYYY-MM") : null,
+                    endAt: item.endAt ? dayjs(item.endAt).format("YYYY-MM") : null,
                 })) ?? [];
             } else {
                 data.workExperiences = [];

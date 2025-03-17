@@ -266,7 +266,7 @@
                             <el-input v-model="school.name" placeholder="請輸入學校名稱" />
                         </el-form-item>
                     </el-col>
-                    <el-col :span="5">
+                    <el-col :span="6">
                         <el-form-item label="科系" :prop="'educationExperiences.' + index + '.department'" :rules="{
                             required: true,
                             message: '請輸入科系',
@@ -294,7 +294,21 @@
                             </el-select>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="9">
+                    <el-col :span="4">
+                        <el-form-item label="開始年月" :prop="'educationExperiences.' + index + '.startFrom'"
+                            :rules="{ type: 'date', required: false, message: '請選擇服務起年月', trigger: 'change' }">
+                            <el-date-picker v-model="school.startFrom" type="month" 
+                                placeholder="開始年月" format="YYYY-MM" value-format="YYYY-MM" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="4">
+                        <el-form-item label="結束年月" :prop="'educationExperiences.' + index + '.endAt'"
+                            :rules="{ type: 'date', required: false, message: '請選擇服務訖年月', trigger: 'change' }">
+                            <el-date-picker v-model="school.endAt" type="month"
+                                placeholder="結束年月" format="YYYY-MM" value-format="YYYY-MM" />
+                        </el-form-item>
+                    </el-col>
+                    <!-- <el-col :span="9">
                         <el-form-item label="修業起訖年月" :prop="'educationExperiences.' + index + '.period'" :rules="{
                             type: 'array',
                             required: true,
@@ -311,7 +325,7 @@
                                 start-placeholder="開始年月" end-placeholder="結束年月" format="YYYY-MM"
                                 value-format="YYYY-MM" />
                         </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :span="1">
                         <el-form-item
                             style="display: flex;align-items:flex-end;justify-content: center;width: 100%;height: 100%;">
@@ -1008,7 +1022,10 @@ const addEducationExperience = () => {
             academicDegree: null,
             department: null,
             degreeStatus: null,
-            period: [null, null],
+            startFrom: null,
+            endAt: null,
+            // period: [null, null],
+
         })
     }
 }
@@ -1649,8 +1666,12 @@ function dataFormatHandle(data) {
     //教育經歷格式化
     if (data.educationExperiences) {
         data.educationExperiences.forEach((item) => {
-            item.startFrom = item.period[0] + "-01"
-            item.endAt = item.period[1] + "-01"
+            if(item.startFrom!=null){
+                item.startFrom = item.startFrom + "-01"
+            }
+            if(item.endAt!=null){
+                item.endAt = item.endAt + "-01"
+            }
         })
     } else {
         data.educationExperiences = []
