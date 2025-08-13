@@ -297,15 +297,15 @@
                     <el-col :span="4">
                         <el-form-item label="開始年月" :prop="'educationExperiences.' + index + '.startFrom'"
                             :rules="{ type: 'date', required: false, message: '請選擇服務起年月', trigger: 'change' }">
-                            <el-date-picker v-model="school.startFrom" type="month" 
-                                placeholder="開始年月" format="YYYY-MM" value-format="YYYY-MM" />
+                            <el-date-picker v-model="school.startFrom" type="month" placeholder="開始年月" format="YYYY-MM"
+                                value-format="YYYY-MM" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item label="結束年月" :prop="'educationExperiences.' + index + '.endAt'"
                             :rules="{ type: 'date', required: false, message: '請選擇服務訖年月', trigger: 'change' }">
-                            <el-date-picker v-model="school.endAt" type="month"
-                                placeholder="結束年月" format="YYYY-MM" value-format="YYYY-MM" />
+                            <el-date-picker v-model="school.endAt" type="month" placeholder="結束年月" format="YYYY-MM"
+                                value-format="YYYY-MM" />
                         </el-form-item>
                     </el-col>
                     <!-- <el-col :span="9">
@@ -377,15 +377,15 @@
                     <el-col :span="4">
                         <el-form-item label="開始年月" :prop="'workExperiences.' + index + '.startFrom'"
                             :rules="{ type: 'date', required: false, message: '請選擇服務起年月', trigger: 'change' }">
-                            <el-date-picker v-model="experience.startFrom" type="month" 
-                                placeholder="開始年月" format="YYYY-MM" value-format="YYYY-MM" />
+                            <el-date-picker v-model="experience.startFrom" type="month" placeholder="開始年月"
+                                format="YYYY-MM" value-format="YYYY-MM" />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item label="結束年月" :prop="'workExperiences.' + index + '.endAt'"
                             :rules="{ type: 'date', required: false, message: '請選擇服務訖年月', trigger: 'change' }">
-                            <el-date-picker v-model="experience.endAt" type="month"
-                                placeholder="結束年月" format="YYYY-MM" value-format="YYYY-MM" />
+                            <el-date-picker v-model="experience.endAt" type="month" placeholder="結束年月" format="YYYY-MM"
+                                value-format="YYYY-MM" />
                         </el-form-item>
                     </el-col>
 
@@ -439,7 +439,7 @@
                         </el-form-item>
                     </el-col>
 
-                    
+
                 </el-row>
             </el-col>
             <!-- 新增職務經歷 -->
@@ -649,7 +649,6 @@
             <el-button :icon="Upload" type="primary" plain round @click="exportExcel()">匯出</el-button>
         </el-tooltip>
     </div>
-    <!-- isModified:{{ isModified }} -->
 </template>
 
 <script setup>
@@ -1653,10 +1652,10 @@ function dataFormatHandle(data) {
     // 工作經歷格式化
     if (data.workExperiences) {
         data.workExperiences.forEach((item) => {
-            if(item.startFrom!=null){
+            if (item.startFrom != null) {
                 item.startFrom = item.startFrom + "-01"
             }
-            if(item.endAt!=null){
+            if (item.endAt != null) {
                 item.endAt = item.endAt + "-01"
             }
         })
@@ -1666,10 +1665,10 @@ function dataFormatHandle(data) {
     //教育經歷格式化
     if (data.educationExperiences) {
         data.educationExperiences.forEach((item) => {
-            if(item.startFrom!=null){
+            if (item.startFrom != null) {
                 item.startFrom = item.startFrom + "-01"
             }
-            if(item.endAt!=null){
+            if (item.endAt != null) {
                 item.endAt = item.endAt + "-01"
             }
         })

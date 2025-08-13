@@ -103,27 +103,30 @@ export const useEmployeeStore = defineStore(
                 educationalQualifications: null, //學歷
                 expertise: null, //專長
                 professionalLicense: [], //專業證照
+                //職務經歷
                 workExperience: [
                     {
                         company: null, //公司名稱
                         position: null, //職務名稱
                         period: [null, null], //服務起訖年月
                     },
-                ], //職務經歷
+                ], 
+                //歷年著作
                 annualPublications: [
                     {
                         category: null, //類型
                         date: null, //時間
                         name: null, //名稱
                     },
-                ], //歷年著作
+                ], 
+                //歷年計畫
                 annualProjects: [
                     {
                         sponsorUnit: null, //委託單位
                         period: [null, null], //起訖時間
                         projectName: null, //計畫名稱
                     },
-                ], //歷年計畫
+                ],
             };
         };
 
@@ -373,11 +376,11 @@ export const useEmployeeStore = defineStore(
 
             //歷年參與之專案計畫格式化
             if (data.annualProjects) {
-                data.annualProjects.forEach((item) => {
-                    let startDate = dayjs(item.startFrom).format("YYYY-MM");
-                    let endDate = dayjs(item.endAt).format("YYYY-MM");
-                    item.period = [startDate, endDate];
-                });
+                data.annualProjects =data.annualProjects?.map((item) => ({
+                    ...item,
+                    startFrom: item.startFrom ? dayjs(item.startFrom).format("YYYY-MM") : null,
+                    endAt: item.endAt ? dayjs(item.endAt).format("YYYY-MM") : null,
+                })) ?? [];
             } else {
                 data.annualProjects = [];
             }

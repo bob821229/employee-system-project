@@ -3,7 +3,7 @@
         <el-breadcrumb separator="/" v-if="employeeStore.getUserInfo.role != 1">
             <el-breadcrumb-item><el-text size="large" tag="b">員工簡歷</el-text></el-breadcrumb-item>
             <el-breadcrumb-item><el-text size="large" tag="b">{{ curriculumVitae.userName ?? ''
-                    }}</el-text></el-breadcrumb-item>
+            }}</el-text></el-breadcrumb-item>
         </el-breadcrumb>
         <el-form ref="ruleFormRef" :model="curriculumVitae" label-position="top" :size="'large'" :disabled="!checkUser"
             :rules="rules">
@@ -76,19 +76,19 @@
                             </el-form-item>
                         </el-col>
                         <el-col :span="4">
-                        <el-form-item label="開始年月" :prop="'workExperiences.' + index + '.startFrom'"
-                            :rules="{ type: 'date', required: false, message: '請選擇服務起年月', trigger: 'change' }">
-                            <el-date-picker v-model="item.startFrom" type="month" 
-                                placeholder="開始年月" format="YYYY-MM" value-format="YYYY-MM" />
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="4">
-                        <el-form-item label="結束年月" :prop="'workExperiences.' + index + '.endAt'"
-                            :rules="{ type: 'date', required: false, message: '請選擇服務訖年月', trigger: 'change' }">
-                            <el-date-picker v-model="item.endAt" type="month"
-                                placeholder="結束年月" format="YYYY-MM" value-format="YYYY-MM" />
-                        </el-form-item>
-                    </el-col>
+                            <el-form-item label="開始年月" :prop="'workExperiences.' + index + '.startFrom'"
+                                :rules="{ type: 'date', required: false, message: '請選擇服務起年月', trigger: 'change' }">
+                                <el-date-picker v-model="item.startFrom" type="month" placeholder="開始年月"
+                                    format="YYYY-MM" value-format="YYYY-MM" />
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="4">
+                            <el-form-item label="結束年月" :prop="'workExperiences.' + index + '.endAt'"
+                                :rules="{ type: 'date', required: false, message: '請選擇服務訖年月', trigger: 'change' }">
+                                <el-date-picker v-model="item.endAt" type="month" placeholder="結束年月" format="YYYY-MM"
+                                    value-format="YYYY-MM" />
+                            </el-form-item>
+                        </el-col>
                         <!-- <el-col :span="9">
                             <el-form-item label="起訖年月" :prop="'workExperiences.' + index + '.period'" :rules="{
                                 type: 'array',
@@ -199,13 +199,13 @@
                     <el-row style="width: 100%;align-items: end;" :gutter="10"
                         v-for="(item, index) in curriculumVitae.annualProjects" :key="index"
                         class="work-experience-item">
-                        <el-col :span="4">
+                        <el-col :span="5">
                             <el-form-item label="委託單位" :prop="'annualProjects.' + index + '.customer'"
                                 :rules="{ required: true, message: '請輸入委託單位', trigger: 'blur' }">
                                 <el-input v-model="item.customer" placeholder="請輸入委託單位" />
                             </el-form-item>
                         </el-col>
-                        <el-col :span="9">
+                        <!-- <el-col :span="9">
                             <el-form-item label="起訖年月" :prop="'annualProjects.' + index + '.period'" :rules="{
                                 type: 'array',
                                 required: true,
@@ -220,6 +220,20 @@
                             }">
                                 <el-date-picker v-model="item.period" type="monthrange" range-separator="至"
                                     start-placeholder="開始年月" end-placeholder="結束年月" format="YYYY-MM"
+                                    value-format="YYYY-MM" />
+                            </el-form-item>
+                        </el-col> -->
+                        <el-col :span="4">
+                            <el-form-item label="開始年月" :prop="'annualProjects.' + index + '.startFrom'"
+                                :rules="{ type: 'date', required: false, message: '請選擇服務起年月', trigger: 'change' }">
+                                <el-date-picker v-model="item.startFrom" type="month" placeholder="開始年月"
+                                    format="YYYY-MM" value-format="YYYY-MM" />
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="4">
+                            <el-form-item label="結束年月" :prop="'annualProjects.' + index + '.endAt'"
+                                :rules="{ type: 'date', required: false, message: '請選擇服務訖年月', trigger: 'change' }">
+                                <el-date-picker v-model="item.endAt" type="month" placeholder="結束年月" format="YYYY-MM"
                                     value-format="YYYY-MM" />
                             </el-form-item>
                         </el-col>
@@ -270,13 +284,13 @@
     <!-- isModified:{{ isModified }} -->
 </template>
 <script setup>
-import { ref, onMounted, computed, reactive, inject,watch } from 'vue'
+import { ref, onMounted, computed, reactive, inject, watch } from 'vue'
 import { db } from '../api/firebaseConfig';
 import {
     getDatabase, ref as dbRef, push, onValue, remove, query, equalTo, orderByChild, set
 } from 'firebase/database';
 import { useEmployeeStore } from '../stores/employee';
-import { apiGetMetaDataList,apiGetResume, apiSaveResume, apiDeleteWorkingExperience, apiDeleteUserPublication, apiDeleteUserProject, apiGetUserCvFile } from '../api/api';
+import { apiGetMetaDataList, apiGetResume, apiSaveResume, apiDeleteWorkingExperience, apiDeleteUserPublication, apiDeleteUserProject, apiGetUserCvFile } from '../api/api';
 import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import { Upload } from '@element-plus/icons-vue'
 
@@ -482,8 +496,10 @@ const addAnnualProjects = () => {
         curriculumVitae.value.annualProjects.push({
             customer: null,
             projectName: null,
-            period: [null, null],
-            rid: null
+            rid: null,
+            // period: [null, null],
+            startFrom: null,
+            endAt: null,
         });
     }
 };
@@ -655,8 +671,8 @@ const saveResume = async (apiData) => {
 /** 重新獲取最新資料 */
 const refreshResumeData = async (userId) => {
     try {
-        const updatedResponse = await apiGetResume(userId);~
-        employeeStore.setTmpCurriculumVitae(updatedResponse.data);
+        const updatedResponse = await apiGetResume(userId); ~
+            employeeStore.setTmpCurriculumVitae(updatedResponse.data);
         console.log("資料更新成功");
     } catch (error) {
         console.error("獲取最新資料失敗:", error);
@@ -672,8 +688,12 @@ function dataFormatHandle(data) {
     //歷年參與之專案計畫 格式化
     if (data.annualProjects) {
         data.annualProjects.forEach((item) => {
-            item.startFrom = item.period[0] + "-01"
-            item.endAt = item.period[1] + "-01"
+            if (item.startFrom != null) {
+                item.startFrom = item.startFrom + "-01"
+            }
+            if (item.endAt != null) {
+                item.endAt = item.endAt + "-01"
+            }
         })
     } else {
         data.annualProjects = []
@@ -689,10 +709,10 @@ function dataFormatHandle(data) {
     // 工作經歷格式化
     if (data.workExperiences) {
         data.workExperiences.forEach((item) => {
-            if(item.startFrom!=null){
+            if (item.startFrom != null) {
                 item.startFrom = item.startFrom + "-01"
             }
-            if(item.endAt!=null){
+            if (item.endAt != null) {
                 item.endAt = item.endAt + "-01"
             }
         })
