@@ -3,7 +3,7 @@
 /** api_config.js */
 import axios from 'axios';
 import Swal from 'sweetalert2';
-// import { API_CONFIG } from '/api-config.js'
+// import { API_CONFIG } from '@/api/api-config.js';
 import { useRouter } from 'vue-router'
 // const router = useRouter();
 
@@ -320,6 +320,14 @@ export const apiDeleteUserProject = (rid) =>{
   }
   return userRequest.post(url);
 } 
+// 上傳頭像 API
+export const apiUploadProfileImage = (formData, onUploadProgress) => {
+  return axios.post(`/api/${endpoints.user.uploadProfileImage}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    onUploadProgress,
+    withCredentials: false
+  })
+}
 
 //admin
 // 取得員工清單
